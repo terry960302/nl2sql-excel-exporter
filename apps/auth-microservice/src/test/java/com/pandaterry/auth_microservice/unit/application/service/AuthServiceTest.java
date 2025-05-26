@@ -1,5 +1,6 @@
-package com.pandaterry.auth_microservice.application.service;
+package com.pandaterry.auth_microservice.unit.application.service;
 
+import com.pandaterry.auth_microservice.application.service.AuthService;
 import com.pandaterry.auth_microservice.infrastructure.client.QuotaClient;
 import com.pandaterry.auth_microservice.domain.entity.Organization;
 import com.pandaterry.auth_microservice.domain.entity.Plan;

@@ -2,39 +2,52 @@
 package com.pandaterry.auth_microservice.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pandaterry.auth_microservice.domain.entity.Organization;
-import com.pandaterry.auth_microservice.domain.entity.Plan;
+import com.pandaterry.auth_microservice.AuthMicroserviceApplication;
+import com.pandaterry.auth_microservice.domain.entity.RefreshToken;
 import com.pandaterry.auth_microservice.domain.entity.User;
-import com.pandaterry.auth_microservice.domain.enumerated.PlanType;
 import com.pandaterry.auth_microservice.domain.exception.AuthException;
 import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
-import com.pandaterry.auth_microservice.domain.repository.OrganizationRepository;
 import com.pandaterry.auth_microservice.domain.repository.PlanRepository;
+import com.pandaterry.auth_microservice.domain.repository.RefreshTokenRepository;
 import com.pandaterry.auth_microservice.domain.repository.UserRepository;
-import com.pandaterry.auth_microservice.infrastructure.config.SecurityTestConfig;
+import com.pandaterry.auth_microservice.config.SecurityTestConfig;
+import com.pandaterry.auth_microservice.infrastructure.client.QuotaClient;
+import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
 import com.pandaterry.auth_microservice.presentation.dto.LoginRequest;
+import com.pandaterry.auth_microservice.presentation.dto.QuotaInfo;
 import com.pandaterry.auth_microservice.presentation.dto.SignupRequest;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import com.pandaterry.auth_microservice.presentation.dto.TokenResponse;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@SpringBootTest
+// 모든 빈을 스캔하지 않도록(메모리 효율화) 특정 클래스만 지정해서 테스트 시행
+@SpringBootTest(
+        classes = {
+                AuthMicroserviceApplication.class,
+                SecurityTestConfig.class
+        }
+)
 @AutoConfigureMockMvc
 @Import(SecurityTestConfig.class)
 @ActiveProfiles("test")
@@ -43,6 +56,9 @@ class AuthIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private QuotaClient quotaClient;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -53,17 +69,17 @@ class AuthIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    // 기본으로업로드 되어있어야하는 데이터
-    private Plan basicPlan;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @BeforeEach
     void setUp() {
-        // 기본 플랜 생성
-        basicPlan = new Plan();
-        basicPlan.setName(PlanType.BASIC.name());
-        basicPlan.setMonthlyQuota(100);
-        basicPlan.setRateLimitRps(1);
-        planRepository.save(basicPlan);
+        // QuotaClient의 임의 설정
+        when(quotaClient.getCurrentQuota(anyString()))
+                .thenReturn(new QuotaInfo(100, 0, 100));  // 기본 쿼터 정보 반환
     }
 
     @Nested
@@ -78,19 +94,17 @@ class AuthIntegrationTest {
                     .password("ValidPass123!")
                     .build();
 
-            // when & then
+            // when
             mockMvc.perform(post("/auth/signup")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
             // then
             User user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
 
-            Assertions.assertEquals(user.getEmail(), request.getEmail());
-            Assertions.assertEquals(user.getPasswordHash(), request.getPassword());
-
+            Assertions.assertEquals(request.getEmail(), user.getEmail());
         }
 
         @Test
@@ -98,22 +112,23 @@ class AuthIntegrationTest {
         void signup_이메일중복_실패() throws Exception {
             // given
             SignupRequest request = SignupRequest.builder()
-                    .email("test@example.com")
+                    .email("test1@example.com")
                     .password("ValidPass123!")
                     .build();
 
             // 첫 번째 회원가입
             mockMvc.perform(post("/auth/signup")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
             // 두 번째 회원가입 시도
             mockMvc.perform(post("/auth/signup")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
-                    .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_EMAIL.getCode()));
+                    .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_EMAIL.getCode()))
+                    .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_EMAIL.getMessage()));
         }
     }
 
@@ -136,8 +151,8 @@ class AuthIntegrationTest {
 
             try {
                 mockMvc.perform(post("/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(signupRequest)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(signupRequest)))
                         .andExpect(status().isOk());
             } catch (Exception e) {
                 throw new RuntimeException("회원가입 실패", e);
@@ -155,11 +170,13 @@ class AuthIntegrationTest {
 
             // when & then
             mockMvc.perform(post("/auth/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").exists())
-                    .andExpect(jsonPath("$.refreshToken").exists());
+                    .andExpect(jsonPath("$.refreshToken").exists())
+                    .andExpect(jsonPath("$.accessToken").isString())
+                    .andExpect(jsonPath("$.refreshToken").isString());
         }
 
         @Test
@@ -173,10 +190,162 @@ class AuthIntegrationTest {
 
             // when & then
             mockMvc.perform(post("/auth/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.code").value("AUTH_4002"));
+                    .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_CREDENTIALS.getCode()));
+        }
+    }
+
+    @Nested
+    @DisplayName("토큰 갱신 통합 테스트")
+    class TokenRefreshIntegrationTest {
+        private User testUser;
+        private String userEmail = "test@example.com";
+        private String userPassword = "ValidPass123!";
+
+        private TokenResponse tokenResponse;
+
+        @BeforeEach
+        void setUp() throws Exception {
+            // 회원가입 요청으로 사용자 생성
+            SignupRequest signupRequest = SignupRequest.builder()
+                    .email(userEmail)
+                    .password(userPassword)
+                    .build();
+
+            mockMvc.perform(post("/auth/signup")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(signupRequest)))
+                    .andExpect(status().isOk());
+
+            // 사용자 정보 조회
+            testUser = userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
+
+            // 로그인하여 토큰 발급
+            LoginRequest loginRequest = LoginRequest.builder()
+                    .email(userEmail)
+                    .password(userPassword)
+                    .build();
+
+            String loginResponse = mockMvc.perform(post("/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(loginRequest)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.accessToken").exists())
+                    .andExpect(jsonPath("$.refreshToken").exists())
+                    .andExpect(jsonPath("$.accessToken").isString())
+                    .andExpect(jsonPath("$.refreshToken").isString())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            tokenResponse = objectMapper.readValue(loginResponse, TokenResponse.class);
+        }
+
+        @Test
+        @DisplayName("토큰 갱신 성공")
+        void refreshToken_성공() throws Exception {
+
+            String validRefreshToken = tokenResponse.getRefreshToken();
+            // when & then
+        mockMvc.perform(post("/auth/token/refresh")
+                            .header("X-Refresh-Token", validRefreshToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.accessToken").exists())
+                    .andExpect(jsonPath("$.refreshToken").exists())
+                    .andExpect(jsonPath("$.accessToken").isString())
+                    .andExpect(jsonPath("$.refreshToken").isString())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            // 새로운 토큰으로 사용자 정보 조회 테스트
+            mockMvc.perform(get("/auth/me")
+                            .header("X-User-Id", testUser.getId().toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.email").value(userEmail))
+                    .andExpect(jsonPath("$.userId").value(testUser.getId().toString()));
+        }
+
+        @Test
+        @DisplayName("만료된 리프레시 토큰으로 갱신 실패")
+        void refreshToken_만료된토큰_실패() throws Exception {
+            RefreshToken token = refreshTokenRepository.findByToken(tokenResponse.getRefreshToken())
+                    .orElseThrow(() -> new AuthException(ErrorCode.INVALID_TOKEN));
+            refreshTokenRepository.delete(token);
+
+            LocalDateTime expiredAt = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
+            String expiredRefreshToken = jwtUtil.generateRefreshToken(testUser.getId(), Date.from(expiredAt.atZone(ZoneId.systemDefault()) // or ZoneOffset.UTC
+                    .toInstant()));
+            RefreshToken newToken = RefreshToken.create(testUser, expiredRefreshToken, LocalDateTime.now(), expiredAt);
+            refreshTokenRepository.save(newToken);
+
+            // when & then
+            mockMvc.perform(post("/auth/token/refresh")
+                            .header("X-Refresh-Token", expiredRefreshToken))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.code").value(ErrorCode.TOKEN_EXPIRED.getCode()))
+                    .andExpect(jsonPath("$.message").value(ErrorCode.TOKEN_EXPIRED.getMessage()));
+        }
+
+        @Test
+        @DisplayName("이미 사용된 리프레시 토큰으로 갱신 실패")
+        void refreshToken_이미사용된토큰_실패() throws Exception {
+            RefreshToken token = refreshTokenRepository.findByToken(tokenResponse.getRefreshToken())
+                    .orElseThrow(() -> new AuthException(ErrorCode.INVALID_TOKEN));
+            token.revoke();
+            refreshTokenRepository.save(token);
+
+
+            // when & then
+            mockMvc.perform(post("/auth/token/refresh")
+                            .header("X-Refresh-Token", token.getToken()))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.code").value(ErrorCode.TOKEN_REVOKED.getCode()))
+                    .andExpect(jsonPath("$.message").value(ErrorCode.TOKEN_REVOKED.getMessage()));
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 리프레시 토큰으로 갱신 실패")
+        void refreshToken_유효하지않은토큰_실패() throws Exception {
+            // when & then
+            mockMvc.perform(post("/auth/token/refresh")
+                            .header("X-Refresh-Token", "invalid.token.here"))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_TOKEN.getCode()))
+                    .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_TOKEN.getMessage()));
+        }
+
+        @Test
+        @DisplayName("토큰 갱신 후 이전 토큰으로 재사용 시도 실패")
+        void refreshToken_이전토큰재사용_실패() throws Exception {
+            String firstRefreshToken = tokenResponse.getRefreshToken();
+            // 첫 번째 토큰 갱신
+            String response = mockMvc.perform(post("/auth/token/refresh")
+                            .header("X-Refresh-Token", firstRefreshToken))
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            // 새로 갱신받은 토큰
+            TokenResponse secondTokens = objectMapper.readValue(response, TokenResponse.class);
+            String secondRefreshToken = secondTokens.getRefreshToken();
+
+            // 이전 토큰으로 재시도
+            mockMvc.perform(post("/auth/token/refresh")
+                            .header("X-Refresh-Token", firstRefreshToken)) // 첫번째 발급받은 토큰은 이미 폐기처리돼서 갱신을 못함.
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.code").value(ErrorCode.TOKEN_REVOKED.getCode()))
+                    .andExpect(jsonPath("$.message").value(ErrorCode.TOKEN_REVOKED.getMessage()));
+
+            // 두번째로 받은(갱신한) 새로운 토큰으로 시도 -> 성공해야함.
+            mockMvc.perform(post("/auth/token/refresh")
+                            .header("X-Refresh-Token", secondRefreshToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.accessToken").exists())
+                    .andExpect(jsonPath("$.refreshToken").exists());
         }
     }
 }

@@ -20,7 +20,7 @@ public class RefreshToken {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 512)
     private String token;
 
     @Column(name = "issued_at", nullable = false)
@@ -35,6 +35,10 @@ public class RefreshToken {
 
     public void revoke() {
         this.revoked = true;
+    }
+
+    public boolean isExpired(){
+       return this.expiresAt.isBefore(LocalDateTime.now());
     }
 
     private RefreshToken(User user, String token, LocalDateTime issuedAt, LocalDateTime expiresAt, boolean revoked) {

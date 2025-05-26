@@ -1,4 +1,4 @@
-package com.pandaterry.auth_microservice.infrastructure.config;
+package com.pandaterry.auth_microservice.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

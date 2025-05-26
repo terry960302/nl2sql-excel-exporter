@@ -49,11 +49,11 @@ public class AuthService {
         organization = organizationRepository.save(organization);
 
         User user = User.create(
-            request.getEmail(),
-            passwordEncoder.encode(request.getPassword()), 
-            organization
+                request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                organization
         );
-        
+
         userRepository.save(user);
     }
 
@@ -88,29 +88,30 @@ public class AuthService {
     }
 
     public TokenResponse refreshToken(String refreshToken) {
-        if (!jwtUtil.validateToken(refreshToken)) {
-            throw new AuthException(ErrorCode.INVALID_TOKEN);
-        }
+        jwtUtil.validateToken(refreshToken);
 
-        RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
+        RefreshToken existingToken = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new AuthException(ErrorCode.INVALID_TOKEN));
 
-        if (token.isRevoked()) {
+        if (existingToken.isRevoked()) {
             throw new AuthException(ErrorCode.TOKEN_REVOKED);
         }
 
-        User user = token.getUser();
+        // 기존 토큰은 폐기처리(더이상 사용못하도록)
+        existingToken.revoke();
+
+        User user = existingToken.getUser();
+
         String newAccessToken = jwtUtil.generateAccessToken(
                 user.getId(),
                 user.getEmail(),
                 user.getOrganization().getId(),
                 user.getOrganization().getPlan().getName());
-
         String newRefreshToken = jwtUtil.generateRefreshToken(user.getId());
-        token.revoke();
+
         saveRefreshToken(user, newRefreshToken);
 
-        return new TokenResponse(newAccessToken, newRefreshToken);
+        return TokenResponse.of(newAccessToken, newRefreshToken);
     }
 
     public void logout(String refreshToken) {

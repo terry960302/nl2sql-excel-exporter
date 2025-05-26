@@ -1,14 +1,20 @@
-package com.pandaterry.auth_microservice.infrastructure.util;
+package com.pandaterry.auth_microservice.unit.infrastructure.util;
 
 import com.pandaterry.auth_microservice.domain.entity.Organization;
 import com.pandaterry.auth_microservice.domain.entity.Plan;
 import com.pandaterry.auth_microservice.domain.entity.User;
+import com.pandaterry.auth_microservice.domain.exception.AuthException;
+import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
+import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 
 class JwtUtilTest {
 
@@ -21,8 +27,8 @@ class JwtUtilTest {
     void setUp() {
         jwtUtil = new JwtUtil(
                 "testSecretKey123456789012345678901234567890",
-                30L,
-                7L);
+                3000L,
+                70000L);
 
         testPlan = new Plan();
         testPlan.setId(UUID.randomUUID());
@@ -87,10 +93,13 @@ class JwtUtilTest {
         String invalidToken = "invalid.token.here";
 
         // when
-        boolean isValid = jwtUtil.validateToken(invalidToken);
 
         // then
-        assertThat(isValid).isFalse();
+        RuntimeException exception = Assertions.assertThrows(AuthException.class,  () -> {
+            jwtUtil.validateToken(invalidToken);
+        });
+
+        assertThat(exception.getMessage()).isEqualTo(ErrorCode.INVALID_TOKEN.getMessage());
     }
 
     @Test

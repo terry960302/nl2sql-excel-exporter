@@ -1,10 +1,11 @@
-package com.pandaterry.auth_microservice.presentation.controller;
+package com.pandaterry.auth_microservice.unit.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pandaterry.auth_microservice.application.service.AuthService;
 import com.pandaterry.auth_microservice.domain.exception.AuthException;
 import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
-import com.pandaterry.auth_microservice.infrastructure.config.SecurityTestConfig;
+import com.pandaterry.auth_microservice.config.SecurityTestConfig;
+import com.pandaterry.auth_microservice.presentation.controller.AuthController;
 import com.pandaterry.auth_microservice.presentation.dto.LoginRequest;
 import com.pandaterry.auth_microservice.presentation.dto.OrganizationResponse;
 import com.pandaterry.auth_microservice.presentation.dto.SignupRequest;
@@ -191,7 +192,7 @@ class AuthControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.userId").value(userId))
                     .andExpect(jsonPath("$.email").value("test@example.com"))
-                    .andExpect(jsonPath("$.organizationName").value("default"))
+                    .andExpect(jsonPath("$.organization.name").value("default"))
                     .andExpect(jsonPath("$.planName").value("BASIC"))
                     .andExpect(jsonPath("$.totalQuota").value(100))
                     .andExpect(jsonPath("$.usedQuota").value(30))

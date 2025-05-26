@@ -1,5 +1,7 @@
 package com.pandaterry.auth_microservice.infrastructure.util;
 
+import com.pandaterry.auth_microservice.domain.exception.AuthException;
+import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,16 +18,17 @@ import java.util.UUID;
 public class JwtUtil {
 
     private final SecretKey key;
-    private final long accessTokenValidityInMinutes;
-    private final long refreshTokenValidityInDays;
+    private final long accessTokenExpirationTime;
+    private final long refreshTokenExpirationTime;
 
     public JwtUtil(
-            @Value("${jwt.secret}") String secretKey,
-            @Value("${jwt.access-token-validity-in-minutes}") long accessTokenValidityInMinutes,
-            @Value("${jwt.refresh-token-validity-in-days}") long refreshTokenValidityInDays) {
+            @Value("${jwt.secret-key}") String secretKey,
+            @Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime,
+            @Value("${jwt.refresh-token.expiration-time}") long refreshTokenExpirationTime
+    ) {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-        this.accessTokenValidityInMinutes = accessTokenValidityInMinutes;
-        this.refreshTokenValidityInDays = refreshTokenValidityInDays;
+        this.accessTokenExpirationTime = accessTokenExpirationTime;
+        this.refreshTokenExpirationTime = refreshTokenExpirationTime;
     }
 
     public String generateAccessToken(UUID userId, String email, UUID organizationId, String planName) {
@@ -38,16 +41,22 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(userId.toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidityInMinutes * 60 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationTime))
                 .signWith(key)
+                .setId(UUID.randomUUID().toString())
                 .compact();
     }
 
     public String generateRefreshToken(UUID userId) {
+        return this.generateRefreshToken(userId, new Date(System.currentTimeMillis() + refreshTokenExpirationTime));
+    }
+
+    public String generateRefreshToken(UUID userId, Date expiredAt){
         return Jwts.builder()
                 .setSubject(userId.toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidityInDays * 24 * 60 * 60 * 1000))
+                .setExpiration(expiredAt)
+                .setId(UUID.randomUUID().toString())
                 .signWith(key)
                 .compact();
     }
@@ -59,8 +68,10 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            throw new AuthException(ErrorCode.TOKEN_EXPIRED);
         } catch (JwtException | IllegalArgumentException e) {
-            return false;
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
         }
     }
 
