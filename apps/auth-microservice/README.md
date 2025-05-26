@@ -46,12 +46,13 @@ src/main/java/com/pandaterry/auth_microservice/
 │   └── validator/       # 유효성 검증
 ├── domain/              # 도메인 계층
 │   ├── entity/         # 도메인 엔티티
-│   ├── repository/     # 리포지토리 인터페이스
-│   └── exception/      # 도메인 예외
+│   ├── enumerated/     # 열거형
+│   ├── exception/      # 도메인 예외
+│   └── repository/     # 리포지토리 인터페이스
 ├── infrastructure/      # 인프라스트럭처 계층
 │   ├── config/         # 설정
-│   ├── persistence/    # 영속성 구현
-│   └── security/       # 보안 관련 구현
+│   ├── client/         # 외부 서비스 클라이언트
+│   └── util/           # 유틸리티
 └── presentation/       # 프레젠테이션 계층
     ├── controller/     # REST 컨트롤러
     ├── dto/           # 데이터 전송 객체
