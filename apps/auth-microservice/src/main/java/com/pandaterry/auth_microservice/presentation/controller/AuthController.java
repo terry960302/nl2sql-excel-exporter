@@ -1,0 +1,44 @@
+package com.pandaterry.auth_microservice.presentation.controller;
+
+import com.pandaterry.auth_microservice.application.service.AuthService;
+import com.pandaterry.auth_microservice.presentation.dto.LoginRequest;
+import com.pandaterry.auth_microservice.presentation.dto.SignupRequest;
+import com.pandaterry.auth_microservice.presentation.dto.TokenResponse;
+import com.pandaterry.auth_microservice.presentation.dto.UserInfoResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthController {
+    private final AuthService authService;
+
+    @PostMapping("/signup")
+    public ResponseEntity<Void> signup(@RequestBody SignupRequest request) {
+        authService.signup(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserInfoResponse> getMyInfo(@RequestHeader("X-User-Id") String userId) {
+        return ResponseEntity.ok(authService.getMyInfo(userId));
+    }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<TokenResponse> refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken) {
+        return ResponseEntity.ok(authService.refreshToken(refreshToken));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("X-Refresh-Token") String refreshToken) {
+        authService.logout(refreshToken);
+        return ResponseEntity.ok().build();
+    }
+}

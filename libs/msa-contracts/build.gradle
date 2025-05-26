@@ -1,0 +1,18 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.pandaterry.msa-contracts'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+// 여기에 공통으로 쓸 의존성이 있으면 추가합니다.
+// e.g. implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
