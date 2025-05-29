@@ -1,0 +1,33 @@
+server:
+    port: 8081
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+llm:
+  api:
+    provider: openai # openai, python-server 등
+    base-url: ${LLM_API_BASE_URL:https://api.openai.com}
+    timeout: 30
+    openai:
+      key: ${OPENAI_API_KEY}
+      model: gpt-4
+    python-server:
+      endpoint: ${PYTHON_SERVER_ENDPOINT:http://localhost:8000}
+      model: prem-2b-sql
+
+schema:
+  service:
+    url: ${SCHEMA_SERVICE_URL:http://localhost:8081}
