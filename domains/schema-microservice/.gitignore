@@ -36,4 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-docs/*
+application.yml
+application-*.yml
+.md

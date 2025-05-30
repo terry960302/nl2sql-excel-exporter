@@ -1,0 +1,15 @@
+micronaut:
+  application:
+    name: agent-server
+  server:
+    port: 3930
+  http:
+    client:
+      read-timeout: 10s
+
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/test
+    username: user
+    password: pass
+    driverClassName: org.postgresql.Driver
