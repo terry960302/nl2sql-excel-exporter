@@ -20,18 +20,33 @@ dependencies {
     testImplementation("io.micronaut:micronaut-http-client")
     implementation("org.postgresql:postgresql")
     implementation("com.alibaba:easyexcel:3.3.2")
-
+    compileOnly("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    
+    // HikariCP
+    implementation("com.zaxxer:HikariCP:5.1.0")
+    
+    // YAML
+    runtimeOnly("org.yaml:snakeyaml:2.2")
+    
+    // Test dependencies
+    testImplementation("org.testcontainers:testcontainers:1.19.7")
+    testImplementation("org.testcontainers:postgresql:1.19.7")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.7")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
+    testImplementation("org.assertj:assertj-core:3.25.3")
 }
-
 
 application {
     mainClass = "com.pandaterry.Application"
 }
+
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
     targetCompatibility = JavaVersion.toVersion("17")
 }
-
 
 graalvmNative.toolchainDetection = false
 
@@ -43,8 +58,6 @@ micronaut {
         annotations("com.pandaterry.*")
     }
     aot {
-        // Please review carefully the optimizations enabled below
-        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
         optimizeServiceLoading = false
         convertYamlToJava = false
         precomputeOperations = true
@@ -55,7 +68,6 @@ micronaut {
         replaceLogbackXml = true
     }
 }
-
 
 tasks.named("dockerfileNative") {
     jdkVersion = "17"

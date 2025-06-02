@@ -1,0 +1,45 @@
+package com.pandaterry.infrastructure.client;
+
+import com.pandaterry.domain.model.ExecutionJob;
+import io.micronaut.http.client.HttpClient;
+import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Singleton
+public class QueryServiceClient extends BaseServiceClient {
+    private static final Logger logger = LoggerFactory.getLogger(QueryServiceClient.class);
+
+    protected QueryServiceClient(HttpClient httpClient, String baseUrl, String agentSecret) {
+        super(httpClient, baseUrl, agentSecret);
+    }
+
+//    // 자연어 질의 요청
+//    public QueryRequestResponse requestQuery(QueryRequestPayload payload) {
+//        return post("/queries", payload, QueryRequestResponse.class);
+//    }
+
+    // 1. 작업 Polling
+    public Optional<ExecutionJob> pollPendingJob(UUID agentId) {
+        try {
+            String path = "/jobs?agentId=" + agentId + "&status=PENDING";
+            ExecutionJob job = get(path, ExecutionJob.class);
+            return Optional.ofNullable(job);
+        } catch (Exception e) {
+            // TODO: 로깅 필요
+            return Optional.empty();
+        }
+    }
+
+//    // 2. 작업 결과 보고
+//    public void reportJobResult(UUID jobId, JobResultPayload payload) {
+//        String path = "/jobs/" + jobId + "/result";
+//        post(path, payload, null);
+//    }
+
+
+
+}
