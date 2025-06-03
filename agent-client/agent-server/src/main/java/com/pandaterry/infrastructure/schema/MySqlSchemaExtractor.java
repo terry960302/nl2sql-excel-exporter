@@ -1,5 +1,6 @@
 package com.pandaterry.infrastructure.schema;
 
+import com.pandaterry.domain.model.database.DatabaseType;
 import com.pandaterry.domain.model.database.TableSchema;
 import com.pandaterry.domain.model.database.ColumnSchema;
 import com.pandaterry.domain.service.SchemaExtractor;
@@ -55,8 +56,8 @@ public class MySqlSchemaExtractor implements SchemaExtractor {
     }
 
     @Override
-    public boolean supports(String databaseType) {
-        return "MYSQL".equalsIgnoreCase(databaseType);
+    public boolean supports(DatabaseType databaseType) {
+        return DatabaseType.MYSQL.equals(databaseType);
     }
 
     private List<ColumnSchema> getColumns(DatabaseMetaData metaData, String catalog, String tableName)

@@ -8,6 +8,7 @@ import com.pandaterry.infrastructure.config.DatabaseConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import javax.sql.DataSource;
@@ -19,15 +20,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class DataSourceManager {
-    private final DatabaseConfig databaseConfig;
+
+    @Inject
+    private DatabaseConfig databaseConfig;
     private final Map<UUID, HikariDataSource> poolMap = new ConcurrentHashMap<>();
 
-    public DataSourceManager(DatabaseConfig databaseConfig) {
-        this.databaseConfig = databaseConfig;
-    }
 
     public void register(DatasourceSession session) {
-        UUID datasourceId = session.getId();
+        UUID datasourceId = session.getDatasourceId();
 
         if (poolMap.containsKey(datasourceId)) {
             return;
@@ -54,6 +54,9 @@ public class DataSourceManager {
 
     public void testConnection(UUID datasourceId) {
         HikariDataSource ds = poolMap.get(datasourceId);
+        if(ds == null){
+            throw new AgentException(ErrorCode.DATASOURCE_NOT_REGISTERED);
+        }
         try(Connection conn = ds.getConnection()){
             if(!conn.isValid(5)){
                 throw new AgentException(ErrorCode.DATABASE_NOT_CONNECTED);

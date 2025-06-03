@@ -7,6 +7,7 @@ import com.pandaterry.domain.model.database.DatasourceSession;
 import com.pandaterry.infrastructure.config.DatabaseConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,10 @@ import static org.mockito.Mockito.*;
 @MicronautTest
 class DataSourceManagerTest {
 
+    @Inject
     private DatabaseConfig config;
+
+    @Inject
     private DataSourceManager manager;
 
     private DatasourceSession session;
@@ -34,8 +38,6 @@ class DataSourceManagerTest {
         when(config.getDefaultIdleTimeout()).thenReturn(30000L);
         when(config.getDefaultConnectionTimeout()).thenReturn(5000L);
         when(config.getDefaultMaxLifetime()).thenReturn(60000L);
-
-        manager = new DataSourceManager(config);
 
         UUID datasourceId = UUID.randomUUID();
         session =  DatasourceSession.create(

@@ -1,5 +1,6 @@
 package com.pandaterry.infrastructure.schema;
 
+import com.pandaterry.domain.model.database.DatabaseType;
 import com.pandaterry.domain.service.SchemaExtractor;
 import com.pandaterry.application.exception.AgentException;
 import com.pandaterry.domain.enums.ErrorCode;
@@ -14,7 +15,7 @@ public class SchemaExtractorFactory {
         this.extractors = extractors;
     }
 
-    public SchemaExtractor getExtractor(String databaseType) {
+    public SchemaExtractor getExtractor(DatabaseType databaseType) {
         return extractors.stream()
                 .filter(extractor -> extractor.supports(databaseType))
                 .findFirst()

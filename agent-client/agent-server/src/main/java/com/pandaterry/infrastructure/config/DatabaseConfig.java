@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-@Factory
+@Singleton
 public class DatabaseConfig {
 
     @Value("${datasources.default.maximum-pool-size:10}")
