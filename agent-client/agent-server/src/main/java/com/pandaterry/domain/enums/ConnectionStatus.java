@@ -1,4 +1,4 @@
-package com.pandaterry.domain.model.database;
+package com.pandaterry.domain.enums;
 
 public enum ConnectionStatus {
     PENDING,

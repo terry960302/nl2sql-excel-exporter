@@ -1,6 +1,6 @@
 package com.pandaterry.infrastructure.schema;
 
-import com.pandaterry.domain.model.database.DatabaseType;
+import com.pandaterry.domain.enums.DatabaseType;
 import com.pandaterry.domain.service.SchemaExtractor;
 import com.pandaterry.application.exception.AgentException;
 import com.pandaterry.domain.enums.ErrorCode;

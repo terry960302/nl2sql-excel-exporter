@@ -3,7 +3,7 @@ package com.pandaterry.application.service;
 import com.pandaterry.application.exception.AgentException;
 import com.pandaterry.domain.enums.ErrorCode;
 import com.pandaterry.domain.model.database.DatasourceSession;
-import com.pandaterry.domain.model.database.DatabaseType;
+import com.pandaterry.domain.enums.DatabaseType;
 import com.pandaterry.infrastructure.config.DatabaseConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -11,7 +11,6 @@ import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;

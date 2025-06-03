@@ -1,12 +1,10 @@
 package com.pandaterry.application.service;
 
-import com.pandaterry.application.exception.AgentException;
-import com.pandaterry.domain.enums.ErrorCode;
+import com.pandaterry.domain.enums.DatabaseType;
 import com.pandaterry.domain.model.database.*;
 import com.pandaterry.domain.service.SchemaExtractor;
 import com.pandaterry.infrastructure.config.DatabaseConfig;
 import com.pandaterry.infrastructure.schema.PostgresSchemaExtractor;
-import com.pandaterry.infrastructure.schema.SchemaExtractorFactory;
 import com.zaxxer.hikari.pool.HikariPool;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;

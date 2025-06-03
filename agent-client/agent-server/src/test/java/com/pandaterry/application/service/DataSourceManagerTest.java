@@ -2,7 +2,7 @@ package com.pandaterry.application.service;
 
 import com.pandaterry.application.exception.AgentException;
 import com.pandaterry.domain.enums.ErrorCode;
-import com.pandaterry.domain.model.database.DatabaseType;
+import com.pandaterry.domain.enums.DatabaseType;
 import com.pandaterry.domain.model.database.DatasourceSession;
 import com.pandaterry.infrastructure.config.DatabaseConfig;
 import com.zaxxer.hikari.HikariDataSource;
