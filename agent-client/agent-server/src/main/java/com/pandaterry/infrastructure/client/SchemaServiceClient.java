@@ -1,6 +1,6 @@
 package com.pandaterry.infrastructure.client;
 
-import com.pandaterry.domain.model.database.DatabaseConnection;
+import com.pandaterry.domain.model.database.DatasourceSession;
 import io.micronaut.http.client.HttpClient;
 import jakarta.inject.Singleton;
 
@@ -13,7 +13,7 @@ public class SchemaServiceClient extends BaseServiceClient{
     }
 
     // 스키마 업로드
-    public void uploadSchema(UUID orgId, DatabaseConnection connection) {
+    public void uploadSchema(UUID orgId, DatasourceSession connection) {
         post("/datasources", connection, null);
     }
 }
