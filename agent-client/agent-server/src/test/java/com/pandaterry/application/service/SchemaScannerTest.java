@@ -3,6 +3,8 @@ package com.pandaterry.application.service;
 import com.pandaterry.domain.model.database.*;
 import com.pandaterry.domain.service.SchemaExtractor;
 import com.pandaterry.application.exception.AgentException;
+import com.pandaterry.application.service.database.DataSourceManager;
+import com.pandaterry.application.service.database.SchemaScanner;
 import com.pandaterry.domain.enums.ErrorCode;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
