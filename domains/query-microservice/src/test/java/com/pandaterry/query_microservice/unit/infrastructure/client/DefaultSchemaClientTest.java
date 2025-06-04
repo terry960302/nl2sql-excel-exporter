@@ -1,13 +1,12 @@
 package com.pandaterry.query_microservice.unit.infrastructure.client;
 
-import com.pandaterry.query_microservice.application.dto.DataSourceInfo;
-import com.pandaterry.query_microservice.application.dto.TableInfo;
 import com.pandaterry.query_microservice.application.dto.response.SchemaInfoResponse;
 import com.pandaterry.query_microservice.application.dto.response.TableInfoResponse;
-import com.pandaterry.query_microservice.application.dto.ColumnInfo;
+import com.pandaterry.query_microservice.application.vo.ColumnInfo;
+import com.pandaterry.query_microservice.application.vo.DataSourceInfo;
 import com.pandaterry.query_microservice.domain.enums.ErrorCode;
 import com.pandaterry.query_microservice.domain.exception.QueryException;
-import com.pandaterry.query_microservice.infrastructure.client.DefaultSchemaClient;
+import com.pandaterry.query_microservice.infrastructure.client.SchemaClient;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,11 +45,11 @@ class DefaultSchemaClientTest {
         @Mock
         private WebClient.ResponseSpec responseSpec;
 
-        private DefaultSchemaClient schemaClient;
+        private SchemaClient schemaClient;
 
         @BeforeEach
         void setUp() {
-                schemaClient = new DefaultSchemaClient(webClient);
+                schemaClient = new SchemaClient(webClient);
                 when(webClient.get()).thenReturn(requestHeadersUriSpec);
                 when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
                 lenient().when(requestHeadersSpec.header(eq("X-Organization-Id"), any()))

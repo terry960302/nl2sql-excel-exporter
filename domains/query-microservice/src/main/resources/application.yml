@@ -3,6 +3,7 @@ llm:
     provider: openai # openai, python-server 등
     base-url: ${LLM_API_BASE_URL:https://api.openai.com}
     timeout: 30
+    
     openai:
       key: ${OPENAI_API_KEY}
       model: gpt-4

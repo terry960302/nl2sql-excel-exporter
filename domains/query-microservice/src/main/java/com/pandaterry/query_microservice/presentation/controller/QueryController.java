@@ -3,7 +3,7 @@ package com.pandaterry.query_microservice.presentation.controller;
 import com.pandaterry.query_microservice.domain.exception.QueryException;
 import com.pandaterry.query_microservice.application.service.QueryService;
 import com.pandaterry.query_microservice.application.dto.request.NaturalLanguageQueryRequest;
-import com.pandaterry.query_microservice.application.service.NaturalLanguageQueryService;
+import com.pandaterry.query_microservice.application.service.QueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/v1/query")
+@RequestMapping("/api/v1/queries")
 @RequiredArgsConstructor
 public class QueryController {
     private final QueryService queryService;
-    private final NaturalLanguageQueryService naturalLanguageQueryService;
+    private final QueryService naturalLanguageQueryService;
 
-    @PostMapping("/natural-to-sql")
+    @PostMapping
     public Mono<ResponseEntity<String>> convertNaturalLanguageToSQL(
             @RequestBody NaturalLanguageQueryRequest request) {
         return naturalLanguageQueryService.convertToSQL(request)

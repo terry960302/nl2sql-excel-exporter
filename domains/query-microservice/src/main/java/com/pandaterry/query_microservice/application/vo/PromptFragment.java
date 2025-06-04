@@ -1,4 +1,4 @@
-package com.pandaterry.query_microservice.application.dto;
+package com.pandaterry.query_microservice.application.vo;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
