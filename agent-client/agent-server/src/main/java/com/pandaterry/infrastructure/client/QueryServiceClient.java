@@ -17,7 +17,7 @@ public class QueryServiceClient extends BaseServiceClient {
         super(httpClient, baseUrl, agentSecret);
     }
 
-//    // 자연어 질의 요청
+    // 자연어 질의 요청
 //    public QueryRequestResponse requestQuery(QueryRequestPayload payload) {
 //        return post("/queries", payload, QueryRequestResponse.class);
 //    }

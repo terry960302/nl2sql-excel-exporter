@@ -31,4 +31,12 @@ public class SchemaScanner {
           throw new AgentException(ErrorCode.DATABASE_SCHEMA_SCAN_FAILED, e);
        }
     }
+
+    public String scanRawSchema(UUID datasourceId) {
+        try(Connection connection = dataSourceManager.getConnection(datasourceId)){
+            return schemaExtractor.extractRawSchema(connection);
+        }catch(SQLException e){
+            throw new AgentException(ErrorCode.DATABASE_SCHEMA_SCAN_FAILED, e);
+        }
+    }
 }

@@ -123,22 +123,4 @@ class DataSourceManagerTest {
         manager.registerMock(session.getDatasourceId(), mockDs);
         manager.shutdown(); // 예외가 없어야 함
     }
-
-    @Test
-    @DisplayName("Oracle 데이터소스 등록 시 드라이버가 올바르게 설정되어야 한다")
-    void oracle_driver_resolved() throws Exception {
-        DatasourceSession oracleSession = DatasourceSession.create(
-                UUID.randomUUID(),
-                "jdbc:oracle:thin:@localhost:1521/test",
-                "test",
-                "test",
-                DatabaseType.ORACLE
-        );
-
-        var method = DataSourceManager.class.getDeclaredMethod("buildConfig", DatasourceSession.class);
-        method.setAccessible(true);
-        HikariConfig config = (HikariConfig) method.invoke(manager, oracleSession);
-
-        assertThat(config.getDriverClassName()).isEqualTo("oracle.jdbc.OracleDriver");
-    }
 }

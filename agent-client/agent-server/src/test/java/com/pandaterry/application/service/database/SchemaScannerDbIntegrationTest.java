@@ -1,7 +1,5 @@
 package com.pandaterry.application.service.database;
 
-import com.pandaterry.application.service.database.DataSourceManager;
-import com.pandaterry.application.service.database.SchemaScanner;
 import com.pandaterry.domain.enums.DatabaseType;
 import com.pandaterry.domain.model.database.*;
 import com.pandaterry.domain.service.SchemaExtractor;
@@ -25,7 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @Testcontainers
 @MicronautTest
-class SchemaScannerIntegrationTest {
+class SchemaScannerDbIntegrationTest {
 
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");

@@ -42,6 +42,18 @@ public class DataSourceManager {
         poolMap.put(datasourceId, dataSource);
     }
 
+    public void unregister(UUID datasourceId) {
+        if (!poolMap.containsKey(datasourceId)) return;
+
+        // 우선 커넥션풀을 해제하고 캐시에서 삭제
+        HikariDataSource dataSource = poolMap.get(datasourceId);
+        if (!dataSource.isClosed()) {
+            dataSource.close();
+        }
+
+        if (!dataSource.isClosed()) throw new AgentException(ErrorCode.DATASOURCE_NOT_CLOSED_BEFORE_REMOVE);
+        poolMap.remove(datasourceId);
+    }
 
     public Connection getConnection(UUID datasourceId) throws SQLException {
         HikariDataSource ds = poolMap.get(datasourceId);
@@ -53,14 +65,15 @@ public class DataSourceManager {
 
     public void testConnection(UUID datasourceId) {
         HikariDataSource ds = poolMap.get(datasourceId);
-        if(ds == null){
+        if (ds == null) {
             throw new AgentException(ErrorCode.DATASOURCE_NOT_REGISTERED);
         }
-        try(Connection conn = ds.getConnection()){
-            if(!conn.isValid(5)){
+        try (Connection conn = ds.getConnection()) {
+            if (!conn.isValid(5)) {
                 throw new AgentException(ErrorCode.DATABASE_NOT_CONNECTED);
             }
-        }catch (SQLException e){
+            this.unregister(datasourceId);
+        } catch (SQLException e) {
             throw new AgentException(ErrorCode.DATABASE_CONNECTION_FAILED, e);
         }
     }

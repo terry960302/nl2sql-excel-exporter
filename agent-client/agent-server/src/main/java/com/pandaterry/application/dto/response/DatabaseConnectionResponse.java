@@ -4,7 +4,7 @@ import com.pandaterry.domain.enums.ConnectionStatus;
 import java.util.UUID;
 
 public record DatabaseConnectionResponse(
-        UUID id,
+        UUID datasourceId,
         String jdbcUrl,
         ConnectionStatus status) {
 }
