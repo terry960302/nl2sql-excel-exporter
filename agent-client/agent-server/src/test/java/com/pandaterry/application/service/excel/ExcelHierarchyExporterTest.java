@@ -173,4 +173,71 @@ public class ExcelHierarchyExporterTest {
 
         System.out.println("✅ 엑셀 파일 생성 및 병합 영역 검증 완료: " + outputFile.toAbsolutePath());
     }
+
+    @Test
+    @DisplayName("4단계 중첩 구조, 약 100개 행도 정상 처리되어야 한다")
+    void export_deepHierarchy() throws Exception {
+        List<String> columns = List.of("L1", "L2", "L3", "L4", "VAL");
+
+        List<FlatRow> rows = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 4; k++) {
+                    for (int m = 0; m < 4; m++) {
+                        FlatRow r = new FlatRow();
+                        r.getColumns().put("L1", "C" + i);
+                        r.getColumns().put("L2", "D" + j);
+                        r.getColumns().put("L3", "T" + k);
+                        r.getColumns().put("L4", "S" + m);
+                        r.getColumns().put("VAL", "V" + i + j + k + m);
+                        rows.add(r);
+                    }
+                }
+            }
+        }
+
+        MergeRegionCalculator calc = new MergeRegionCalculator();
+        Map<Integer, List<CellRange>> mergeMap = calc.calculateMergeRegions(rows, columns);
+
+        // L1 은 두 그룹(각 48행)으로 병합
+        assertThat(mergeMap.get(0)).hasSize(2);
+        assertThat(mergeMap.get(0).get(0)).isEqualTo(new CellRange(2, 49));
+        assertThat(mergeMap.get(0).get(1)).isEqualTo(new CellRange(50, 97));
+
+        // L2 는 총 6개 그룹(각 16행)
+        assertThat(mergeMap.get(1)).hasSize(6);
+        mergeMap.get(1).forEach(r -> assertThat(r.end() - r.start() + 1).isEqualTo(16));
+
+        // L3 은 총 24개 그룹(각 4행)
+        assertThat(mergeMap.get(2)).hasSize(24);
+        mergeMap.get(2).forEach(r -> assertThat(r.end() - r.start() + 1).isEqualTo(4));
+
+        // L4 는 병합 없음
+        assertThat(mergeMap.getOrDefault(3, List.of())).isEmpty();
+
+        Path outDir = Paths.get("src/test/resources/output");
+        Files.createDirectories(outDir);
+        Path outFile = outDir.resolve("test_deep_hierarchy.xlsx");
+
+        try (OutputStream os = Files.newOutputStream(outFile)) {
+            ExcelHierarchyExporter exporter = new ExcelHierarchyExporter();
+            exporter.export(rows, columns, os);
+        }
+
+        assertThat(Files.exists(outFile)).isTrue();
+        assertThat(Files.size(outFile)).isGreaterThan(0);
+
+        try (Workbook wb = WorkbookFactory.create(Files.newInputStream(outFile))) {
+            Sheet sheet = wb.getSheetAt(0);
+            Map<Integer, Integer> mergedCount = new HashMap<>();
+            for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+                CellRangeAddress addr = sheet.getMergedRegion(i);
+                mergedCount.merge(addr.getFirstColumn(), 1, Integer::sum);
+            }
+            assertThat(mergedCount.get(0)).isEqualTo(2);
+            assertThat(mergedCount.get(1)).isEqualTo(6);
+            assertThat(mergedCount.get(2)).isEqualTo(24);
+            assertThat(mergedCount.get(3)).isNull();
+        }
+    }
 }
