@@ -94,6 +94,7 @@ public class DataSourceManager {
         return switch (type) {
             case POSTGRESQL -> "org.postgresql.Driver";
             case MYSQL -> "com.mysql.cj.jdbc.Driver";
+            case ORACLE -> "oracle.jdbc.OracleDriver";
             default -> throw new AgentException(ErrorCode.UNSUPPORTED_DB_TYPE);
         };
     }

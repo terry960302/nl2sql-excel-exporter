@@ -5,6 +5,7 @@ import com.pandaterry.domain.enums.ErrorCode;
 import com.pandaterry.domain.enums.DatabaseType;
 import com.pandaterry.domain.model.database.DatasourceSession;
 import com.pandaterry.infrastructure.config.DatabaseConfig;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
@@ -16,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -119,5 +121,23 @@ class DataSourceManagerTest {
         HikariDataSource mockDs = mock(HikariDataSource.class);
         manager.registerMock(session.getDatasourceId(), mockDs);
         manager.shutdown(); // 예외가 없어야 함
+    }
+
+    @Test
+    @DisplayName("Oracle 데이터소스 등록 시 드라이버가 올바르게 설정되어야 한다")
+    void oracle_driver_resolved() throws Exception {
+        DatasourceSession oracleSession = DatasourceSession.create(
+                UUID.randomUUID(),
+                "jdbc:oracle:thin:@localhost:1521/test",
+                "test",
+                "test",
+                DatabaseType.ORACLE
+        );
+
+        var method = DataSourceManager.class.getDeclaredMethod("buildConfig", DatasourceSession.class);
+        method.setAccessible(true);
+        HikariConfig config = (HikariConfig) method.invoke(manager, oracleSession);
+
+        assertThat(config.getDriverClassName()).isEqualTo("oracle.jdbc.OracleDriver");
     }
 }
