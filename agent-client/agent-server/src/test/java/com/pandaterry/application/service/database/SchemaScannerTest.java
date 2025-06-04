@@ -1,4 +1,4 @@
-package com.pandaterry.application.service;
+package com.pandaterry.application.service.database;
 
 import com.pandaterry.domain.model.database.*;
 import com.pandaterry.domain.service.SchemaExtractor;

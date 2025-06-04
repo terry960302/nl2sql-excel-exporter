@@ -1,4 +1,4 @@
-package com.pandaterry.application.service;
+package com.pandaterry.application.service.database;
 
 import com.pandaterry.application.service.database.DataSourceManager;
 import com.pandaterry.application.service.database.SchemaScanner;
