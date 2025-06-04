@@ -2,6 +2,7 @@ package com.pandaterry.application.service.query;
 
 import com.pandaterry.application.dto.request.JobResultRequest;
 import com.pandaterry.application.dto.request.QueryRequest;
+import com.pandaterry.domain.enums.JobStatus;
 import com.pandaterry.domain.model.ExecutionJob;
 import com.pandaterry.infrastructure.client.QueryServiceClient;
 import jakarta.inject.Inject;
@@ -38,14 +39,14 @@ public class QueryJobProcessor {
         try {
             Path excel = jobExecutionService.execute(datasourceId, job.query(), jobId);
             if (excel == null) {
-                queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), "FAILED", null, "empty result"));
+                queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), JobStatus.FAILED, null, "empty result"));
                 return Optional.empty();
             }
-            queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), "COMPLETED", excel.toString(), null));
+            queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), JobStatus.COMPLETED, excel.toString(), null));
             return Optional.of(excel);
         } catch (Exception e) {
             log.error("failed to execute job", e);
-            queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), "FAILED", null, e.getMessage()));
+            queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), JobStatus.FAILED, null, e.getMessage()));
             return Optional.empty();
         }
     }

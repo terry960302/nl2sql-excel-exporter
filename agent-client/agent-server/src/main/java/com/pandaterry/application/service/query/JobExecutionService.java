@@ -22,8 +22,8 @@ public class JobExecutionService {
     private ExcelHierarchyExporter excelExporter;
 
     /**
-     * SQL을 실행하고 결과를 엑셀 파일로 저장합니다.
-     * 결과가 없을 경우 Optional.empty()를 반환합니다.
+     * SQL을 실행하고 결과를 엑셀 파일로 저장
+     * 결과가 없을 경우 Optional.empty()를 반환.
      */
     public Path execute(UUID datasourceId, String sql, UUID jobId) throws Exception {
         List<Map<String, Object>> rows = sqlExecutor.execute(datasourceId, sql);

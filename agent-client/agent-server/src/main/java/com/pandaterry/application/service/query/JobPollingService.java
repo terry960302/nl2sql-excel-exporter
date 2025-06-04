@@ -20,8 +20,8 @@ public class JobPollingService {
     private QueryServiceClient queryServiceClient;
 
     /**
-     * 지정한 jobId가 할당된 작업을 polling 합니다.
-     * 일정 시간동안 polling 후에도 작업이 없으면 null을 반환합니다.
+     * 지정한 jobId가 할당된 작업을 polling
+     * 일정 시간동안 polling 후에도 작업이 없으면 null을 반환
      */
     public ExecutionJob poll(UUID agentId, UUID jobId) {
         for (int i = 0; i < 5; i++) {

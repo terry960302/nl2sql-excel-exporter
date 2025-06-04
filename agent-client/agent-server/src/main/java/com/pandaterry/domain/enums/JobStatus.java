@@ -1,2 +1,7 @@
-package com.pandaterry.domain.enums;public class JobStatus {
+package com.pandaterry.domain.enums;
+
+public enum JobStatus {
+    FAILED,
+    COMPLETED,
+    ;
 }
