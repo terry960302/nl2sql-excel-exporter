@@ -108,13 +108,13 @@ public class QuotaService {
     }
 
     private long getDailyCount(UUID orgId, LocalDate date) {
-        return dailyRepository.findById(new QuotaUsageDailyKey(orgId, date))
+        return dailyRepository.findById(QuotaUsageDailyKey.builder().orgId(orgId).dateKey(date).build())
                 .map(QuotaUsageDaily::getCount)
                 .orElse(0L);
     }
 
     private long getMonthlyCount(UUID orgId, String monthKey) {
-        return monthlyRepository.findById(new QuotaUsageMonthlyKey(orgId, monthKey))
+        return monthlyRepository.findById(QuotaUsageMonthlyKey.builder().orgId(orgId).monthKey(monthKey).build())
                 .map(QuotaUsageMonthly::getCount)
                 .orElse(0L);
     }
@@ -141,12 +141,12 @@ public class QuotaService {
     }
 
     private QuotaUsageDaily getOrCreateDaily(UUID orgId, LocalDate date) {
-        return dailyRepository.findById(new QuotaUsageDailyKey(orgId, date))
+        return dailyRepository.findById(QuotaUsageDailyKey.builder().orgId(orgId).dateKey(date).build())
                 .orElseGet(() -> QuotaUsageDaily.create(orgId, date, 0L));
     }
 
     private QuotaUsageMonthly getOrCreateMonthly(UUID orgId, String monthKey) {
-        return monthlyRepository.findById(new QuotaUsageMonthlyKey(orgId, monthKey))
+        return monthlyRepository.findById(QuotaUsageMonthlyKey.builder().orgId(orgId).monthKey(monthKey).build())
                 .orElseGet(() -> QuotaUsageMonthly.create(orgId, monthKey, 0L));
     }
 }

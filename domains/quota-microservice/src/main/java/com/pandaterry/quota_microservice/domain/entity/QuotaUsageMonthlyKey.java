@@ -4,6 +4,7 @@ import jakarta.persistence.Embeddable;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 @Embeddable
@@ -14,4 +15,16 @@ import java.util.UUID;
 public class QuotaUsageMonthlyKey implements Serializable {
     private UUID orgId;
     private String monthKey;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orgId, monthKey);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(!(o instanceof QuotaUsageMonthlyKey that)) return false;
+        return this.orgId.equals(that.orgId) && this.monthKey.equals(that.monthKey);
+    }
 }
