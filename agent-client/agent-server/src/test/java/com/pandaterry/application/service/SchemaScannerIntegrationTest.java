@@ -1,5 +1,7 @@
 package com.pandaterry.application.service;
 
+import com.pandaterry.application.service.database.DataSourceManager;
+import com.pandaterry.application.service.database.SchemaScanner;
 import com.pandaterry.domain.enums.DatabaseType;
 import com.pandaterry.domain.model.database.*;
 import com.pandaterry.domain.service.SchemaExtractor;

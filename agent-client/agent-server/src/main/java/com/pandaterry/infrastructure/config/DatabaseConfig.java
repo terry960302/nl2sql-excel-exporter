@@ -1,6 +1,6 @@
 package com.pandaterry.infrastructure.config;
 
-import com.pandaterry.application.service.DataSourceManager;
+import com.pandaterry.application.service.database.DataSourceManager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.micronaut.context.annotation.Factory;

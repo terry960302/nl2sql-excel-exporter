@@ -1,4 +1,4 @@
-package com.pandaterry.application.service;
+package com.pandaterry.application.service.database;
 
 import com.pandaterry.application.exception.AgentException;
 import com.pandaterry.domain.enums.ErrorCode;
@@ -94,6 +94,7 @@ public class DataSourceManager {
         return switch (type) {
             case POSTGRESQL -> "org.postgresql.Driver";
             case MYSQL -> "com.mysql.cj.jdbc.Driver";
+            case ORACLE -> "oracle.jdbc.OracleDriver";
             default -> throw new AgentException(ErrorCode.UNSUPPORTED_DB_TYPE);
         };
     }

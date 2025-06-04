@@ -9,10 +9,8 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Singleton
 public class ExcelHierarchyExporter {
-
     public void export(List<FlatRow> flatRows, List<String> columnOrder, OutputStream out) {
         export(flatRows, columnOrder, Collections.emptyList(), out);
     }

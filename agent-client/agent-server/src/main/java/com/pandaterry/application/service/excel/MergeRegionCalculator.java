@@ -30,7 +30,7 @@ public class MergeRegionCalculator {
             int blockStart = 0;
 
             for (int i = 0; i < rowCount; i++) {
-                Object curr = flatRows.get(i).getColumns().get(column);
+                Object curr = flatRows.get(i).getColumns().get(columnOrder.get(col));
 
                 if (!Objects.equals(prev, curr)) {
                     // 이전 블록이 2개 이상 연속이면 병합해야 함

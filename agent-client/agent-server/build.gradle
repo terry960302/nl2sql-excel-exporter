@@ -26,6 +26,10 @@ dependencies {
     
     // HikariCP
     implementation("com.zaxxer:HikariCP:5.1.0")
+
+
+    // jsql parser
+    implementation("com.github.jsqlparser:jsqlparser:4.6")
     
     // YAML
     runtimeOnly("org.yaml:snakeyaml:2.2")

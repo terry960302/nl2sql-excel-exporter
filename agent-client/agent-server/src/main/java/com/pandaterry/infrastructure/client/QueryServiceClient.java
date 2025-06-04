@@ -29,7 +29,7 @@ public class QueryServiceClient extends BaseServiceClient {
             ExecutionJob job = get(path, ExecutionJob.class);
             return Optional.ofNullable(job);
         } catch (Exception e) {
-            // TODO: 로깅 필요
+            logger.error("Failed to poll job", e);
             return Optional.empty();
         }
     }
