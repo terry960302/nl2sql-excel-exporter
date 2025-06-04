@@ -1,10 +1,7 @@
 package com.pandaterry.query_microservice.application.service;
 
-import com.pandaterry.query_microservice.application.dto.*;
 import com.pandaterry.query_microservice.application.dto.request.NaturalLanguageQueryRequest;
-import com.pandaterry.query_microservice.application.dto.request.JobResultRequest;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
-import com.pandaterry.query_microservice.application.service.JobService;
 import com.pandaterry.query_microservice.application.vo.PromptContext;
 import com.pandaterry.query_microservice.application.vo.SchemaInfo;
 import com.pandaterry.query_microservice.infrastructure.client.LLMClient;

@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/jobs")
+@RequestMapping("/api/v1/jobs")
 @RequiredArgsConstructor
 public class JobController {
     private final JobService jobService;

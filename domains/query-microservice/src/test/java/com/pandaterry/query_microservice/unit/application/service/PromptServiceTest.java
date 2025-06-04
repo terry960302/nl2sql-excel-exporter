@@ -1,6 +1,5 @@
 package com.pandaterry.query_microservice.unit.application.service;
 
-import com.pandaterry.query_microservice.application.dto.*;
 import com.pandaterry.query_microservice.application.service.PromptService;
 import com.pandaterry.query_microservice.application.vo.AliasInfo;
 import com.pandaterry.query_microservice.application.vo.ColumnInfo;
