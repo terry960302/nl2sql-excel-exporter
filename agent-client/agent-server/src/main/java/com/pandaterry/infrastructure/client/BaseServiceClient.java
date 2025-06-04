@@ -67,8 +67,8 @@ public abstract class BaseServiceClient {
      * @param body         요청 바디 객체 (JSON으로 직렬화됨)
      * @param responseType 반환받을 클래스 타입 (null이면 바디 처리 없이 exchange)
      */
-    protected <T> void post(String path, Object body, @Nullable Class<T> responseType) {
-        post(path, body, null, responseType);
+    protected <T> T post(String path, Object body, @Nullable Class<T> responseType) {
+        return post(path, body, null, responseType);
     }
 
     /**
@@ -79,10 +79,10 @@ public abstract class BaseServiceClient {
      * @param extraHeaders 추가로 포함할 헤더들 (키: 헤더명, 값: 헤더값), 없으면 null
      * @param responseType 응답을 매핑할 클래스 타입 (null이면 exchange만 수행)
      */
-    protected <T> void post(String path,
-                            Object body,
-                            @Nullable Map<String, String> extraHeaders,
-                            @Nullable Class<T> responseType) {
+    protected <T> T post(String path,
+                         Object body,
+                         @Nullable Map<String, String> extraHeaders,
+                         @Nullable Class<T> responseType) {
         // 1) MutableHttpRequest로 선언
         MutableHttpRequest<Object> request = HttpRequest
                 .POST(UriBuilder.of(baseUrl).path(path).build(), body)
@@ -95,9 +95,10 @@ public abstract class BaseServiceClient {
 
         // 3) Micronaut HttpClient 호출
         if (responseType != null) {
-            httpClient.toBlocking().retrieve(request, responseType);
+            return httpClient.toBlocking().retrieve(request, responseType);
         } else {
             httpClient.toBlocking().exchange(request);
+            return null;
         }
     }
 }
