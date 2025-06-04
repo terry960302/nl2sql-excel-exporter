@@ -172,5 +172,35 @@ public class ExcelHierarchyExporterTest {
         }
 
         System.out.println("✅ 엑셀 파일 생성 및 병합 영역 검증 완료: " + outputFile.toAbsolutePath());
+}
+
+    @Test
+    @DisplayName("동일 값이어도 상위 키가 다르면 병합하지 않는다")
+    void noMergeWhenDifferentParent() {
+        List<String> columns = List.of("회사", "부서", "팀", "직원명", "근무일", "장비명");
+
+        FlatRow r1 = new FlatRow();
+        r1.getColumns().put("회사", "회사A");
+        r1.getColumns().put("부서", "기획부");
+        r1.getColumns().put("팀", "A1");
+        r1.getColumns().put("직원명", "홍길동");
+        r1.getColumns().put("근무일", "2024-01-01");
+        r1.getColumns().put("장비명", "노트북");
+
+        FlatRow r2 = new FlatRow();
+        r2.getColumns().put("회사", "회사B");
+        r2.getColumns().put("부서", "기획부");
+        r2.getColumns().put("팀", "B1");
+        r2.getColumns().put("직원명", "김철수");
+        r2.getColumns().put("근무일", "2024-01-01");
+        r2.getColumns().put("장비명", "태블릿");
+
+        List<FlatRow> rows = List.of(r1, r2);
+
+        MergeRegionCalculator calc = new MergeRegionCalculator();
+        Map<Integer, List<CellRange>> mergeMap = calc.calculateMergeRegions(rows, columns);
+
+        assertThat(mergeMap).doesNotContainKey(1); // 부서 컬럼 병합 없음
+        assertThat(mergeMap).isEmpty();
     }
 }

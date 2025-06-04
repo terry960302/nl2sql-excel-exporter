@@ -20,22 +20,27 @@ public class MergeRegionCalculator {
 
         for (int col = 0; col < columnOrder.size(); col++) {
             String column = columnOrder.get(col);
-            Object prev = null;
+            List<Object> prevKey = null; // 이전 행까지의 join key
             int blockStart = 0;
 
             for (int i = 0; i < rowCount; i++) {
-                Object curr = flatRows.get(i).getColumns().get(column);
+                // 현재 컬럼까지의 key(조인 기준) 생성
+                List<Object> currKey = new ArrayList<>(col + 1);
+                for (int j = 0; j <= col; j++) {
+                    String keyCol = columnOrder.get(j);
+                    currKey.add(flatRows.get(i).getColumns().get(keyCol));
+                }
 
-                if (!Objects.equals(prev, curr)) {
-                    // 이전 블록이 2개 이상 연속이면 병합해야 함
-                    if (prev != null && (i - blockStart) >= 2) {
+                if (!Objects.equals(prevKey, currKey)) {
+                    // 이전 블록이 2개 이상 연속이면 병합 구간 등록
+                    if (prevKey != null && (i - blockStart) >= 2) {
                         // Excel 행 번호로 변환: flatRows idx 0 → 시트 2, idx i-1 → 시트 (i-1)+2
                         int excelStart = blockStart + 2;
                         int excelEnd = (i - 1) + 2;
                         mergeMap.computeIfAbsent(col, k -> new ArrayList<>())
                                 .add(new CellRange(excelStart, excelEnd));
                     }
-                    prev = curr;
+                    prevKey = currKey;
                     blockStart = i;
                 }
 
