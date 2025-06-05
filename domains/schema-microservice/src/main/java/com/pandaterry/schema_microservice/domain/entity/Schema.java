@@ -8,7 +8,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 
 @Entity
 @Table(name = "schemas")
@@ -30,6 +29,7 @@ public class Schema {
 
     @Column(nullable = false)
     private String name;
+
 
     @Column(name = "raw_json", nullable = false, length = 3000)
     private String rawJson;

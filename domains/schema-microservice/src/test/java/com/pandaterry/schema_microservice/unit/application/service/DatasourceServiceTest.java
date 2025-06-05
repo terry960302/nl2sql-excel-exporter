@@ -11,6 +11,15 @@ import com.pandaterry.schema_microservice.infrastructure.repository.DatasourceRe
 import com.pandaterry.schema_microservice.presentation.mappers.DatasourceMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+package com.pandaterry.schema_microservice.unit.application.service;
+
+import com.pandaterry.msa_contracts.dto.schema.request.DatasourceUpdateRequest;
+import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
+import com.pandaterry.schema_microservice.application.service.DatasourceService;
+import com.pandaterry.schema_microservice.domain.entity.Datasource;
+import com.pandaterry.schema_microservice.infrastructure.repository.DatasourceRepository;
+import com.pandaterry.schema_microservice.presentation.mappers.DatasourceMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +31,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -35,9 +43,9 @@ class DatasourceServiceTest {
 
     private UUID orgId;
     private UUID userId;
-    private UUID agentId;
+    private UUID agentId;=
     private Datasource datasource;
-
+  
     @BeforeEach
     void setUp() {
         orgId = UUID.randomUUID();
