@@ -1,13 +1,12 @@
 package com.pandaterry.schema_microservice.domain.entity;
 
+import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-
-import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
 
 @Entity
 @Table(name = "aliases")

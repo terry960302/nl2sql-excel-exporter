@@ -2,7 +2,6 @@ package com.pandaterry.schema_microservice.infrastructure.repository;
 
 import com.pandaterry.schema_microservice.domain.entity.Alias;
 import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
