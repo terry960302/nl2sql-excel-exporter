@@ -2,6 +2,7 @@ package com.pandaterry.application.service.query;
 
 import com.pandaterry.application.service.excel.ExcelHierarchyExporter;
 import com.pandaterry.application.vo.FlatRow;
+import com.pandaterry.infrastructure.client.UploadClient;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -16,16 +17,24 @@ import java.util.UUID;
 @Singleton
 public class JobExecutionService {
 
+    private final SimpleSqlExecutor sqlExecutor;
+    private final ExcelHierarchyExporter excelExporter;
+    private final UploadClient uploadClient;
+
     @Inject
-    private SimpleSqlExecutor sqlExecutor;
-    @Inject
-    private ExcelHierarchyExporter excelExporter;
+    public JobExecutionService(SimpleSqlExecutor sqlExecutor,
+                               ExcelHierarchyExporter excelExporter,
+                               UploadClient uploadClient) {
+        this.sqlExecutor = sqlExecutor;
+        this.excelExporter = excelExporter;
+        this.uploadClient = uploadClient;
+    }
 
     /**
-     * SQL을 실행하고 결과를 엑셀 파일로 저장
-     * 결과가 없을 경우 Optional.empty()를 반환.
+     * SQL을 실행하고 결과 엑셀 파일을 업로드한다.
+     * 결과가 없으면 null을 반환한다.
      */
-    public Path execute(UUID datasourceId, String sql, UUID jobId) throws Exception {
+    public String execute(UUID datasourceId, String sql, UUID jobId) throws Exception {
         List<Map<String, Object>> rows = sqlExecutor.execute(datasourceId, sql);
         if (rows.isEmpty()) {
             return null;
@@ -43,6 +52,6 @@ public class JobExecutionService {
         try (OutputStream os = Files.newOutputStream(temp)) {
             excelExporter.export(flatRows, columnOrder, os);
         }
-        return temp;
+        return uploadClient.upload(temp);
     }
 }
