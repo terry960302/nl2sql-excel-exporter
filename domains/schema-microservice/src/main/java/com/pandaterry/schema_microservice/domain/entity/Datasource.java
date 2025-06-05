@@ -57,6 +57,8 @@ public class Datasource {
         this.name = name;
         this.dbType = dbType;
         this.engineType = engineType;
+        this.createdByUser = userId;
+        this.createdByAgent = agentId;
     }
 
     public static Datasource create(UUID orgId, String name, DatabaseType dbType, DatabaseEngineType engineType, UUID userId, UUID agentId) {
