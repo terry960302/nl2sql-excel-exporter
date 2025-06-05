@@ -68,12 +68,22 @@ public class PostgresSchemaExtractor implements SchemaExtractor {
         }
 
         try {
-            // 스키마 조회 SQL 작성 (예: 해당 데이터베이스의 모든 테이블 컬럼 정보)
+            // PostgreSQL 시스템 카탈로그를 이용한 컬럼 정보 조회 쿼리
             String sql = ""
-                    + "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_KEY "
-                    + "FROM INFORMATION_SCHEMA.COLUMNS "
-                    + "WHERE TABLE_SCHEMA = ? "
-                    + "ORDER BY TABLE_NAME, ORDINAL_POSITION";
+                    + "SELECT c.relname AS table_name, "
+                    + "       a.attname AS column_name, "
+                    + "       format_type(a.atttypid, a.atttypmod) AS data_type, "
+                    + "       NOT a.attnotnull AS is_nullable, "
+                    + "       CASE WHEN pk.indisprimary THEN 'PRI' ELSE NULL END AS column_key "
+                    + "FROM pg_catalog.pg_class c "
+                    + "JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace "
+                    + "JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid "
+                    + "LEFT JOIN pg_catalog.pg_index pk ON pk.indrelid = c.oid "
+                    + "  AND a.attnum = ANY(pk.indkey) AND pk.indisprimary "
+                    + "WHERE n.nspname = ? "
+                    + "  AND c.relkind = 'r' "
+                    + "  AND a.attnum > 0 "
+                    + "ORDER BY c.relname, a.attnum";
 
             List<Map<String, Object>> rawRows = new ArrayList<>();
 
