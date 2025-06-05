@@ -11,5 +11,4 @@ import java.util.UUID;
 
 @Repository
 public interface SchemaRepository extends JpaRepository<Schema, UUID> {
-    List<Schema> findByDatasourceIdAndIsEnabled(UUID datasourceId, EnableStatus isEnabled);
 }

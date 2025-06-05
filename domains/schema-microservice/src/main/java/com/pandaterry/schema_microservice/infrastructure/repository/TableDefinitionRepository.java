@@ -11,5 +11,4 @@ import java.util.UUID;
 
 @Repository
 public interface TableDefinitionRepository extends JpaRepository<TableDefinition, UUID> {
-    List<TableDefinition> findBySchemaIdAndIsEnabled(UUID schemaId, EnableStatus isEnabled);
 }
