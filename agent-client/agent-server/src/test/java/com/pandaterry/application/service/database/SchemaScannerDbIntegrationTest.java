@@ -87,6 +87,13 @@ class SchemaScannerDbIntegrationTest {
         dataSourceManager.register(session);
         dataSourceManager.testConnection(session.getDatasourceId());
 
+        // 풀 유지 여부 확인
+        try (Connection conn = dataSourceManager.getConnection(session.getDatasourceId())) {
+            assertThat(conn).isNotNull();
+        } catch (Exception e) {
+            Assertions.fail("Connection should be available", e);
+        }
+
     }
 
     @Test

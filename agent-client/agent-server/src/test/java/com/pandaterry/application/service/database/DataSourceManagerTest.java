@@ -91,9 +91,14 @@ class DataSourceManagerTest {
         // 실행
         manager.testConnection(dsId);
 
+        // 커넥션 풀 유지 여부 검증
+        Connection afterConn = manager.getConnection(dsId);
+        afterConn.close();
+
         // 검증
         verify(mockConn).isValid(5);
-        verify(mockConn).close();
+        verify(mockConn, times(2)).close();
+        verify(mockDs, never()).close();
     }
 
     @Test
