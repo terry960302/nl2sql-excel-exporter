@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 
 @Entity
 @Table(name = "table_definitions")
@@ -23,6 +22,7 @@ public class TableDefinition {
 
     @Column(name = "table_name", nullable = false)
     private String tableName;
+
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
