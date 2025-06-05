@@ -1,23 +1,19 @@
 package com.pandaterry.application.service.database;
 
-import com.pandaterry.application.dto.request.DatabaseConnectionRequest;
-import com.pandaterry.application.dto.request.RegisterSchemaRequest;
-import com.pandaterry.application.dto.request.ScanSchemaRequest;
-import com.pandaterry.application.dto.response.DatabaseConnectionResponse;
-import com.pandaterry.application.dto.response.RegisterSchemaResponse;
-import com.pandaterry.application.dto.response.ScanSchemaResponse;
+import com.pandaterry.msa_contracts.dto.schema.request.RegisterSchemaRequest;
+import com.pandaterry.msa_contracts.dto.schema.response.RegisterSchemaResponse;
+import com.pandaterry.presentation.dto.request.DatabaseConnectionRequest;
+import com.pandaterry.presentation.dto.request.ScanSchemaRequest;
+import com.pandaterry.presentation.dto.response.DatabaseConnectionResponse;
+import com.pandaterry.presentation.dto.response.ScanSchemaResponse;
 import com.pandaterry.domain.enums.ConnectionStatus;
 import com.pandaterry.domain.model.database.DatasourceSession;
 import com.pandaterry.domain.model.database.TableSchema;
-import com.pandaterry.infrastructure.client.QueryServiceClient;
 import com.pandaterry.infrastructure.client.SchemaServiceClient;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
 @Singleton
 public class DatabaseService {
@@ -47,8 +43,6 @@ public class DatabaseService {
     }
 
     public RegisterSchemaResponse registerSchema(RegisterSchemaRequest req){
-        schemaServiceClient.uploadSchema(req);
-
-        return new RegisterSchemaResponse();
+        return schemaServiceClient.uploadSchema(req);
     }
 }

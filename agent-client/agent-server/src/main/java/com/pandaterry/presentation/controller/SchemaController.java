@@ -1,9 +1,9 @@
 package com.pandaterry.presentation.controller;
 
-import com.pandaterry.application.dto.request.RegisterSchemaRequest;
-import com.pandaterry.application.dto.request.ScanSchemaRequest;
-import com.pandaterry.application.dto.response.RegisterSchemaResponse;
-import com.pandaterry.application.dto.response.ScanSchemaResponse;
+import com.pandaterry.msa_contracts.dto.schema.request.RegisterSchemaRequest;
+import com.pandaterry.msa_contracts.dto.schema.response.RegisterSchemaResponse;
+import com.pandaterry.presentation.dto.request.ScanSchemaRequest;
+import com.pandaterry.presentation.dto.response.ScanSchemaResponse;
 import com.pandaterry.application.service.database.DatabaseService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;

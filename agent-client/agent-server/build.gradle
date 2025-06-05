@@ -12,6 +12,8 @@ repositories {
 }
 
 dependencies {
+    implementation project(':shared:msa-contracts')
+
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut.serde:micronaut-serde-jackson")

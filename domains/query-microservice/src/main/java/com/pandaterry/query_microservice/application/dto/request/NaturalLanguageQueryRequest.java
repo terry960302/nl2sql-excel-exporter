@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class NaturalLanguageQueryRequest {
     private String naturalText;
+    private UUID agentId;
     private UUID orgId;
     private UUID userId;
 }

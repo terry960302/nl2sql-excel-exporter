@@ -1,8 +1,8 @@
 package com.pandaterry.infrastructure.client;
 
 import com.pandaterry.domain.model.ExecutionJob;
-import com.pandaterry.application.dto.request.JobResultRequest;
-import com.pandaterry.application.dto.request.QueryRequest;
+import com.pandaterry.presentation.dto.request.JobResultRequest;
+import com.pandaterry.presentation.dto.request.QueryRequest;
 import io.micronaut.http.client.HttpClient;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;

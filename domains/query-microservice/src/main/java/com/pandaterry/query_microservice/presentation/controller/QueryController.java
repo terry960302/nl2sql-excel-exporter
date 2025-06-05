@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/v1/queries")
+@RequestMapping("/v1/queries")
 @RequiredArgsConstructor
 public class QueryController {
     private final QueryService queryService;
 
+    // 자연어 -> SQL 생성
     @PostMapping
     public Mono<ResponseEntity<ExecutionJob>> requestQuery(
             @RequestBody NaturalLanguageQueryRequest request) {

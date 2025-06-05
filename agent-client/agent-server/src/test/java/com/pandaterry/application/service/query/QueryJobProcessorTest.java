@@ -1,7 +1,7 @@
 package com.pandaterry.application.service.query;
 
-import com.pandaterry.application.dto.request.JobResultRequest;
-import com.pandaterry.application.dto.request.QueryRequest;
+import com.pandaterry.presentation.dto.request.JobResultRequest;
+import com.pandaterry.presentation.dto.request.QueryRequest;
 import com.pandaterry.domain.enums.JobStatus;
 import com.pandaterry.domain.model.ExecutionJob;
 import com.pandaterry.infrastructure.client.QueryServiceClient;
@@ -48,10 +48,10 @@ class QueryJobProcessorTest {
 
         when(queryServiceClient.requestQuery(eq(orgId), any(QueryRequest.class))).thenReturn(Optional.of(job));
         when(jobPollingService.poll(agentId, jobId)).thenReturn(job);
-        Path resultPath = Path.of("result.xlsx");
+        String resultPath = Path.of("result.xlsx").toString();
         when(jobExecutionService.execute(datasourceId, job.query(), jobId)).thenReturn(resultPath);
 
-        Optional<Path> result = processor.requestAndProcess(orgId, agentId, datasourceId, "select 1");
+        Optional<String> result = processor.requestAndProcess(orgId, agentId, datasourceId, "select 1");
 
         assertThat(result).contains(resultPath);
         ArgumentCaptor<JobResultRequest> captor = ArgumentCaptor.forClass(JobResultRequest.class);
@@ -75,7 +75,7 @@ class QueryJobProcessorTest {
         when(jobPollingService.poll(agentId, jobId)).thenReturn(job);
         when(jobExecutionService.execute(datasourceId, job.query(), jobId)).thenThrow(new RuntimeException("boom"));
 
-        Optional<Path> result = processor.requestAndProcess(orgId, agentId, datasourceId, "select 1");
+        Optional<String> result = processor.requestAndProcess(orgId, agentId, datasourceId, "select 1");
 
         assertThat(result).isEmpty();
         ArgumentCaptor<JobResultRequest> captor = ArgumentCaptor.forClass(JobResultRequest.class);

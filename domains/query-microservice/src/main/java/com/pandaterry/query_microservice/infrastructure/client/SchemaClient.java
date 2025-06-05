@@ -43,7 +43,7 @@ public class SchemaClient {
 
     public Mono<List<SchemaInfoResponse>> getSchemasWithAliases(UUID orgId) {
         return webClient.get()
-                .uri(schemaServiceUrl + "/api/v1/schemas/with-aliases?orgId=" + orgId)
+                .uri(schemaServiceUrl + "/v1/schemas/with-aliases?orgId=" + orgId)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<SchemaInfoResponse>>() {
                 })

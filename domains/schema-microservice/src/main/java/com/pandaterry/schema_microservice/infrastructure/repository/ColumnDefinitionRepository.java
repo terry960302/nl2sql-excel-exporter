@@ -1,7 +1,7 @@
 package com.pandaterry.schema_microservice.infrastructure.repository;
 
 import com.pandaterry.schema_microservice.domain.entity.ColumnDefinition;
-import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
+import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

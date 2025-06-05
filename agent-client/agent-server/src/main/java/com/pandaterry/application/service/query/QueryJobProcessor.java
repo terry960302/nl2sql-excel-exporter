@@ -1,7 +1,7 @@
 package com.pandaterry.application.service.query;
 
-import com.pandaterry.application.dto.request.JobResultRequest;
-import com.pandaterry.application.dto.request.QueryRequest;
+import com.pandaterry.presentation.dto.request.JobResultRequest;
+import com.pandaterry.presentation.dto.request.QueryRequest;
 import com.pandaterry.domain.enums.JobStatus;
 import com.pandaterry.domain.model.ExecutionJob;
 import com.pandaterry.infrastructure.client.QueryServiceClient;
@@ -10,7 +10,6 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 
