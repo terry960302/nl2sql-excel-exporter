@@ -26,7 +26,7 @@ public class QueryJobProcessor {
     @Inject
     private JobExecutionService jobExecutionService;
 
-    public Optional<Path> requestAndProcess(UUID orgId, UUID agentId, UUID datasourceId, String naturalText) {
+    public Optional<String> requestAndProcess(UUID orgId, UUID agentId, UUID datasourceId, String naturalText) {
         Optional<ExecutionJob> created = queryServiceClient.requestQuery(orgId, new QueryRequest(naturalText));
         if (created.isEmpty()) {
             return Optional.empty();
@@ -37,13 +37,13 @@ public class QueryJobProcessor {
             return Optional.empty();
         }
         try {
-            Path excel = jobExecutionService.execute(datasourceId, job.query(), jobId);
-            if (excel == null) {
+            String downloadUrl = jobExecutionService.execute(datasourceId, job.query(), jobId);
+            if (downloadUrl == null) {
                 queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), JobStatus.FAILED, null, "empty result"));
                 return Optional.empty();
             }
-            queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), JobStatus.COMPLETED, excel.toString(), null));
-            return Optional.of(excel);
+            queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), JobStatus.COMPLETED, downloadUrl, null));
+            return Optional.of(downloadUrl);
         } catch (Exception e) {
             log.error("failed to execute job", e);
             queryServiceClient.reportJobResult(jobId, new JobResultRequest(job.jobId(), JobStatus.FAILED, null, e.getMessage()));
