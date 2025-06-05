@@ -72,7 +72,6 @@ public class DataSourceManager {
             if (!conn.isValid(5)) {
                 throw new AgentException(ErrorCode.DATABASE_NOT_CONNECTED);
             }
-            this.unregister(datasourceId);
         } catch (SQLException e) {
             throw new AgentException(ErrorCode.DATABASE_CONNECTION_FAILED, e);
         }
