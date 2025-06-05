@@ -68,12 +68,22 @@ public class OracleSchemaExtractor implements SchemaExtractor {
         }
 
         try {
-            // 스키마 조회 SQL 작성 (예: 해당 데이터베이스의 모든 테이블 컬럼 정보)
+            // Oracle ALL_TAB_COLUMNS 등 시스템 뷰를 이용한 컬럼 정보 조회 쿼리
             String sql = ""
-                    + "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_KEY "
-                    + "FROM INFORMATION_SCHEMA.COLUMNS "
-                    + "WHERE TABLE_SCHEMA = ? "
-                    + "ORDER BY TABLE_NAME, ORDINAL_POSITION";
+                    + "SELECT c.TABLE_NAME, "
+                    + "       c.COLUMN_NAME, "
+                    + "       c.DATA_TYPE, "
+                    + "       c.NULLABLE AS IS_NULLABLE, "
+                    + "       CASE WHEN cons.CONSTRAINT_TYPE = 'P' THEN 'PRI' ELSE NULL END AS COLUMN_KEY "
+                    + "FROM ALL_TAB_COLUMNS c "
+                    + "LEFT JOIN ALL_CONS_COLUMNS acc ON c.OWNER = acc.OWNER "
+                    + "  AND c.TABLE_NAME = acc.TABLE_NAME "
+                    + "  AND c.COLUMN_NAME = acc.COLUMN_NAME "
+                    + "LEFT JOIN ALL_CONSTRAINTS cons ON acc.OWNER = cons.OWNER "
+                    + "  AND acc.CONSTRAINT_NAME = cons.CONSTRAINT_NAME "
+                    + "  AND cons.CONSTRAINT_TYPE = 'P' "
+                    + "WHERE c.OWNER = ? "
+                    + "ORDER BY c.TABLE_NAME, c.COLUMN_ID";
 
             List<Map<String, Object>> rawRows = new ArrayList<>();
 

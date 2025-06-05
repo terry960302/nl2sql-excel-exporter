@@ -16,7 +16,7 @@ import java.util.UUID;
 public class QueryServiceClient extends BaseServiceClient {
     private static final Logger logger = LoggerFactory.getLogger(QueryServiceClient.class);
 
-    protected QueryServiceClient(HttpClient httpClient, String baseUrl, String agentSecret) {
+    public QueryServiceClient(HttpClient httpClient, String baseUrl, String agentSecret) {
         super(httpClient, baseUrl, agentSecret);
     }
 

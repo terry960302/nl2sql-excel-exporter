@@ -15,15 +15,14 @@ datasources:
     driverClassName: org.postgresql.Driver
 
 services:
-  schema-service:
-    base-url: http://localhost:8081
-  query-service:
-    base-url: http://localhost:8082
-  quota-service:
-    base-url: http://localhost:8083
-
+  gateway:
+    base-url: http://localhost:8080
+    
 storage:
   type: local
   local-path: ./uploads
   presigned-put-url: http://localhost:9000/put
   download-url: http://localhost:9000/download
+
+agent:
+  secret: default-secret
