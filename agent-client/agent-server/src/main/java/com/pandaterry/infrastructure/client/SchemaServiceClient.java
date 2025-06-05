@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Singleton
 public class SchemaServiceClient extends BaseServiceClient {
-    protected SchemaServiceClient(HttpClient httpClient, String baseUrl, String agentSecret) {
+    public SchemaServiceClient(HttpClient httpClient, String baseUrl, String agentSecret) {
         super(httpClient, baseUrl, agentSecret);
     }
 
