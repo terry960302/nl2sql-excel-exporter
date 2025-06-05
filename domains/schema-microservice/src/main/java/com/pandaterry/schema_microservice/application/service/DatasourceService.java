@@ -41,7 +41,7 @@ public class DatasourceService {
         datasource.updateName(request.getName());
         datasource.updateDbType(request.getDbType());
         datasource.updateEngineType(request.getEngineType());
-        datasource.deactivate();
+        datasource.activate();
 
         Datasource saved = datasourceRepository.save(datasource);
         return DatasourceMapper.toResponse(saved);
