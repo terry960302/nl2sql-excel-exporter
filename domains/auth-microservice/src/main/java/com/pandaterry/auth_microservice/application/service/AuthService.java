@@ -79,7 +79,10 @@ public class AuthService {
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
         saveRefreshToken(user, refreshToken);
 
-        return new TokenResponse(accessToken, refreshToken);
+        return TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     @Transactional(readOnly = true)

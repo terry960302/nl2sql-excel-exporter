@@ -1,4 +1,4 @@
-package com.pandaterry.quota_microservice.application.dto;
+package com.pandaterry.msa_contracts.dto.quota.request;
 
 import lombok.Builder;
 import lombok.Getter;

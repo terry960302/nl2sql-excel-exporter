@@ -14,10 +14,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<ErrorResponse> handleAuthException(AuthException e) {
         ErrorCode errorCode = e.getErrorCode();
-        ErrorResponse response = new ErrorResponse(
-                errorCode.getCode(),
-                errorCode.getMessage()
-        );
+        ErrorResponse response = ErrorResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
 }

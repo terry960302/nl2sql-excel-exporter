@@ -1,7 +1,7 @@
 package com.pandaterry.quota_microservice.integration;
 
-import com.pandaterry.quota_microservice.application.dto.QuotaMeResponse;
-import com.pandaterry.quota_microservice.application.dto.QuotaUsageRecordRequest;
+import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
+import com.pandaterry.msa_contracts.dto.quota.response.QuotaMeResponse;
 import com.pandaterry.quota_microservice.config.TestSecurityConfig;
 import com.pandaterry.quota_microservice.domain.entity.Organization;
 import com.pandaterry.quota_microservice.domain.entity.Plan;

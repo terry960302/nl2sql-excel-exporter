@@ -1,6 +1,6 @@
 package com.pandaterry.quota_microservice.unit.application.service;
 
-import com.pandaterry.quota_microservice.application.dto.QuotaMeResponse;
+import com.pandaterry.msa_contracts.dto.quota.response.QuotaMeResponse;
 import com.pandaterry.quota_microservice.application.service.QuotaService;
 import com.pandaterry.quota_microservice.domain.entity.*;
 import com.pandaterry.quota_microservice.domain.repository.*;

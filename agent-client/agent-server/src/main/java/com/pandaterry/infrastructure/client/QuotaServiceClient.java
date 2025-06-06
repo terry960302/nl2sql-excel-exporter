@@ -5,6 +5,7 @@ import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
 import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
 import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
 import com.pandaterry.msa_contracts.dto.auth.response.UserInfoResponse;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.HttpClient;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -23,5 +24,7 @@ public class QuotaServiceClient extends BaseServiceClient {
     }
 
     // 내 사용량 조회
+//    @Get("/api/v1/me")
+//    public
 
 }

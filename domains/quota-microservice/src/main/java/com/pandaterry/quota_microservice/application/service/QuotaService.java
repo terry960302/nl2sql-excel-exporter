@@ -1,6 +1,6 @@
 package com.pandaterry.quota_microservice.application.service;
 
-import com.pandaterry.quota_microservice.application.dto.*;
+import com.pandaterry.msa_contracts.dto.quota.response.*;
 import com.pandaterry.quota_microservice.domain.entity.*;
 import com.pandaterry.quota_microservice.domain.exception.ErrorCode;
 import com.pandaterry.quota_microservice.domain.exception.QuotaException;
