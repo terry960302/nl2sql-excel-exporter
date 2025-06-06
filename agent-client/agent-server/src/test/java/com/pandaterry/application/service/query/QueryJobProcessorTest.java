@@ -58,7 +58,7 @@ class QueryJobProcessorTest {
                 UUID jobId = UUID.randomUUID();
                 UUID userId = UUID.randomUUID();
 
-                ExecutionJob job = new ExecutionJob(jobId, JobStatus.PENDING, "select 1",
+                ExecutionJob job = new ExecutionJob(jobId, JobStatus.PENDING, orgId, "select 1",
                         LocalDateTime.now(), LocalDateTime.now());
 
                 when(queryServiceClient.requestQuery(eq(orgId), any(QueryRequest.class)))
@@ -105,7 +105,7 @@ class QueryJobProcessorTest {
                 UUID jobId = UUID.randomUUID();
                 UUID userId = UUID.randomUUID();
 
-                ExecutionJob job = new ExecutionJob(jobId, JobStatus.PENDING, "select 1", LocalDateTime.now(),
+                ExecutionJob job = new ExecutionJob(jobId, JobStatus.PENDING, orgId, "select 1", LocalDateTime.now(),
                                 LocalDateTime.now());
 
                 when(queryServiceClient.requestQuery(eq(orgId), any(QueryRequest.class))).thenReturn(Optional.of(job));

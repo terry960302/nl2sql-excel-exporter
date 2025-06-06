@@ -60,7 +60,7 @@ public final class ApiPath {
         public static final String EXECUTE = BASE + EXECUTE_SUFFIX;
     }
 
-버    public static final class Job {
+    public static final class Job {
         public static final String BASE = "/jobs";
 
         // 특정 작업
