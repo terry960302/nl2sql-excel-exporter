@@ -31,6 +31,10 @@ public final class ApiPath {
     public static final class Datasource {
         public static final String BASE = "/datasources";
 
+        // 데이터소스 연결 확인(에이전트 서버)
+        public static final String TEST_SUFFIX = "/test";
+        public static final String TEST = BASE + TEST_SUFFIX;
+
         // 특정 데이터소스 조회
         public static final String DETAIL_SUFFIX = "/{datasourceId}";
         public static final String DETAIL = BASE + DETAIL_SUFFIX;
@@ -38,13 +42,25 @@ public final class ApiPath {
 
     public static final class Schema {
         public static final String BASE = "/schemas";
+
+        // 스키마 스캔(에이전트 서버)
+        public static final String SCAN_SUFFIX = "/scan";
+        public static final String SCAN = BASE + SCAN_SUFFIX;
+
+        // 스키마 등록(에이전트 서버)
+        public static final String REGISTER_SUFFIX = "/register";
+        public static final String REGISTER = BASE + REGISTER_SUFFIX;
     }
 
     public static final class Query {
         public static final String BASE = "/queries";
+
+        // 쿼리 실행(에이전트 서버)
+        public static final String EXECUTE_SUFFIX = "/execute";
+        public static final String EXECUTE = BASE + EXECUTE_SUFFIX;
     }
 
-    public static final class Job {
+버    public static final class Job {
         public static final String BASE = "/jobs";
 
         // 특정 작업
