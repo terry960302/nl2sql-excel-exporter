@@ -13,10 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class JobService {
-    private final Map<String, ExecutionJob> store = new ConcurrentHashMap<>();
+    private final Map<UUID, ExecutionJob> store = new ConcurrentHashMap<>();
 
     public Mono<ExecutionJob> createJob(String query) {
-        String id = UUID.randomUUID().toString();
+        UUID id = UUID.randomUUID();
         ExecutionJob job = new ExecutionJob(id, JobStatus.PENDING, query, LocalDateTime.now(), LocalDateTime.now());
         store.put(id, job);
         return Mono.just(job);
@@ -31,7 +31,7 @@ public class JobService {
     }
 
     public Mono<Void> reportResult(UUID jobId, JobResultRequest request) {
-        ExecutionJob existing = store.get(jobId.toString());
+        ExecutionJob existing = store.get(jobId);
         if (existing != null) {
             ExecutionJob updated = new ExecutionJob(
                     existing.jobId(),
@@ -45,7 +45,7 @@ public class JobService {
         return Mono.empty();
     }
 
-    public Mono<ExecutionJob> getJob(String jobId) {
+    public Mono<ExecutionJob> getJob(UUID jobId) {
         return Mono.justOrEmpty(store.get(jobId));
     }
 }

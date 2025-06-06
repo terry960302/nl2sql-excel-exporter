@@ -22,34 +22,35 @@ public class JobResultEventListener {
     private QueryServiceClient queryServiceClient;
 
     @EventListener
-    public void handleSuccess(JobExecutionSucceededEvent event) {
-        String jobIdStr = event.jobId();
-        String downloadUrl = event.downloadUrl();
-        log.info("Handling JobExecutionSucceededEvent. jobId={}, downloadUrl={}", jobIdStr, downloadUrl);
+    public void onSuccess(JobExecutionSucceededEvent event) {
+        UUID jobId = event.getJobId();
+        String downloadUrl = event.getDownloadUrl();
+        log.info("Handling JobExecutionSucceededEvent. jobId={}, downloadUrl={}", jobId, downloadUrl);
 
         try {
             queryServiceClient.reportJobResult(
-                    UUID.fromString(jobIdStr),
-                    new JobResultRequest(jobIdStr, JobStatus.COMPLETED, downloadUrl, null)
+                    jobId,
+                    new JobResultRequest(jobId, JobStatus.COMPLETED, downloadUrl, null)
             );
         } catch (Exception e) {
-            log.error("Failed to report success for jobId={}", jobIdStr, e);
+            log.error("Failed to report success for jobId={}", jobId, e);
         }
     }
 
     @EventListener
-    public void handleFailure(JobExecutionFailedEvent event) {
-        String jobIdStr = event.jobId();
-        String reason = event.reason();
-        log.info("Handling JobExecutionFailedEvent. jobId={}, reason={}", jobIdStr, reason);
+    public void onFailure(JobExecutionFailedEvent event) {
+        UUID jobId = event.getJobId();
+
+        String reason = event.getReason();
+        log.info("Handling JobExecutionFailedEvent. jobId={}, reason={}", jobId, reason);
 
         try {
             queryServiceClient.reportJobResult(
-                    UUID.fromString(jobIdStr),
-                    new JobResultRequest(jobIdStr, JobStatus.FAILED, null, reason)
+                    jobId,
+                    new JobResultRequest(jobId, JobStatus.FAILED, null, reason)
             );
         } catch (Exception e) {
-            log.error("Failed to report failure for jobId={}", jobIdStr, e);
+            log.error("Failed to report failure for jobId={}", jobId, e);
         }
     }
 }

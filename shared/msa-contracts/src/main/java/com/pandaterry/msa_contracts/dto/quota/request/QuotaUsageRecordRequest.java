@@ -1,13 +1,14 @@
 package com.pandaterry.msa_contracts.dto.quota.request;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.UUID;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuotaUsageRecordRequest {
-    private final UUID orgId;
-    private final long increment;
+    private UUID orgId;
+    private long increment;
 }

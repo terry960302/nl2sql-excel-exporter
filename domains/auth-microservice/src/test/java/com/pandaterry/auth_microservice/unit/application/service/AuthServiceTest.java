@@ -86,6 +86,7 @@ class AuthServiceTest {
     void signup_성공() {
         // given
         SignupRequest request = SignupRequest.builder()
+                .name("asdjajksdhads")
                 .email("new@example.com")
                 .password("ValidPass123!")
                 .build();
@@ -111,6 +112,7 @@ class AuthServiceTest {
     void signup_이메일중복_실패() {
         // given
         SignupRequest request = SignupRequest.builder()
+                .name("Asdadasda")
                 .email("existing@example.com")
                 .password("ValidPass123!")
                 .build();

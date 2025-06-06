@@ -2,12 +2,7 @@ package com.pandaterry.msa_contracts.dto.auth.response;
 
 import java.time.LocalDateTime;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * 예시:
@@ -21,19 +16,19 @@ import lombok.ToString;
 @Getter
 @ToString
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrganizationResponse {
     @NonNull
-    private final String id;
+    private String id;
 
     @NonNull
-    private final String name;
+    private String name;
 
-    private final String displayName;
+    private String displayName;
 
-    private final String planName;
+    private String planName;
 
-    @NonNull
-    private final LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
 }

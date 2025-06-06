@@ -1,13 +1,14 @@
 package com.pandaterry.msa_contracts.dto.quota.response;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class QuotaOrgResponse {
-    private final long todayCount;
-    private final long monthCount;
-    private final int monthlyQuota;
-    private final int remainingQuota;
+    private long todayCount;
+    private long monthCount;
+    private int monthlyQuota;
+    private int remainingQuota;
 }

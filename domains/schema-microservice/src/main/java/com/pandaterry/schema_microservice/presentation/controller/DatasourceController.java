@@ -1,5 +1,6 @@
 package com.pandaterry.schema_microservice.presentation.controller;
 
+import com.pandaterry.msa_contracts.constants.ApiPath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.schema.request.DatasourceCreateRequest;
 import com.pandaterry.msa_contracts.dto.schema.response.DatasourceResponse;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/datasources")
+@RequestMapping("/v1" + ApiPath.Datasource.BASE)
 @RequiredArgsConstructor
 public class DatasourceController {
     private final DatasourceService datasourceService;
@@ -28,7 +29,7 @@ public class DatasourceController {
     }
 
     // 실제로 활성화단계에서 이름, 디비 종류 등을 설정하여 활성화
-    @PutMapping("/{datasourceId}")
+    @PutMapping(ApiPath.Datasource.DETAIL_SUFFIX)
     public ResponseEntity<DatasourceResponse> activateDatasource(
             @PathVariable UUID datasourceId,
             @RequestBody DatasourceUpdateRequest request,
@@ -40,17 +41,17 @@ public class DatasourceController {
 
     @GetMapping
     public ResponseEntity<List<DatasourceResponse>> getDatasources(
-            @RequestHeader("X-Organization-Id") UUID orgId) {
+            @RequestHeader(HeaderKeys.ORG_ID) UUID orgId) {
         return ResponseEntity.ok(datasourceService.getDatasources(orgId));
     }
 
-    @GetMapping("/{datasourceId}")
+    @GetMapping(ApiPath.Datasource.DETAIL_SUFFIX)
     public ResponseEntity<DatasourceResponse> getDatasource(
             @PathVariable UUID datasourceId) {
         return ResponseEntity.ok(datasourceService.getDatasource(datasourceId));
     }
 
-    @DeleteMapping("/{datasourceId}")
+    @DeleteMapping(ApiPath.Datasource.DETAIL_SUFFIX)
     public ResponseEntity<Void> deactivateDatasource(
             @PathVariable UUID datasourceId) {
         datasourceService.deactivateDatasource(datasourceId);

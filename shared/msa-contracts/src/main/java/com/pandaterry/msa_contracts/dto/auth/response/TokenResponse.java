@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 
@@ -18,15 +19,16 @@ import lombok.ToString;
 @Getter
 @ToString
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TokenResponse {
     @NonNull
     @NotBlank
-    private final String accessToken;
+    private String accessToken;
 
     @NonNull
     @NotBlank
-    private final String refreshToken;
+    private String refreshToken;
 
     public static TokenResponse of(String accessToken, String refreshToken) {
         return TokenResponse.builder()

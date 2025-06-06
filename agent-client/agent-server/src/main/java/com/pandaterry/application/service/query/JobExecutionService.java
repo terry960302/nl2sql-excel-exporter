@@ -18,18 +18,12 @@ import java.util.UUID;
 @Singleton
 public class JobExecutionService {
 
-    private final SimpleSqlExecutor sqlExecutor;
-    private final ExcelHierarchyExporter excelExporter;
-    private final UploadClient uploadClient;
-
     @Inject
-    public JobExecutionService(SimpleSqlExecutor sqlExecutor,
-                               ExcelHierarchyExporter excelExporter,
-                               UploadClient uploadClient) {
-        this.sqlExecutor = sqlExecutor;
-        this.excelExporter = excelExporter;
-        this.uploadClient = uploadClient;
-    }
+    private  SimpleSqlExecutor sqlExecutor;
+    @Inject
+    private  ExcelHierarchyExporter excelExporter;
+    @Inject
+    private UploadClient uploadClient;
 
     /**
      * SQL을 실행하고 결과 엑셀 파일을 업로드한다.

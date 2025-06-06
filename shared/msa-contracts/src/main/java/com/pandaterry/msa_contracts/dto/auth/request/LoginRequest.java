@@ -1,12 +1,7 @@
 package com.pandaterry.msa_contracts.dto.auth.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * 예시:
@@ -18,13 +13,14 @@ import lombok.ToString;
 @Getter
 @ToString
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoginRequest {
     @NonNull
     @NotBlank
-    private final String email;
+    private String email;
 
     @NonNull
     @NotBlank
-    private final String password;
+    private String password;
 }

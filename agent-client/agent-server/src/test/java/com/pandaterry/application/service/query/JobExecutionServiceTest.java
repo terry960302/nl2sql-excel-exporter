@@ -4,6 +4,10 @@ import com.pandaterry.application.service.excel.ExcelHierarchyExporter;
 import com.pandaterry.application.vo.ExcelResult;
 import com.pandaterry.infrastructure.client.UploadClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -14,15 +18,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class JobExecutionServiceTest {
 
+    @Mock
+    private SimpleSqlExecutor sqlExecutor;
+
+    @Mock
+    private ExcelHierarchyExporter exporter;
+
+    @Mock
+    private UploadClient uploadClient;
+
+    @InjectMocks
+    private JobExecutionService service;
     @Test
     void execute_업로드호출() throws Exception {
-        SimpleSqlExecutor sqlExecutor = mock(SimpleSqlExecutor.class);
-        ExcelHierarchyExporter exporter = mock(ExcelHierarchyExporter.class);
-        UploadClient uploadClient = mock(UploadClient.class);
-
-        JobExecutionService service = new JobExecutionService(sqlExecutor, exporter, uploadClient);
 
         UUID dsId = UUID.randomUUID();
         UUID jobId = UUID.randomUUID();

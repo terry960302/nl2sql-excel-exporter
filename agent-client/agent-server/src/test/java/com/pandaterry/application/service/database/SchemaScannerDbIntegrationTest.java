@@ -23,6 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @Testcontainers
 @MicronautTest
+@Tag("Docker")
 class SchemaScannerDbIntegrationTest {
 
     @Container

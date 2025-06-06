@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -17,11 +18,12 @@ import lombok.ToString;
 @Getter
 @ToString
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuotaInfo {
-    private final int totalQuota;
-    private final int usedQuota;
-    private final int remainingQuota;
+    private int totalQuota;
+    private int usedQuota;
+    private int remainingQuota;
 
     public static QuotaInfo of(int totalQuota, int usedQuota, int remainingQuota) {
         return QuotaInfo.builder()
