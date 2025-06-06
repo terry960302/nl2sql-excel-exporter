@@ -1,16 +1,16 @@
 package com.pandaterry.auth_microservice.presentation.controller;
 
 import com.pandaterry.auth_microservice.application.service.AuthService;
-import com.pandaterry.auth_microservice.presentation.dto.LoginRequest;
-import com.pandaterry.auth_microservice.presentation.dto.SignupRequest;
-import com.pandaterry.auth_microservice.presentation.dto.TokenResponse;
-import com.pandaterry.auth_microservice.presentation.dto.UserInfoResponse;
+import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
+import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
+import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
+import com.pandaterry.msa_contracts.dto.auth.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;

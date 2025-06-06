@@ -1,4 +1,3 @@
-// src/test/java/com/pandaterry/auth_microservice/integration/AuthIntegrationTest.java
 package com.pandaterry.auth_microservice.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,11 +12,10 @@ import com.pandaterry.auth_microservice.domain.repository.UserRepository;
 import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import com.pandaterry.auth_microservice.infrastructure.client.QuotaClient;
 import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
-import com.pandaterry.auth_microservice.presentation.dto.LoginRequest;
-import com.pandaterry.auth_microservice.presentation.dto.QuotaInfo;
-import com.pandaterry.auth_microservice.presentation.dto.SignupRequest;
-
-import com.pandaterry.auth_microservice.presentation.dto.TokenResponse;
+import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
+import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
+import com.pandaterry.msa_contracts.dto.auth.response.QuotaInfo;
+import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,8 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.time.temporal.ChronoUnit;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;

@@ -1,4 +1,4 @@
-package com.pandaterry.auth_microservice.presentation.dto;
+package com.pandaterry.auth_microservice.infrastructure.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.pandaterry.auth_microservice.presentation.dto;
+package com.pandaterry.msa_contracts.dto.auth.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
