@@ -28,7 +28,7 @@ public class QuotaService {
     private final PlanRepository planRepository;
 
     @Transactional(readOnly = true)
-    public QuotaMeResponse getQuotaForOrg(UUID orgId) {
+    public QuotaOrgResponse getQuotaForOrg(UUID orgId) {
         LocalDate today = LocalDate.now();
         String monthKey = currentMonthKey();
 
@@ -37,7 +37,7 @@ public class QuotaService {
         Plan plan = loadPlan(orgId);
         int monthlyQuota = plan.getMonthlyQuota();
 
-        return QuotaMeResponse.builder()
+        return QuotaOrgResponse.builder()
                 .todayCount(todayCount)
                 .monthCount(monthCount)
                 .monthlyQuota(monthlyQuota)
@@ -46,7 +46,7 @@ public class QuotaService {
     }
 
     @Transactional(readOnly = true)
-    public QuotaUsersPageResponse getAllQuotaStatus(Pageable pageable) {
+    public QuotaOrgsPageResponse getAllQuotaStatus(Pageable pageable) {
         String monthKey = currentMonthKey();
         Page<Organization> page = organizationRepository.findAll(pageable);
 
@@ -54,7 +54,7 @@ public class QuotaService {
                 .map(org -> toUsersItem(org, monthKey))
                 .toList();
 
-        return QuotaUsersPageResponse.builder()
+        return QuotaOrgsPageResponse.builder()
                 .content(content)
                 .page(page.getNumber())
                 .size(page.getSize())
@@ -64,7 +64,7 @@ public class QuotaService {
     }
 
     @Transactional(readOnly = true)
-    public QuotaUserDetailResponse getQuotaDetailForOrg(UUID orgId, LocalDate start, LocalDate end) {
+    public QuotaOrgDetailResponse getQuotaDetailForOrg(UUID orgId, LocalDate start, LocalDate end) {
         List<QuotaUserDetailDaily> dailyUsage = dailyRepository
                 .findByIdOrgIdAndIdDateKeyBetweenOrderByIdDateKeyAsc(orgId, start, end)
                 .stream()
@@ -84,7 +84,7 @@ public class QuotaService {
                 .monthlyQuota(plan.getMonthlyQuota())
                 .build();
 
-        return QuotaUserDetailResponse.builder()
+        return QuotaOrgDetailResponse.builder()
                 .dailyUsage(dailyUsage)
                 .monthlyUsage(monthlyUsage)
                 .build();

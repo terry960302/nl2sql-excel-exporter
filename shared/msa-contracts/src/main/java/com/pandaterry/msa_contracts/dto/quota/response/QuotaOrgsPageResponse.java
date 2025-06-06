@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class QuotaUsersPageResponse {
+public class QuotaOrgsPageResponse {
     private final List<QuotaUsersItem> content;
     private final int page;
     private final int size;

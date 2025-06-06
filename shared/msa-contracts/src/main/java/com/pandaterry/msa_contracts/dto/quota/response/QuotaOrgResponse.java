@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class QuotaMeResponse {
+public class QuotaOrgResponse {
     private final long todayCount;
     private final long monthCount;
     private final int monthlyQuota;

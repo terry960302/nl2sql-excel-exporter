@@ -1,7 +1,7 @@
 package com.pandaterry.quota_microservice.integration;
 
 import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
-import com.pandaterry.msa_contracts.dto.quota.response.QuotaMeResponse;
+import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
 import com.pandaterry.quota_microservice.config.TestSecurityConfig;
 import com.pandaterry.quota_microservice.domain.entity.Organization;
 import com.pandaterry.quota_microservice.domain.entity.Plan;
@@ -51,9 +51,9 @@ class QuotaIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        QuotaMeResponse response = objectMapper.readValue(
+        QuotaOrgResponse response = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                QuotaMeResponse.class);
+                QuotaOrgResponse.class);
 
         assertThat(response.getTodayCount()).isZero();
         assertThat(response.getMonthCount()).isZero();
@@ -78,9 +78,9 @@ class QuotaIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        QuotaMeResponse response = objectMapper.readValue(
+        QuotaOrgResponse response = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                QuotaMeResponse.class);
+                QuotaOrgResponse.class);
 
         assertThat(response.getTodayCount()).isEqualTo(3L);
         assertThat(response.getMonthCount()).isEqualTo(3L);

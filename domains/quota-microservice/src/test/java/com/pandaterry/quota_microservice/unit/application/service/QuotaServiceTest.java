@@ -1,6 +1,6 @@
 package com.pandaterry.quota_microservice.unit.application.service;
 
-import com.pandaterry.msa_contracts.dto.quota.response.QuotaMeResponse;
+import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
 import com.pandaterry.quota_microservice.application.service.QuotaService;
 import com.pandaterry.quota_microservice.domain.entity.*;
 import com.pandaterry.quota_microservice.domain.repository.*;
@@ -59,7 +59,7 @@ class QuotaServiceTest {
         when(organizationRepository.findById(orgId)).thenReturn(Optional.of(organization));
         when(planRepository.findById(plan.getId())).thenReturn(Optional.of(plan));
 
-        QuotaMeResponse response = quotaService.getQuotaForOrg(orgId);
+        QuotaOrgResponse response = quotaService.getQuotaForOrg(orgId);
 
         assertThat(response.getTodayCount()).isEqualTo(3L);
         assertThat(response.getMonthCount()).isEqualTo(10L);

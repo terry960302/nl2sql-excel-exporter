@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class QuotaUserDetailResponse {
+public class QuotaOrgDetailResponse {
     private final List<QuotaUserDetailDaily> dailyUsage;
     private final QuotaUserDetailMonthly monthlyUsage;
 }
