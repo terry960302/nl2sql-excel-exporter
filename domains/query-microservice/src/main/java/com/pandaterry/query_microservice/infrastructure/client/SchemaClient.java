@@ -1,6 +1,6 @@
 package com.pandaterry.query_microservice.infrastructure.client;
 
-import com.pandaterry.query_microservice.application.dto.response.SchemaInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.SchemaInfoResponse;
 import com.pandaterry.query_microservice.application.vo.DataSourceInfo;
 import com.pandaterry.query_microservice.domain.enums.ErrorCode;
 import com.pandaterry.query_microservice.domain.exception.QueryException;

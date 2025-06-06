@@ -1,4 +1,4 @@
-package com.pandaterry.query_microservice.application.dto.response;
+package com.pandaterry.msa_contracts.dto.query.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

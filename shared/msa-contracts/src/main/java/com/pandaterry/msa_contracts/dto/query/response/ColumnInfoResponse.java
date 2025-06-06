@@ -1,4 +1,4 @@
-package com.pandaterry.query_microservice.application.dto.response;
+package com.pandaterry.msa_contracts.dto.query.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class AliasInfoResponse {
+public class ColumnInfoResponse {
     private UUID columnId;
-    private String alias;
+    private String columnName;
+    private String dataType;
+
 }

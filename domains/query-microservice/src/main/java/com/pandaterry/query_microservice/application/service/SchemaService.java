@@ -1,6 +1,6 @@
 package com.pandaterry.query_microservice.application.service;
 
-import com.pandaterry.query_microservice.application.dto.response.SchemaInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.SchemaInfoResponse;
 import com.pandaterry.query_microservice.infrastructure.client.SchemaClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

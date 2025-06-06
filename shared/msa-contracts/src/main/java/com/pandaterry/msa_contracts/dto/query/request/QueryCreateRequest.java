@@ -1,4 +1,4 @@
-package com.pandaterry.query_microservice.application.dto.request;
+package com.pandaterry.msa_contracts.dto.query.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,6 +1,7 @@
 package com.pandaterry.application.service.query;
 
 import com.pandaterry.application.service.excel.ExcelHierarchyExporter;
+import com.pandaterry.application.vo.ExcelResult;
 import com.pandaterry.application.vo.FlatRow;
 import com.pandaterry.infrastructure.client.UploadClient;
 import jakarta.inject.Inject;
@@ -34,7 +35,7 @@ public class JobExecutionService {
      * SQL을 실행하고 결과 엑셀 파일을 업로드한다.
      * 결과가 없으면 null을 반환한다.
      */
-    public String execute(UUID datasourceId, String sql, UUID jobId) throws Exception {
+    public ExcelResult execute(UUID datasourceId, String sql, UUID jobId) throws Exception {
         List<Map<String, Object>> rows = sqlExecutor.execute(datasourceId, sql);
         if (rows.isEmpty()) {
             return null;
@@ -49,9 +50,11 @@ public class JobExecutionService {
             flatRows.add(fr);
         }
         Path temp = Files.createTempFile("query-result-" + jobId, ".xlsx");
+        String filename = temp.getFileName().toString();
         try (OutputStream os = Files.newOutputStream(temp)) {
             excelExporter.export(flatRows, columnOrder, os);
         }
-        return uploadClient.upload(temp);
+        String downloadUrl = uploadClient.upload(temp);
+        return new ExcelResult(filename, downloadUrl);
     }
 }

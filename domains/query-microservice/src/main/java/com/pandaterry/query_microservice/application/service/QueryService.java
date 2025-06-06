@@ -1,6 +1,6 @@
 package com.pandaterry.query_microservice.application.service;
 
-import com.pandaterry.query_microservice.application.dto.request.NaturalLanguageQueryRequest;
+import com.pandaterry.msa_contracts.dto.query.request.NaturalLanguageQueryRequest;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
 import com.pandaterry.query_microservice.application.vo.PromptContext;
 import com.pandaterry.query_microservice.application.vo.SchemaInfo;

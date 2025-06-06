@@ -1,7 +1,7 @@
 package com.pandaterry.infrastructure.client;
 
 import com.pandaterry.domain.model.ExecutionJob;
-import com.pandaterry.presentation.dto.request.JobResultRequest;
+import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.presentation.dto.request.QueryRequest;
 import io.micronaut.http.client.HttpClient;
 import jakarta.inject.Singleton;

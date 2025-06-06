@@ -1,6 +1,7 @@
 package com.pandaterry.application.service.query;
 
 import com.pandaterry.application.service.excel.ExcelHierarchyExporter;
+import com.pandaterry.application.vo.ExcelResult;
 import com.pandaterry.infrastructure.client.UploadClient;
 import org.junit.jupiter.api.Test;
 
@@ -30,11 +31,11 @@ public class JobExecutionServiceTest {
                 .thenReturn(List.of(Map.of("a", 1)));
         when(uploadClient.upload(any(Path.class))).thenReturn("http://download");
 
-        String url = service.execute(dsId, "select 1", jobId);
+        ExcelResult result = service.execute(dsId, "select 1", jobId);
 
         verify(sqlExecutor).execute(dsId, "select 1");
         verify(exporter).export(any(), any(), any());
         verify(uploadClient).upload(any(Path.class));
-        assertThat(url).isEqualTo("http://download");
+        assertThat(result.downloadUrl()).isEqualTo("http://download");
     }
 }

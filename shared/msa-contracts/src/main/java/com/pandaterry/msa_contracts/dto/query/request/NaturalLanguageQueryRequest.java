@@ -1,18 +1,23 @@
-package com.pandaterry.query_microservice.application.dto.request;
+package com.pandaterry.msa_contracts.dto.query.request;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.AccessLevel;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 import java.util.UUID;
 
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class NaturalLanguageQueryRequest {
+    @NonNull
     private String naturalText;
+    @NonNull
+    private UUID datasourceId;
+    @NonNull
     private UUID agentId;
+    @NonNull
     private UUID orgId;
+    @NonNull
     private UUID userId;
 }

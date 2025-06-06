@@ -1,7 +1,8 @@
 package com.pandaterry.query_microservice.unit.infrastructure.client;
 
-import com.pandaterry.query_microservice.application.dto.response.SchemaInfoResponse;
-import com.pandaterry.query_microservice.application.dto.response.TableInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.ColumnInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.SchemaInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.TableInfoResponse;
 import com.pandaterry.query_microservice.application.vo.ColumnInfo;
 import com.pandaterry.query_microservice.application.vo.DataSourceInfo;
 import com.pandaterry.query_microservice.domain.enums.ErrorCode;
@@ -31,139 +32,139 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DefaultSchemaClientTest {
 
-        @Mock
-        private WebClient webClient;
+    @Mock
+    private WebClient webClient;
 
-        @Mock
-        @SuppressWarnings("rawtypes")
-        private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
+    @Mock
+    @SuppressWarnings("rawtypes")
+    private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
 
-        @Mock
-        @SuppressWarnings("rawtypes")
-        private WebClient.RequestHeadersSpec requestHeadersSpec;
+    @Mock
+    @SuppressWarnings("rawtypes")
+    private WebClient.RequestHeadersSpec requestHeadersSpec;
 
-        @Mock
-        private WebClient.ResponseSpec responseSpec;
+    @Mock
+    private WebClient.ResponseSpec responseSpec;
 
-        private SchemaClient schemaClient;
+    private SchemaClient schemaClient;
 
-        @BeforeEach
-        void setUp() {
-                schemaClient = new SchemaClient(webClient);
-                when(webClient.get()).thenReturn(requestHeadersUriSpec);
-                when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
-                lenient().when(requestHeadersSpec.header(eq("X-Organization-Id"), any()))
-                                .thenReturn(requestHeadersSpec);
-                when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    @BeforeEach
+    void setUp() {
+        schemaClient = new SchemaClient(webClient);
+        when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        when(requestHeadersUriSpec.uri(any(String.class))).thenReturn(requestHeadersSpec);
+        lenient().when(requestHeadersSpec.header(eq("X-Organization-Id"), any()))
+                .thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    }
+
+    @Nested
+    @DisplayName("getSchemasForOrg 메서드는")
+    class Describe_getSchemasForOrg {
+
+        @Test
+        @DisplayName("유효한 조직 ID로 호출 시 스키마 목록을 반환한다")
+        void getSchemasForOrg_WithValidOrgId_ShouldReturnSchemas() {
+            // given
+            UUID orgId = UUID.randomUUID();
+            List<SchemaInfoResponse> expectedSchemas = List.of(
+                    SchemaInfoResponse.builder()
+                            .schemaName("schema1")
+                            .tables(List.of(
+                                    TableInfoResponse.builder()
+                                            .tableName("table1")
+                                            .columns(List.of(
+                                                    ColumnInfoResponse.builder()
+                                                            .columnName("column1")
+                                                            .dataType("varchar")
+                                                            .build(),
+                                                    ColumnInfoResponse.builder()
+                                                            .columnName("column2")
+                                                            .dataType("int")
+                                                            .build()))
+                                            .build()))
+                            .aliases(List.of())
+                            .build());
+
+            when(responseSpec.bodyToMono(new ParameterizedTypeReference<List<SchemaInfoResponse>>() {
+            }))
+                    .thenReturn(Mono.just(expectedSchemas));
+
+            // when
+            Mono<List<SchemaInfoResponse>> result = schemaClient.getSchemasForOrg(orgId);
+
+            // then
+            StepVerifier.create(result)
+                    .expectNext(expectedSchemas)
+                    .verifyComplete();
         }
 
-        @Nested
-        @DisplayName("getSchemasForOrg 메서드는")
-        class Describe_getSchemasForOrg {
+        @Test
+        @DisplayName("API 호출 실패 시 QueryException을 발생시킨다")
+        void getSchemasForOrg_WhenErrorOccurs_ShouldThrowQueryException() {
+            // given
+            UUID orgId = UUID.randomUUID();
+            when(responseSpec.bodyToMono(new ParameterizedTypeReference<List<SchemaInfoResponse>>() {
+            }))
+                    .thenReturn(Mono.error(new RuntimeException("API Error")));
 
-                @Test
-                @DisplayName("유효한 조직 ID로 호출 시 스키마 목록을 반환한다")
-                void getSchemasForOrg_WithValidOrgId_ShouldReturnSchemas() {
-                        // given
-                        UUID orgId = UUID.randomUUID();
-                        List<SchemaInfoResponse> expectedSchemas = List.of(
-                                        SchemaInfoResponse.builder()
-                                                        .schemaName("schema1")
-                                                        .tables(List.of(
-                                                                        TableInfoResponse.builder()
-                                                                                        .tableName("table1")
-                                                                                        .columns(List.of(
-                                                                                                        ColumnInfo.builder()
-                                                                                                                        .columnName("column1")
-                                                                                                                        .dataType("varchar")
-                                                                                                                        .build(),
-                                                                                                        ColumnInfo.builder()
-                                                                                                                        .columnName("column2")
-                                                                                                                        .dataType("int")
-                                                                                                                        .build()))
-                                                                                        .build()))
-                                                        .aliases(List.of())
-                                                        .build());
+            // when
+            Mono<List<SchemaInfoResponse>> result = schemaClient.getSchemasForOrg(orgId);
 
-                        when(responseSpec.bodyToMono(new ParameterizedTypeReference<List<SchemaInfoResponse>>() {
-                        }))
-                                        .thenReturn(Mono.just(expectedSchemas));
+            // then
+            StepVerifier.create(result)
+                    .expectError(QueryException.class)
+                    .verify();
+        }
+    }
 
-                        // when
-                        Mono<List<SchemaInfoResponse>> result = schemaClient.getSchemasForOrg(orgId);
+    @Nested
+    @DisplayName("getDataSourceInfo 메서드는")
+    class Describe_getDataSourceInfo {
 
-                        // then
-                        StepVerifier.create(result)
-                                        .expectNext(expectedSchemas)
-                                        .verifyComplete();
-                }
+        @Test
+        @DisplayName("유효한 데이터소스 ID로 호출 시 데이터소스 정보를 반환한다")
+        void getDataSourceInfo_WithValidDatasourceId_ShouldReturnDataSourceInfo() {
+            // given
+            UUID datasourceId = UUID.randomUUID();
+            DataSourceInfo expectedInfo = DataSourceInfo.builder()
+                    .id(datasourceId)
+                    .name("test-db")
+                    .host("localhost")
+                    .port(5432)
+                    .database("test")
+                    .username("username")
+                    .encryptedPassword("password")
+                    .type("postgresql")
+                    .build();
 
-                @Test
-                @DisplayName("API 호출 실패 시 QueryException을 발생시킨다")
-                void getSchemasForOrg_WhenErrorOccurs_ShouldThrowQueryException() {
-                        // given
-                        UUID orgId = UUID.randomUUID();
-                        when(responseSpec.bodyToMono(new ParameterizedTypeReference<List<SchemaInfoResponse>>() {
-                        }))
-                                        .thenReturn(Mono.error(new RuntimeException("API Error")));
+            when(responseSpec.bodyToMono(DataSourceInfo.class))
+                    .thenReturn(Mono.just(expectedInfo));
 
-                        // when
-                        Mono<List<SchemaInfoResponse>> result = schemaClient.getSchemasForOrg(orgId);
+            // when
+            Mono<DataSourceInfo> result = schemaClient.getDataSourceInfo(datasourceId);
 
-                        // then
-                        StepVerifier.create(result)
-                                        .expectError(QueryException.class)
-                                        .verify();
-                }
+            // then
+            StepVerifier.create(result)
+                    .expectNext(expectedInfo)
+                    .verifyComplete();
         }
 
-        @Nested
-        @DisplayName("getDataSourceInfo 메서드는")
-        class Describe_getDataSourceInfo {
+        @Test
+        @DisplayName("API 호출 실패 시 QueryException을 발생시킨다")
+        void getDataSourceInfo_WhenErrorOccurs_ShouldThrowQueryException() {
+            // given
+            UUID datasourceId = UUID.randomUUID();
+            when(responseSpec.bodyToMono(DataSourceInfo.class))
+                    .thenReturn(Mono.error(new QueryException(ErrorCode.INTERNAL_SERVER_ERROR)));
 
-                @Test
-                @DisplayName("유효한 데이터소스 ID로 호출 시 데이터소스 정보를 반환한다")
-                void getDataSourceInfo_WithValidDatasourceId_ShouldReturnDataSourceInfo() {
-                        // given
-                        UUID datasourceId = UUID.randomUUID();
-                        DataSourceInfo expectedInfo = DataSourceInfo.builder()
-                                        .id(datasourceId)
-                                        .name("test-db")
-                                        .host("localhost")
-                                        .port(5432)
-                                        .database("test")
-                                        .username("username")
-                                        .encryptedPassword("password")
-                                        .type("postgresql")
-                                        .build();
+            // when
+            Mono<DataSourceInfo> result = schemaClient.getDataSourceInfo(datasourceId);
 
-                        when(responseSpec.bodyToMono(DataSourceInfo.class))
-                                        .thenReturn(Mono.just(expectedInfo));
-
-                        // when
-                        Mono<DataSourceInfo> result = schemaClient.getDataSourceInfo(datasourceId);
-
-                        // then
-                        StepVerifier.create(result)
-                                        .expectNext(expectedInfo)
-                                        .verifyComplete();
-                }
-
-                @Test
-                @DisplayName("API 호출 실패 시 QueryException을 발생시킨다")
-                void getDataSourceInfo_WhenErrorOccurs_ShouldThrowQueryException() {
-                        // given
-                        UUID datasourceId = UUID.randomUUID();
-                        when(responseSpec.bodyToMono(DataSourceInfo.class))
-                                        .thenReturn(Mono.error(new QueryException(ErrorCode.INTERNAL_SERVER_ERROR)));
-
-                        // when
-                        Mono<DataSourceInfo> result = schemaClient.getDataSourceInfo(datasourceId);
-
-                        // then
-                        StepVerifier.create(result)
-                                        .expectError(QueryException.class)
-                                        .verify();
-                }
+            // then
+            StepVerifier.create(result)
+                    .expectError(QueryException.class)
+                    .verify();
         }
+    }
 }

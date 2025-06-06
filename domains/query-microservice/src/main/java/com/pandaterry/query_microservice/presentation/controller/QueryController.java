@@ -2,7 +2,7 @@ package com.pandaterry.query_microservice.presentation.controller;
 
 import com.pandaterry.query_microservice.domain.exception.QueryException;
 import com.pandaterry.query_microservice.application.service.QueryService;
-import com.pandaterry.query_microservice.application.dto.request.NaturalLanguageQueryRequest;
+import com.pandaterry.msa_contracts.dto.query.request.NaturalLanguageQueryRequest;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

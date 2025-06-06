@@ -1,8 +1,12 @@
 package com.pandaterry.application.service.query;
 
-import com.pandaterry.presentation.dto.request.JobResultRequest;
+import com.pandaterry.application.facade.QueryJobProcessFacade;
+import com.pandaterry.application.vo.ExcelResult;
+import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
+import com.pandaterry.msa_contracts.dto.query.request.NaturalLanguageQueryRequest;
+import com.pandaterry.msa_contracts.dto.query.response.NaturalLanguageQueryResponse;
 import com.pandaterry.presentation.dto.request.QueryRequest;
-import com.pandaterry.domain.enums.JobStatus;
+import com.pandaterry.msa_contracts.enums.query.JobStatus;
 import com.pandaterry.domain.model.ExecutionJob;
 import com.pandaterry.infrastructure.client.QueryServiceClient;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +39,7 @@ class QueryJobProcessorTest {
     private JobExecutionService jobExecutionService;
 
     @InjectMocks
-    private QueryJobProcessor processor;
+    private QueryJobProcessFacade processor;
 
     @Test
     @DisplayName("정상적인 Job 처리 시 결과 파일 경로가 반환되어야 한다")
@@ -44,16 +48,25 @@ class QueryJobProcessorTest {
         UUID agentId = UUID.randomUUID();
         UUID datasourceId = UUID.randomUUID();
         UUID jobId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
         ExecutionJob job = new ExecutionJob(jobId.toString(), "PENDING", "select 1", LocalDateTime.now(), LocalDateTime.now());
 
         when(queryServiceClient.requestQuery(eq(orgId), any(QueryRequest.class))).thenReturn(Optional.of(job));
         when(jobPollingService.poll(agentId, jobId)).thenReturn(job);
-        String resultPath = Path.of("result.xlsx").toString();
-        when(jobExecutionService.execute(datasourceId, job.query(), jobId)).thenReturn(resultPath);
+        Path resultPath = Path.of("result.xlsx");
+        String filename = resultPath.getFileName().toString();
+        String path = resultPath.toString();
+        when(jobExecutionService.execute(datasourceId, job.query(), jobId)).thenReturn(new ExcelResult(filename, path));
 
-        Optional<String> result = processor.requestAndProcess(orgId, agentId, datasourceId, "select 1");
-
-        assertThat(result).contains(resultPath);
+        NaturalLanguageQueryResponse result = processor.handleQuery(
+                NaturalLanguageQueryRequest.builder()
+                        .naturalText("select 1")
+                        .agentId(agentId)
+                        .orgId(orgId)
+                        .userId(userId)
+                        .build()
+        );
+        assertThat(result.downloadUrl()).contains(path);
         ArgumentCaptor<JobResultRequest> captor = ArgumentCaptor.forClass(JobResultRequest.class);
         verify(queryServiceClient).reportJobResult(eq(jobId), captor.capture());
         JobResultRequest reported = captor.getValue();
@@ -69,15 +82,24 @@ class QueryJobProcessorTest {
         UUID agentId = UUID.randomUUID();
         UUID datasourceId = UUID.randomUUID();
         UUID jobId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+
         ExecutionJob job = new ExecutionJob(jobId.toString(), "PENDING", "select 1", LocalDateTime.now(), LocalDateTime.now());
 
         when(queryServiceClient.requestQuery(eq(orgId), any(QueryRequest.class))).thenReturn(Optional.of(job));
         when(jobPollingService.poll(agentId, jobId)).thenReturn(job);
         when(jobExecutionService.execute(datasourceId, job.query(), jobId)).thenThrow(new RuntimeException("boom"));
 
-        Optional<String> result = processor.requestAndProcess(orgId, agentId, datasourceId, "select 1");
+        NaturalLanguageQueryResponse result = processor.handleQuery(
+                NaturalLanguageQueryRequest.builder()
+                        .naturalText("select 1")
+                        .agentId(agentId)
+                        .orgId(orgId)
+                        .userId(userId)
+                        .build()
+        );
 
-        assertThat(result).isEmpty();
+        assertThat(result.downloadUrl()).isEmpty();
         ArgumentCaptor<JobResultRequest> captor = ArgumentCaptor.forClass(JobResultRequest.class);
         verify(queryServiceClient).reportJobResult(eq(jobId), captor.capture());
         JobResultRequest reported = captor.getValue();

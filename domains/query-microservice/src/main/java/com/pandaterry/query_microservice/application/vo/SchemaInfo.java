@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.pandaterry.query_microservice.application.dto.response.SchemaInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.SchemaInfoResponse;
 
 @Getter
 @Builder

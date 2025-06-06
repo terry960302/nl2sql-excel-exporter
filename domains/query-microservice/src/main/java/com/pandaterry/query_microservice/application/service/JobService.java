@@ -1,8 +1,8 @@
 package com.pandaterry.query_microservice.application.service;
 
-import com.pandaterry.query_microservice.application.dto.request.JobResultRequest;
+import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
+import com.pandaterry.msa_contracts.enums.query.JobStatus;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
-import com.pandaterry.query_microservice.domain.model.JobStatus;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +17,7 @@ public class JobService {
 
     public Mono<ExecutionJob> createJob(String query) {
         String id = UUID.randomUUID().toString();
-        ExecutionJob job = new ExecutionJob(id, JobStatus.PENDING.name(), query, LocalDateTime.now(), LocalDateTime.now());
+        ExecutionJob job = new ExecutionJob(id, JobStatus.PENDING, query, LocalDateTime.now(), LocalDateTime.now());
         store.put(id, job);
         return Mono.just(job);
     }
@@ -25,7 +25,7 @@ public class JobService {
     public Mono<ExecutionJob> pollPendingJob(UUID agentId) {
         return Mono.justOrEmpty(
                 store.values().stream()
-                        .filter(j -> JobStatus.PENDING.name().equals(j.status()))
+                        .filter(j -> JobStatus.PENDING.equals(j.status()))
                         .findFirst()
         );
     }

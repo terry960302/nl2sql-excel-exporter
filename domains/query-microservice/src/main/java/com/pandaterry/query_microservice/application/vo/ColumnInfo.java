@@ -1,6 +1,6 @@
 package com.pandaterry.query_microservice.application.vo;
 
-import com.pandaterry.query_microservice.application.dto.response.ColumnInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.ColumnInfoResponse;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.pandaterry.query_microservice.presentation.controller;
 
-import com.pandaterry.query_microservice.application.dto.request.JobResultRequest;
+import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.query_microservice.application.service.JobService;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
 import lombok.RequiredArgsConstructor;

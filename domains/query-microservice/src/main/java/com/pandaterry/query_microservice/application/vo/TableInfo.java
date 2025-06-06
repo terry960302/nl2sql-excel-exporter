@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-import com.pandaterry.query_microservice.application.dto.response.TableInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.TableInfoResponse;
 
 @Getter
 @Builder
@@ -16,7 +16,10 @@ public class TableInfo {
     public static TableInfo from(TableInfoResponse response) {
         return TableInfo.builder()
                 .tableName(response.getTableName())
-                .columns(response.getColumns())
+                .columns(
+                        response.getColumns()
+                                .stream().map(ColumnInfo::from).toList()
+                )
                 .build();
     }
 }
