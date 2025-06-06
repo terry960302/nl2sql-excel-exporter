@@ -23,7 +23,7 @@ ext {
 
 dependencies {
 	//공통
-//	implementation project(':libs:msa-contracts')
+	implementation project(':shared:msa-contracts')
 
 	// 의존성
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'

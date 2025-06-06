@@ -8,4 +8,4 @@ schema:
 
 quota:
   usage:
-    queue: quota-usage
+    topic: quota-usage
