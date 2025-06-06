@@ -1,18 +1,15 @@
 package com.pandaterry.schema_microservice.domain.entity;
 
-import com.pandaterry.schema_microservice.domain.enumerated.DatabaseEngineType;
-import com.pandaterry.schema_microservice.domain.enumerated.DatabaseType;
+import com.pandaterry.msa_contracts.enums.schema.DatabaseEngineType;
+import com.pandaterry.msa_contracts.enums.schema.DatabaseType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
-import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
+import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -32,35 +29,16 @@ public class Datasource {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private DatabaseType dbType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private DatabaseEngineType engineType;
-
-    @Column(nullable = false)
-    private String endpoint;
-
-    @Column(nullable = false)
-    private String username;
-
-    @Column(name = "password_encrypted", nullable = false)
-    private String passwordEncrypted;
-
-    @Column(name = "ssl_enabled")
-    private boolean sslEnabled;
-
     @Column(nullable = true)
-    private String connectionString;
-
-    @Column(columnDefinition = "jsonb")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Object> options;
+    private DatabaseEngineType engineType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "is_enabled", nullable = false)
-    private EnableStatus isEnabled = EnableStatus.ENABLED;
+    private EnableStatus isEnabled = EnableStatus.DISABLED;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -68,22 +46,28 @@ public class Datasource {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    private Datasource(UUID orgId, String name, DatabaseType dbType, DatabaseEngineType engineType, String endpoint, String username,
-            String password, boolean sslEnabled, Map<String, Object> options) {
+    @Column(name = "created_by_user")
+    private UUID createdByUser;
+
+    @Column(name = "created_by_agent")
+    private UUID createdByAgent;
+
+    private Datasource(UUID orgId, String name, DatabaseType dbType, DatabaseEngineType engineType, UUID userId, UUID agentId) {
         this.orgId = orgId;
         this.name = name;
         this.dbType = dbType;
         this.engineType = engineType;
-        this.endpoint = endpoint;
-        this.username = username;
-        this.passwordEncrypted = password;
-        this.sslEnabled = sslEnabled;
-        this.options = options;
+        this.createdByUser = userId;
+        this.createdByAgent = agentId;
     }
 
-    public static Datasource create(UUID orgId, String name, DatabaseType dbType, DatabaseEngineType engineType, String endpoint,
-            String username, String password, boolean sslEnabled, Map<String, Object> options) {
-        return new Datasource(orgId, name, dbType, engineType, endpoint, username, password, sslEnabled, options);
+    public static Datasource create(UUID orgId, String name, DatabaseType dbType, DatabaseEngineType engineType, UUID userId, UUID agentId) {
+        return new Datasource(orgId, name, dbType, engineType, userId, agentId);
+    }
+
+    public static Datasource init(UUID orgId, UUID userId, UUID agentId) {
+        String initialName = "datasource-" + LocalDateTime.now();
+        return new Datasource(orgId, initialName, null, null, userId, agentId);
     }
 
     @PrePersist
@@ -97,6 +81,9 @@ public class Datasource {
         updatedAt = LocalDateTime.now();
     }
 
+    public void activate(){
+        isEnabled = EnableStatus.ENABLED;
+    }
     public void deactivate() {
         isEnabled = EnableStatus.DISABLED;
     }
@@ -108,32 +95,15 @@ public class Datasource {
         }
     }
 
-    public void updateEndpoint(String endpoint) {
-        if (endpoint != null) {
-            this.endpoint = endpoint;
+    public void updateDbType(DatabaseType dbType) {
+        if (dbType != null) {
+            this.dbType = dbType;
         }
     }
 
-    public void updateUsername(String username) {
-        if (username != null) {
-            this.username = username;
+    public void updateEngineType(DatabaseEngineType engineType) {
+        if (engineType != null) {  
+            this.engineType = engineType;
         }
     }
-
-    public void updatePassword(String password) {
-        if (password != null) {
-            this.passwordEncrypted = password;
-        }
-    }
-
-    public void updateSslEnabled(boolean sslEnabled) {
-        this.sslEnabled = sslEnabled;
-    }
-
-    public void updateOptions(Map<String, Object> options) {
-        if (options != null) {
-            this.options = options;
-        }
-    }
-
 }

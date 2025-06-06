@@ -37,3 +37,4 @@ out/
 .vscode/
 
 *.md
+application-*.yml

@@ -6,18 +6,25 @@ import com.pandaterry.domain.model.database.ColumnSchema;
 import com.pandaterry.domain.service.SchemaExtractor;
 import com.pandaterry.application.exception.AgentException;
 import com.pandaterry.domain.enums.ErrorCode;
+import io.micronaut.serde.ObjectMapper;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class PostgresSchemaExtractor implements SchemaExtractor {
+
+    @Inject
+    private ObjectMapper objectMapper;
+
     private static final Logger logger = LoggerFactory.getLogger(PostgresSchemaExtractor.class);
 
     @Override
@@ -30,7 +37,7 @@ public class PostgresSchemaExtractor implements SchemaExtractor {
             DatabaseMetaData metaData = connection.getMetaData();
             List<TableSchema> schemas = new ArrayList<>();
 
-            try (ResultSet tables = metaData.getTables(null, null, "%", new String[] { "TABLE" })) {
+            try (ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"})) {
                 while (tables.next()) {
                     String tableName = tables.getString("TABLE_NAME");
                     try {
@@ -50,6 +57,61 @@ public class PostgresSchemaExtractor implements SchemaExtractor {
             return schemas;
         } catch (SQLException e) {
             logger.error("PostgreSQL 스키마 추출 중 오류 발생", e);
+            throw new AgentException(ErrorCode.DATABASE_SCHEMA_SCAN_FAILED, e);
+        }
+    }
+
+    @Override
+    public String extractRawSchema(Connection connection) throws AgentException {
+        if (connection == null) {
+            throw new AgentException(ErrorCode.DATABASE_NOT_CONNECTED);
+        }
+
+        try {
+            // PostgreSQL 시스템 카탈로그를 이용한 컬럼 정보 조회 쿼리
+            String sql = ""
+                    + "SELECT c.relname AS table_name, "
+                    + "       a.attname AS column_name, "
+                    + "       format_type(a.atttypid, a.atttypmod) AS data_type, "
+                    + "       NOT a.attnotnull AS is_nullable, "
+                    + "       CASE WHEN pk.indisprimary THEN 'PRI' ELSE NULL END AS column_key "
+                    + "FROM pg_catalog.pg_class c "
+                    + "JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace "
+                    + "JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid "
+                    + "LEFT JOIN pg_catalog.pg_index pk ON pk.indrelid = c.oid "
+                    + "  AND a.attnum = ANY(pk.indkey) AND pk.indisprimary "
+                    + "WHERE n.nspname = ? "
+                    + "  AND c.relkind = 'r' "
+                    + "  AND a.attnum > 0 "
+                    + "ORDER BY c.relname, a.attnum";
+
+            List<Map<String, Object>> rawRows = new ArrayList<>();
+
+            // PreparedStatement 생성 및 파라미터 바인딩
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, connection.getSchema()); // datasourceId를 DB 스키마 이름으로 활용
+
+                // 쿼리 실행
+                try (ResultSet rs = ps.executeQuery()) {
+                    ResultSetMetaData meta = rs.getMetaData();
+                    int columnCount = meta.getColumnCount();
+
+                    // ResultSet을 순회하며 Map<String,Object> 형태로 rawRows에 담기
+                    while (rs.next()) {
+                        Map<String, Object> rowMap = new LinkedHashMap<>();
+                        for (int i = 1; i <= columnCount; i++) {
+                            String colName = meta.getColumnLabel(i);
+                            Object value = rs.getObject(i);
+                            rowMap.put(colName, value);
+                        }
+                        rawRows.add(rowMap);
+                    }
+                }
+            }
+
+            return objectMapper.writeValueAsString(rawRows);
+
+        } catch (SQLException | IOException e) {
             throw new AgentException(ErrorCode.DATABASE_SCHEMA_SCAN_FAILED, e);
         }
     }

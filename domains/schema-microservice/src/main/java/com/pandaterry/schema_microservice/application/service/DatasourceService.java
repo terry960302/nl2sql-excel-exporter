@@ -1,14 +1,15 @@
 package com.pandaterry.schema_microservice.application.service;
 
-import com.pandaterry.schema_microservice.presentation.dto.DatasourceCreateRequest;
-import com.pandaterry.schema_microservice.presentation.dto.DatasourceResponse;
-import com.pandaterry.schema_microservice.presentation.dto.DatasourceUpdateRequest;
+import com.pandaterry.msa_contracts.dto.schema.request.DatasourceCreateRequest;
+import com.pandaterry.msa_contracts.dto.schema.response.DatasourceResponse;
+import com.pandaterry.msa_contracts.dto.schema.request.DatasourceUpdateRequest;
 import com.pandaterry.schema_microservice.domain.entity.Datasource;
-import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
+import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
 import com.pandaterry.schema_microservice.domain.exception.SchemaException;
 import com.pandaterry.schema_microservice.infrastructure.repository.DatasourceRepository;
 import com.pandaterry.schema_microservice.infrastructure.util.EncryptionUtil;
+import com.pandaterry.schema_microservice.presentation.mappers.DatasourceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,22 +23,36 @@ import java.util.stream.Collectors;
 @Transactional
 public class DatasourceService {
     private final DatasourceRepository datasourceRepository;
-    private final EncryptionUtil encryptionUtil;
 
-    public DatasourceResponse createDatasource(UUID orgId, DatasourceCreateRequest request) {
-        if(orgId == null) throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
-        String encryptedPw = encryptionUtil.encrypt(request.getPassword());
-        Datasource datasource = request.toEntity(orgId, encryptedPw);
+    // UUID 반환용
+    public DatasourceResponse initDatasource(UUID orgId, UUID userId, UUID agentId) {
+        if (orgId == null) throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
+        Datasource datasource = Datasource.init(orgId, userId, agentId);
         Datasource saved = datasourceRepository.save(datasource);
-        return DatasourceResponse.of(saved);
+        return DatasourceMapper.toResponse(saved);
+    }
+
+    public DatasourceResponse activateDatasource(UUID datasourceId, UUID orgId, UUID userId, UUID agentId, DatasourceUpdateRequest request) {
+        if (orgId == null) throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
+
+        Datasource datasource = datasourceRepository.findById(datasourceId)
+                .orElseThrow(() -> new SchemaException(ErrorCode.DATASOURCE_NOT_FOUND));
+
+        datasource.updateName(request.getName());
+        datasource.updateDbType(request.getDbType());
+        datasource.updateEngineType(request.getEngineType());
+        datasource.activate();
+
+        Datasource saved = datasourceRepository.save(datasource);
+        return DatasourceMapper.toResponse(saved);
     }
 
     @Transactional(readOnly = true)
     public List<DatasourceResponse> getDatasources(UUID orgId) {
-        if(orgId == null) throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
+        if (orgId == null) throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
         return datasourceRepository.findByOrgIdAndIsEnabled(orgId, EnableStatus.ENABLED)
                 .stream()
-                .map(DatasourceResponse::of)
+                .map(DatasourceMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -45,23 +60,9 @@ public class DatasourceService {
     public DatasourceResponse getDatasource(UUID datasourceId) {
         Datasource datasource = datasourceRepository.findById(datasourceId)
                 .orElseThrow(() -> new SchemaException(ErrorCode.DATASOURCE_NOT_FOUND));
-        return DatasourceResponse.of(datasource);
+        return DatasourceMapper.toResponse(datasource);
     }
 
-    public DatasourceResponse updateDatasource(UUID datasourceId, DatasourceUpdateRequest request) {
-        Datasource datasource = datasourceRepository.findById(datasourceId)
-                .orElseThrow(() -> new SchemaException(ErrorCode.DATASOURCE_NOT_FOUND));
-
-        datasource.updateName(request.getName());
-        datasource.updateEndpoint(request.getEndpoint());
-        datasource.updateUsername(request.getUsername());
-        datasource.updatePassword(encryptionUtil.encrypt(request.getPassword()));
-        datasource.updateSslEnabled(request.isSslEnabled());
-        datasource.updateOptions(request.getOptions());
-
-        Datasource updated = datasourceRepository.save(datasource);
-        return DatasourceResponse.of(updated);
-    }
 
     public void deactivateDatasource(UUID datasourceId) {
         Datasource datasource = datasourceRepository.findById(datasourceId)

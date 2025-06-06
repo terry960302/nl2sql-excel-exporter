@@ -1,12 +1,10 @@
 rootProject.name = 'nl2sql-msa'
 
-include 'libs:msa-contracts'
-project(':libs:msa-contracts').projectDir = file('libs/msa-contracts')
+include ':shared:msa-contracts'
 
-include 'apps:api_gateway'
-project(':apps:api_gateway').projectDir = file('apps/api_gateway')
-
-//include 'apps:auth-microservice'
-//include 'apps:schema-microservice'
-//include 'apps:query-microservice'
-//include 'apps:quota-microservice'
+include ':domains:auth-microservice'
+include ':domains:schema-microservice'
+include ':domains:query-microservice'
+include ':domains:quota-microservice'
+include ':infrastructure:gateway'
+include ':agent-client:agent-server'

@@ -28,6 +28,7 @@ public enum ErrorCode {
     LLM_SCHEMA_MISMATCH(400, "L002", "요청한 컬럼/테이블이 현재 스키마에 존재하지 않습니다."),
     LLM_AMBIGUOUS_INPUT(400, "L003", "자연어 표현이 모호하거나 여러 의미로 해석될 수 있습니다."),
     LLM_STREAM_TIMEOUT(408, "L004", "LLM 응답 시간이 초과되었습니다."),
+    LLM_PROVIDER_NOT_SUPPORTED(400, "L005", "지원되지 않는 LLM 제공자입니다."),
 
     // SQL 검증 관련 에러 (S001 ~ S099)
     SQL_VALIDATION_FAILED(400, "S001", "SQL 검증에 실패했습니다."),

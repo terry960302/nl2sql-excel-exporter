@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
 
 @Entity
 @Table(name = "table_definitions")
@@ -24,9 +23,6 @@ public class TableDefinition {
     @Column(name = "table_name", nullable = false)
     private String tableName;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "is_enabled", nullable = false)
-    private EnableStatus isEnabled = EnableStatus.ENABLED;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -39,10 +35,6 @@ public class TableDefinition {
         table.schemaId = schemaId;
         table.tableName = tableName;
         return table;
-    }
-
-    public void deactivate() {
-        this.isEnabled = EnableStatus.DISABLED;
     }
 
     @PrePersist

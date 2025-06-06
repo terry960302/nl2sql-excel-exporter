@@ -1,15 +1,18 @@
-package com.pandaterry.schema_microservice.unit.application.service;
-
+import com.pandaterry.msa_contracts.dto.schema.request.RegisterSchemaRequest;
+import com.pandaterry.msa_contracts.dto.schema.response.RegisterSchemaResponse;
+import com.pandaterry.msa_contracts.vo.schema.ColumnSchema;
+import com.pandaterry.msa_contracts.vo.schema.TableSchema;
 import com.pandaterry.schema_microservice.application.service.SchemaService;
+import com.pandaterry.schema_microservice.domain.entity.ColumnDefinition;
 import com.pandaterry.schema_microservice.domain.entity.Schema;
-import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
+import com.pandaterry.schema_microservice.domain.entity.TableDefinition;
 import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
 import com.pandaterry.schema_microservice.domain.exception.SchemaException;
+import com.pandaterry.schema_microservice.infrastructure.repository.ColumnDefinitionRepository;
 import com.pandaterry.schema_microservice.infrastructure.repository.SchemaRepository;
-import com.pandaterry.schema_microservice.presentation.dto.SchemaCreateRequest;
-import com.pandaterry.schema_microservice.presentation.dto.SchemaResponse;
-import com.pandaterry.schema_microservice.presentation.dto.SchemaUpdateRequest;
+import com.pandaterry.schema_microservice.infrastructure.repository.TableDefinitionRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,126 +30,53 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SchemaServiceTest {
-
     @Mock
     private SchemaRepository schemaRepository;
+    @Mock
+    private ColumnDefinitionRepository columnDefinitionRepository;
+    @Mock
+    private TableDefinitionRepository tableDefinitionRepository;
 
     @InjectMocks
     private SchemaService schemaService;
 
     private UUID orgId;
     private UUID userId;
-    private UUID datasourceId;
-    private UUID schemaId;
-    private Schema schema;
+    private UUID agentId;
+    private RegisterSchemaRequest request;
 
     @BeforeEach
     void setUp() {
         orgId = UUID.randomUUID();
         userId = UUID.randomUUID();
-        datasourceId = UUID.randomUUID();
-        schemaId = UUID.randomUUID();
-        schema = Schema.create(orgId, datasourceId, userId, "test_schema");
+        agentId = UUID.randomUUID();
+        ColumnSchema column = ColumnSchema.create("id", "INTEGER", false, true);
+        TableSchema table = TableSchema.create("test", List.of(column));
+        request = new RegisterSchemaRequest(orgId, userId, agentId, UUID.randomUUID(), "schema", List.of(table), "{}");
     }
 
     @Test
-    void createSchema_성공() {
-        // given
-        SchemaCreateRequest request = SchemaCreateRequest.of(datasourceId, "new_schema");
-        when(schemaRepository.save(any(Schema.class))).thenReturn(schema);
+    @DisplayName("스키마 업로드 성공")
+    void uploadSchema_성공() {
+        Schema saved = Schema.create(orgId, request.datasourceId(), userId, request.name(), request.rawSchema());
+        saved.setId(UUID.randomUUID());
+        when(schemaRepository.save(any(Schema.class))).thenReturn(saved);
+        when(tableDefinitionRepository.save(any(TableDefinition.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(columnDefinitionRepository.save(any(ColumnDefinition.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // when
-        SchemaResponse result = schemaService.createSchema(request, orgId, userId);
+        RegisterSchemaResponse response = schemaService.uploadSchema(orgId, userId, agentId, request);
 
-        // then
-        assertThat(result.getName()).isEqualTo("test_schema");
+        assertThat(response.id()).isNotNull();
         verify(schemaRepository).save(any(Schema.class));
+        verify(tableDefinitionRepository, atLeastOnce()).save(any(TableDefinition.class));
+        verify(columnDefinitionRepository, atLeastOnce()).save(any(ColumnDefinition.class));
     }
 
     @Test
-    void getSchemasByDatasource_성공() {
-        // given
-        List<Schema> schemas = List.of(schema);
-        when(schemaRepository.findByDatasourceIdAndIsEnabled(datasourceId, EnableStatus.ENABLED)).thenReturn(schemas);
-
-        // when
-        List<SchemaResponse> result = schemaService.getSchemasByDatasource(datasourceId);
-
-        // then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getName()).isEqualTo("test_schema");
-    }
-
-    @Test
-    void getSchema_성공() {
-        // given
-        when(schemaRepository.findById(schemaId)).thenReturn(Optional.of(schema));
-
-        // when
-        SchemaResponse result = schemaService.getSchema(schemaId);
-
-        // then
-        assertThat(result.getName()).isEqualTo("test_schema");
-    }
-
-    @Test
-    void getSchema_실패_스키마없음() {
-        // given
-        when(schemaRepository.findById(schemaId)).thenReturn(Optional.empty());
-
-        // when & then
-        assertThatThrownBy(() -> schemaService.getSchema(schemaId))
+    @DisplayName("조직 ID 누락으로 인한 스키마 업로드 실패")
+    void uploadSchema_OrgIdNull_실패() {
+        assertThatThrownBy(() -> schemaService.uploadSchema(null, userId, agentId, request))
                 .isInstanceOf(SchemaException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.SCHEMA_NOT_FOUND);
-    }
-
-    @Test
-    void updateSchema_성공() {
-        // given
-        SchemaUpdateRequest request = SchemaUpdateRequest.of("updated_schema", EnableStatus.ENABLED);
-        when(schemaRepository.findById(schemaId)).thenReturn(Optional.of(schema));
-        when(schemaRepository.save(schema)).thenReturn(schema);
-
-        // when
-        SchemaResponse result = schemaService.updateSchema(schemaId, request);
-
-        // then
-        assertThat(result.getName()).isEqualTo("updated_schema");
-        verify(schemaRepository).save(any(Schema.class));
-    }
-
-    @Test
-    void updateSchema_실패_스키마없음() {
-        // given
-        SchemaUpdateRequest request = SchemaUpdateRequest.of("updated_schema", EnableStatus.ENABLED);
-        when(schemaRepository.findById(schemaId)).thenReturn(Optional.empty());
-
-        // when & then
-        assertThatThrownBy(() -> schemaService.updateSchema(schemaId, request))
-                .isInstanceOf(SchemaException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.SCHEMA_NOT_FOUND);
-    }
-
-    @Test
-    void deactivateSchema_성공() {
-        // given
-        when(schemaRepository.findById(schemaId)).thenReturn(Optional.of(schema));
-
-        // when
-        schemaService.deactivateSchema(schemaId);
-
-        // then
-        assertThat(schema.getIsEnabled()).isEqualTo(EnableStatus.DISABLED);
-    }
-
-    @Test
-    void deactivateSchema_실패_스키마없음() {
-        // given
-        when(schemaRepository.findById(schemaId)).thenReturn(Optional.empty());
-
-        // when & then
-        assertThatThrownBy(() -> schemaService.deactivateSchema(schemaId))
-                .isInstanceOf(SchemaException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.SCHEMA_NOT_FOUND);
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORG_ID_NOT_FOUND);
     }
 }

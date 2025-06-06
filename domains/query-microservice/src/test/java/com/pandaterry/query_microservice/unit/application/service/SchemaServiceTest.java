@@ -1,6 +1,6 @@
 package com.pandaterry.query_microservice.unit.application.service;
 
-import com.pandaterry.query_microservice.application.dto.response.SchemaInfoResponse;
+import com.pandaterry.msa_contracts.dto.query.response.SchemaInfoResponse;
 import com.pandaterry.query_microservice.application.service.SchemaService;
 import com.pandaterry.query_microservice.infrastructure.client.SchemaClient;
 import org.junit.jupiter.api.DisplayName;

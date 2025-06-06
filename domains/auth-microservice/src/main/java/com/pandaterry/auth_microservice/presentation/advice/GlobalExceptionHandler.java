@@ -2,7 +2,7 @@ package com.pandaterry.auth_microservice.presentation.advice;
 
 import com.pandaterry.auth_microservice.domain.exception.AuthException;
 import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
-import com.pandaterry.auth_microservice.presentation.dto.ErrorResponse;
+import com.pandaterry.auth_microservice.infrastructure.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,10 +14,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<ErrorResponse> handleAuthException(AuthException e) {
         ErrorCode errorCode = e.getErrorCode();
-        ErrorResponse response = new ErrorResponse(
-                errorCode.getCode(),
-                errorCode.getMessage()
-        );
+        ErrorResponse response = ErrorResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
 }

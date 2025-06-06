@@ -1,6 +1,7 @@
 package com.pandaterry.gateway.shared.converters;
 
 import com.pandaterry.gateway.shared.enums.RoleType;
+import com.pandaterry.gateway.shared.exceptions.GatewayException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,8 +76,7 @@ class CustomJwtAuthenticationConverterTest {
     void whenExpiredToken_thenThrowException() {
         // when & then
         assertThatThrownBy(() -> jwtAuthenticationConverter.convert(expiredJwt))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("JWT expired");
+                .isInstanceOf(GatewayException.class);
     }
 
     @Test

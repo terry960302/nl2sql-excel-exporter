@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface SchemaExtractor {
     List<TableSchema> extractSchema(Connection connection) throws AgentException;
+    String extractRawSchema(Connection connection) throws AgentException;
 
     boolean supports(DatabaseType databaseType);
 }

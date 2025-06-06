@@ -1,7 +1,11 @@
 package com.pandaterry.query_microservice.unit.application.service;
 
-import com.pandaterry.query_microservice.application.dto.*;
 import com.pandaterry.query_microservice.application.service.PromptService;
+import com.pandaterry.query_microservice.application.vo.AliasInfo;
+import com.pandaterry.query_microservice.application.vo.ColumnInfo;
+import com.pandaterry.query_microservice.application.vo.PromptContext;
+import com.pandaterry.query_microservice.application.vo.SchemaInfo;
+import com.pandaterry.query_microservice.application.vo.TableInfo;
 import com.pandaterry.query_microservice.domain.enums.ErrorCode;
 import com.pandaterry.query_microservice.domain.exception.QueryException;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,18 +1,19 @@
 package com.pandaterry.schema_microservice.unit.application.service;
 
+import com.pandaterry.msa_contracts.dto.schema.request.DatasourceUpdateRequest;
+import com.pandaterry.msa_contracts.dto.schema.response.DatasourceResponse;
+import com.pandaterry.msa_contracts.enums.schema.DatabaseEngineType;
+import com.pandaterry.msa_contracts.enums.schema.DatabaseType;
+import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 import com.pandaterry.schema_microservice.application.service.DatasourceService;
 import com.pandaterry.schema_microservice.domain.entity.Datasource;
-import com.pandaterry.schema_microservice.domain.enumerated.DatabaseEngineType;
-import com.pandaterry.schema_microservice.domain.enumerated.DatabaseType;
-import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
 import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
 import com.pandaterry.schema_microservice.domain.exception.SchemaException;
 import com.pandaterry.schema_microservice.infrastructure.repository.DatasourceRepository;
-import com.pandaterry.schema_microservice.infrastructure.util.EncryptionUtil;
-import com.pandaterry.schema_microservice.presentation.dto.DatasourceCreateRequest;
-import com.pandaterry.schema_microservice.presentation.dto.DatasourceResponse;
-import com.pandaterry.schema_microservice.presentation.dto.DatasourceUpdateRequest;
+import com.pandaterry.schema_microservice.presentation.mappers.DatasourceMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,175 +31,108 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DatasourceServiceTest {
-
     @Mock
     private DatasourceRepository datasourceRepository;
-
-    @Mock
-    private EncryptionUtil encryptionUtil;
-
     @InjectMocks
     private DatasourceService datasourceService;
 
     private UUID orgId;
     private UUID userId;
-    private UUID datasourceId;
+    private UUID agentId;
     private Datasource datasource;
-
+  
     @BeforeEach
     void setUp() {
         orgId = UUID.randomUUID();
         userId = UUID.randomUUID();
-        datasourceId = UUID.randomUUID();
-        datasource = Datasource.create(
-                orgId,
-                "test_datasource",
-                DatabaseType.RDB,
-                DatabaseEngineType.POSTGRESQL,
-                "localhost:5432",
-                "user",
-                "password",
-                true,
-                null);
+        agentId = UUID.randomUUID();
+        datasource = Datasource.init(orgId, userId, agentId);
+        datasource.setId(UUID.randomUUID());
+        datasource.activate();
     }
 
     @Test
-    void createDatasource_성공() {
-        // given
-        DatasourceCreateRequest request = DatasourceCreateRequest.of(
-                "new_datasource",
-                DatabaseType.RDB,
-                DatabaseEngineType.POSTGRESQL,
-                "localhost:5432",
-                "user",
-                "password",
-                true,
-                null);
+    @DisplayName("데이터소스 초기화 성공")
+    void initDatasource_성공() {
+        when(datasourceRepository.save(any(Datasource.class))).thenReturn(datasource);
 
-        when(encryptionUtil.encrypt("password")).thenReturn("encrypted_password");
-        when(datasourceRepository.save(any(Datasource.class))).thenAnswer(invocation -> {
-            Datasource savedDatasource = invocation.getArgument(0);
-            return savedDatasource;
-        });
+        DatasourceResponse response = datasourceService.initDatasource(orgId, userId, agentId);
 
-        // when
-        DatasourceResponse result = datasourceService.createDatasource(orgId, request);
-
-        // then
-        assertThat(result.getName()).isEqualTo("new_datasource");
-        assertThat(result.getDbType()).isEqualTo(DatabaseType.RDB);
-        assertThat(result.getEngineType()).isEqualTo(DatabaseEngineType.POSTGRESQL);
+        assertThat(response.getId()).isNotNull();
         verify(datasourceRepository).save(any(Datasource.class));
-        verify(encryptionUtil).encrypt("password");
     }
 
     @Test
-    void getDatasources_성공() {
-        // given
-        List<Datasource> datasources = List.of(datasource);
-        when(datasourceRepository.findByOrgIdAndIsEnabled(orgId, EnableStatus.ENABLED)).thenReturn(datasources);
-
-        // when
-        List<DatasourceResponse> result = datasourceService.getDatasources(orgId);
-
-        // then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getName()).isEqualTo("test_datasource");
+    @DisplayName("조직 ID 누락으로 초기화 실패")
+    void initDatasource_OrgIdNull_실패() {
+        assertThatThrownBy(() -> datasourceService.initDatasource(null, userId, agentId))
+                .isInstanceOf(SchemaException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORG_ID_NOT_FOUND);
     }
 
-    // 복호화는 수신받는 서비스에서 할 예정. 중간 가로채더라도 암호화되어있어야함.
     @Test
+    @DisplayName("데이터소스 활성화 성공")
+    void activateDatasource_성공() {
+        DatasourceUpdateRequest request = DatasourceMapper.of("test", DatabaseType.RDB, DatabaseEngineType.POSTGRESQL);
+        when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.of(datasource));
+        when(datasourceRepository.save(any(Datasource.class))).thenReturn(datasource);
+
+        DatasourceResponse response = datasourceService.activateDatasource(datasource.getId(), orgId, userId, agentId, request);
+
+        assertThat(response.getName()).isEqualTo("test");
+        verify(datasourceRepository).findById(datasource.getId());
+        verify(datasourceRepository).save(any(Datasource.class));
+    }
+
+    @Test
+    @DisplayName("데이터소스 조회 성공")
     void getDatasource_성공() {
-        // given
-        when(datasourceRepository.findById(datasourceId)).thenReturn(Optional.of(datasource));
-//        when(encryptionUtil.decrypt(anyString())).thenReturn("password");
+        when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.of(datasource));
 
-        // when
-        DatasourceResponse result = datasourceService.getDatasource(datasourceId);
+        DatasourceResponse response = datasourceService.getDatasource(datasource.getId());
 
-        // then
-        assertThat(result.getName()).isEqualTo("test_datasource");
-//        verify(encryptionUtil).decrypt(anyString());
+        assertThat(response.getId()).isEqualTo(datasource.getId());
     }
 
     @Test
-    void getDatasource_실패_데이터소스없음() {
-        // given
-        when(datasourceRepository.findById(datasourceId)).thenReturn(Optional.empty());
+    @DisplayName("존재하지 않는 데이터소스 조회 실패")
+    void getDatasource_없음_실패() {
+        when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.empty());
 
-        // when & then
-        assertThatThrownBy(() -> datasourceService.getDatasource(datasourceId))
+        assertThatThrownBy(() -> datasourceService.getDatasource(datasource.getId()))
                 .isInstanceOf(SchemaException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.DATASOURCE_NOT_FOUND);
     }
 
     @Test
-    void updateDatasource_성공() {
-        // given
-        DatasourceUpdateRequest request = new DatasourceUpdateRequest(
-                "updated_datasource",
-                "localhost:5433",
-                "new_user",
-                "new_password",
-                true,
-                null);
+    @DisplayName("데이터소스 리스트 조회 성공")
+    void getDatasources_성공() {
+        when(datasourceRepository.findByOrgIdAndIsEnabled(orgId, EnableStatus.ENABLED)).thenReturn(List.of(datasource));
 
-        when(datasourceRepository.findById(datasourceId)).thenReturn(Optional.of(datasource));
-        when(encryptionUtil.encrypt(anyString())).thenReturn("encrypted_new_password");
-        when(datasourceRepository.save(any(Datasource.class))).thenAnswer(invocation -> {
-            Datasource savedDatasource = invocation.getArgument(0);
-            return savedDatasource;
-        });
+        List<DatasourceResponse> responses = datasourceService.getDatasources(orgId);
 
-        // when
-        DatasourceResponse result = datasourceService.updateDatasource(datasourceId, request);
-
-        // then
-        assertThat(result.getName()).isEqualTo("updated_datasource");
-        assertThat(result.getEndpoint()).isEqualTo("localhost:5433");
-        assertThat(result.isSslEnabled()).isTrue();
-        verify(datasourceRepository).save(any(Datasource.class));
-        verify(encryptionUtil).encrypt("new_password");
+        assertThat(responses).hasSize(1);
+        verify(datasourceRepository).findByOrgIdAndIsEnabled(orgId, EnableStatus.ENABLED);
     }
 
     @Test
-    void updateDatasource_실패_데이터소스없음() {
-        // given
-        DatasourceUpdateRequest request = new DatasourceUpdateRequest(
-                "updated_datasource",
-                null,
-                null,
-                null,
-                true,
-                null);
-        when(datasourceRepository.findById(datasourceId)).thenReturn(Optional.empty());
+    @DisplayName("존재하지 않는 데이터소스 비활성화 실패")
+    void deactivateDatasource_없음_실패() {
+        when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.empty());
 
-        // when & then
-        assertThatThrownBy(() -> datasourceService.updateDatasource(datasourceId, request))
+        assertThatThrownBy(() -> datasourceService.deactivateDatasource(datasource.getId()))
                 .isInstanceOf(SchemaException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.DATASOURCE_NOT_FOUND);
     }
 
     @Test
+    @DisplayName("데이터소스 비활성화 성공")
     void deactivateDatasource_성공() {
-        // given
-        when(datasourceRepository.findById(datasourceId)).thenReturn(Optional.of(datasource));
+        when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.of(datasource));
 
-        // when
-        datasourceService.deactivateDatasource(datasourceId);
+        datasourceService.deactivateDatasource(datasource.getId());
 
-        // then
+        verify(datasourceRepository).findById(datasource.getId());
         assertThat(datasource.getIsEnabled()).isEqualTo(EnableStatus.DISABLED);
-    }
-
-    @Test
-    void deactivateDatasource_실패_데이터소스없음() {
-        // given
-        when(datasourceRepository.findById(datasourceId)).thenReturn(Optional.empty());
-
-        // when & then
-        assertThatThrownBy(() -> datasourceService.deactivateDatasource(datasourceId))
-                .isInstanceOf(SchemaException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.DATASOURCE_NOT_FOUND);
     }
 }

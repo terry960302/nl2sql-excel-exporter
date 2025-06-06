@@ -15,16 +15,22 @@ public class MergeRegionCalculator {
      */
     public Map<Integer, List<CellRange>> calculateMergeRegions(
             List<FlatRow> flatRows, List<String> columnOrder) {
+        return calculateMergeRegions(flatRows, columnOrder, Collections.emptyList());
+    }
+
+    public Map<Integer, List<CellRange>> calculateMergeRegions(
+            List<FlatRow> flatRows, List<String> columnOrder, List<String> joinKeyOrder) {
+        List<String> finalOrder = buildFinalOrder(columnOrder, joinKeyOrder);
+
         Map<Integer, List<CellRange>> mergeMap = new HashMap<>();
         int rowCount = flatRows.size();
-
-        for (int col = 0; col < columnOrder.size(); col++) {
-            String column = columnOrder.get(col);
+        for (int col = 0; col < finalOrder.size(); col++) {
+            String column = finalOrder.get(col);
             Object prev = null;
             int blockStart = 0;
 
             for (int i = 0; i < rowCount; i++) {
-                Object curr = flatRows.get(i).getColumns().get(column);
+                Object curr = flatRows.get(i).getColumns().get(columnOrder.get(col));
 
                 if (!Objects.equals(prev, curr)) {
                     // 이전 블록이 2개 이상 연속이면 병합해야 함
@@ -49,5 +55,14 @@ public class MergeRegionCalculator {
             }
         }
         return mergeMap;
+    }
+
+    private List<String> buildFinalOrder(List<String> columnOrder, List<String> joinKeyOrder) {
+        if (joinKeyOrder == null || joinKeyOrder.isEmpty()) {
+            return new ArrayList<>(columnOrder);
+        }
+        LinkedHashSet<String> set = new LinkedHashSet<>(joinKeyOrder);
+        set.addAll(columnOrder);
+        return new ArrayList<>(set);
     }
 }

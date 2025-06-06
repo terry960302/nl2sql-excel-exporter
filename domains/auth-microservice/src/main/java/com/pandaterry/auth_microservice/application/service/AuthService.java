@@ -14,7 +14,12 @@ import com.pandaterry.auth_microservice.domain.repository.RefreshTokenRepository
 import com.pandaterry.auth_microservice.domain.repository.UserRepository;
 import com.pandaterry.auth_microservice.application.validator.PasswordValidator;
 import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
-import com.pandaterry.auth_microservice.presentation.dto.*;
+import com.pandaterry.auth_microservice.presentation.mappers.UserInfoMapper;
+import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
+import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
+import com.pandaterry.msa_contracts.dto.auth.response.QuotaInfo;
+import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
+import com.pandaterry.msa_contracts.dto.auth.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -74,7 +79,10 @@ public class AuthService {
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
         saveRefreshToken(user, refreshToken);
 
-        return new TokenResponse(accessToken, refreshToken);
+        return TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -84,7 +92,7 @@ public class AuthService {
 
         QuotaInfo quotaInfo = quotaClient.getCurrentQuota(userId);
 
-        return UserInfoResponse.of(user, quotaInfo);
+        return UserInfoMapper.toResponse(user, quotaInfo);
     }
 
     public TokenResponse refreshToken(String refreshToken) {

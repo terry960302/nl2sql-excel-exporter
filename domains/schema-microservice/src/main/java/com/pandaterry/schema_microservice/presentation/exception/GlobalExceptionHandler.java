@@ -2,7 +2,7 @@ package com.pandaterry.schema_microservice.presentation.exception;
 
 import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
 import com.pandaterry.schema_microservice.domain.exception.SchemaException;
-import com.pandaterry.schema_microservice.presentation.dto.ErrorResponse;
+import com.pandaterry.msa_contracts.dto.schema.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;

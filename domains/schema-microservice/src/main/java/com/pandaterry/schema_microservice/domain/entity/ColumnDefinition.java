@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.pandaterry.schema_microservice.domain.enumerated.EnableStatus;
+import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 
 @Entity
 @Table(name = "column_definitions")

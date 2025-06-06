@@ -12,7 +12,11 @@ import com.pandaterry.auth_microservice.domain.repository.PlanRepository;
 import com.pandaterry.auth_microservice.domain.repository.RefreshTokenRepository;
 import com.pandaterry.auth_microservice.domain.repository.UserRepository;
 import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
-import com.pandaterry.auth_microservice.presentation.dto.*;
+import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
+import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
+import com.pandaterry.msa_contracts.dto.auth.response.QuotaInfo;
+import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
+import com.pandaterry.msa_contracts.dto.auth.response.UserInfoResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -82,6 +86,7 @@ class AuthServiceTest {
     void signup_성공() {
         // given
         SignupRequest request = SignupRequest.builder()
+                .name("asdjajksdhads")
                 .email("new@example.com")
                 .password("ValidPass123!")
                 .build();
@@ -107,6 +112,7 @@ class AuthServiceTest {
     void signup_이메일중복_실패() {
         // given
         SignupRequest request = SignupRequest.builder()
+                .name("Asdadasda")
                 .email("existing@example.com")
                 .password("ValidPass123!")
                 .build();
@@ -159,7 +165,7 @@ class AuthServiceTest {
     void getMyInfo_성공() {
         // given
         String userId = testUser.getId().toString();
-        QuotaInfo quotaInfo = new QuotaInfo(100, 30, 70);
+        QuotaInfo quotaInfo = QuotaInfo.of(100, 30, 70);
 
         when(userRepository.findById(UUID.fromString(userId))).thenReturn(Optional.of(testUser));
         when(quotaClient.getCurrentQuota(userId)).thenReturn(quotaInfo);

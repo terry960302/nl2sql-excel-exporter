@@ -1,11 +1,11 @@
 package com.pandaterry.query_microservice.application.service;
 
-import com.pandaterry.query_microservice.application.dto.PromptContext;
-import com.pandaterry.query_microservice.application.dto.PromptFragment;
-import com.pandaterry.query_microservice.application.dto.SchemaInfo;
-import com.pandaterry.query_microservice.application.dto.TableInfo;
-import com.pandaterry.query_microservice.application.dto.ColumnInfo;
-import com.pandaterry.query_microservice.application.dto.AliasInfo;
+import com.pandaterry.query_microservice.application.vo.AliasInfo;
+import com.pandaterry.query_microservice.application.vo.ColumnInfo;
+import com.pandaterry.query_microservice.application.vo.PromptContext;
+import com.pandaterry.query_microservice.application.vo.PromptFragment;
+import com.pandaterry.query_microservice.application.vo.SchemaInfo;
+import com.pandaterry.query_microservice.application.vo.TableInfo;
 import com.pandaterry.query_microservice.domain.enums.ErrorCode;
 import com.pandaterry.query_microservice.domain.exception.QueryException;
 import lombok.RequiredArgsConstructor;
