@@ -77,7 +77,7 @@ class AuthIntegrationTest {
     void setUp() {
         // QuotaClient의 임의 설정
         when(quotaClient.getCurrentQuota(anyString()))
-                .thenReturn(new QuotaInfo(100, 0, 100));  // 기본 쿼터 정보 반환
+                .thenReturn(QuotaInfo.of(100, 0, 100));  // 기본 쿼터 정보 반환
     }
 
     @Nested

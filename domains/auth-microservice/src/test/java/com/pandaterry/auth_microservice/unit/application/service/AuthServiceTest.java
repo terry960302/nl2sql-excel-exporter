@@ -163,7 +163,7 @@ class AuthServiceTest {
     void getMyInfo_성공() {
         // given
         String userId = testUser.getId().toString();
-        QuotaInfo quotaInfo = new QuotaInfo(100, 30, 70);
+        QuotaInfo quotaInfo = QuotaInfo.of(100, 30, 70);
 
         when(userRepository.findById(UUID.fromString(userId))).thenReturn(Optional.of(testUser));
         when(quotaClient.getCurrentQuota(userId)).thenReturn(quotaInfo);
