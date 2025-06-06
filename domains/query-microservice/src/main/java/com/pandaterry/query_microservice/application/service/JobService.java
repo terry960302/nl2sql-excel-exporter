@@ -3,6 +3,9 @@ package com.pandaterry.query_microservice.application.service;
 import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.msa_contracts.enums.query.JobStatus;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
+import com.pandaterry.query_microservice.infrastructure.messaging.QuotaUsageProducer;
+import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -12,12 +15,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@RequiredArgsConstructor
 public class JobService {
     private final Map<UUID, ExecutionJob> store = new ConcurrentHashMap<>();
+    private final QuotaUsageProducer quotaUsageProducer;
 
-    public Mono<ExecutionJob> createJob(String query) {
+    public Mono<ExecutionJob> createJob(UUID orgId, String query) {
         UUID id = UUID.randomUUID();
-        ExecutionJob job = new ExecutionJob(id, JobStatus.PENDING, query, LocalDateTime.now(), LocalDateTime.now());
+        ExecutionJob job = new ExecutionJob(id, JobStatus.PENDING, orgId, query, LocalDateTime.now(), LocalDateTime.now());
         store.put(id, job);
         return Mono.just(job);
     }
@@ -36,11 +41,20 @@ public class JobService {
             ExecutionJob updated = new ExecutionJob(
                     existing.jobId(),
                     request.status(),
+                    existing.orgId(),
                     existing.query(),
                     existing.createdAt(),
                     LocalDateTime.now()
             );
             store.put(existing.jobId(), updated);
+            if (JobStatus.COMPLETED.equals(request.status())) {
+                quotaUsageProducer.sendQuotaUsage(
+                        QuotaUsageRecordRequest.builder()
+                                .orgId(existing.orgId())
+                                .increment(1L)
+                                .build()
+                );
+            }
         }
         return Mono.empty();
     }

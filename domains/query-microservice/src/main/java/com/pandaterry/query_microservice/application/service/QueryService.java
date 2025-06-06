@@ -41,7 +41,7 @@ public class QueryService {
 
         public Mono<ExecutionJob> createQueryJob(NaturalLanguageQueryRequest request) {
                 return convertToSQL(request)
-                                .flatMap(jobService::createJob);
+                                .flatMap(sql -> jobService.createJob(request.getOrgId(), sql));
         }
 
 }
