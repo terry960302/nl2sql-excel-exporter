@@ -1,4 +1,4 @@
-rootProject.name = 'nl2sql-msa'
+rootProject.name = 'nl2sql-backend'
 
 include ':shared:msa-contracts'
 
