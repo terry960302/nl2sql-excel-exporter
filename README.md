@@ -1,6 +1,8 @@
 # NL2SQL Excel Exporter
 > natural language to SQL and generating EXCEL from it.
 
+[랜딩페이지 바로가기](nl2sql.pandaterry.com)
+
 ## 서비스별 역할
 
 | 구성 요소 | 주요 역할 | 통신 방식 | 비고 |
