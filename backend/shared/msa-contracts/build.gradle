@@ -25,6 +25,9 @@ dependencies {
 
     // (선택) IDE autocomplete나 컴파일 시점 애노테이션 프로세서를 위해
     annotationProcessor("jakarta.validation:jakarta.validation-api:3.0.2")
+
+    compileOnly 'org.slf4j:slf4j-api:2.0.9'
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 }
 
 // 여기에 공통으로 쓸 의존성이 있으면 추가합니다.
