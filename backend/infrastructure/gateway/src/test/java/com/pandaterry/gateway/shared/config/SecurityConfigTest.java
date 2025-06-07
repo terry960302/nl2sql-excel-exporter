@@ -1,7 +1,9 @@
 package com.pandaterry.gateway.shared.config;
 
 import com.pandaterry.gateway.presentation.TestController;
+import com.pandaterry.gateway.shared.filters.AgentAuthenticationFilter;
 import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
+import com.pandaterry.gateway.shared.service.AgentAuthService;
 import com.pandaterry.gateway.shared.utils.JwtUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,7 +24,9 @@ import java.util.List;
 
 @WebFluxTest(controllers = TestController.class)
 @Import({SecurityConfig.class, JwtAuthenticationConverter.class, JwtUtil.class,
-        JwtAuthenticationFilter.class  // 필터 추가
+        JwtAuthenticationFilter.class,
+        AgentAuthenticationFilter.class,
+        AgentAuthService.class
 })
 @TestPropertySource(properties = {
         "spring.cloud.config.enabled=false",
