@@ -7,7 +7,6 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.pandaterry.gateway.shared.converters.CustomJwtAuthenticationConverter;
-import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,12 +27,14 @@ public class SecurityConfig {
     private final String SECRET_KEY_ALGORITHM = "HmacSHA256";
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http,
-                                                            JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/api/auth/**").permitAll()  // 인증 엔드포인트는 허용
+                        .pathMatchers("/queries/**", "/schemas/**", "/quota/me").hasAnyRole("USER", "ADMIN")
+                        .pathMatchers("/agents/**", "/quota/users/**").hasRole("ADMIN")
+                        .pathMatchers("/jobs/**", "/datasources/**").hasAuthority("AGENT")
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
