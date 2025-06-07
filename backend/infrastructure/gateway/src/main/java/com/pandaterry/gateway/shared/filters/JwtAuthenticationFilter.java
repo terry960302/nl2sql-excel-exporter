@@ -1,6 +1,7 @@
 package com.pandaterry.gateway.shared.filters;
 
 import com.pandaterry.gateway.shared.utils.JwtUtil;
+import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -45,14 +46,27 @@ public class JwtAuthenticationFilter implements WebFilter {
         // 3) 토큰 검증
         try {
             Jws<Claims> claims = jwtUtil.validateToken(token);
-            // 필요하다면 Claims에서 사용자 정보 꺼내서 SecurityContext에 저장
-             exchange.getAttributes().put("claims", claims.getPayload());
+
+            Claims payload = claims.getPayload();
+            String userId = payload.getSubject();
+            String organizationId = payload.get("organizationId", String.class);
+            @SuppressWarnings("unchecked")
+            java.util.List<String> rolesList = (java.util.List<String>) payload.get("roles");
+            String roles = rolesList == null ? "" : String.join(",", rolesList);
+
+            ServerHttpRequest newRequest = exchange.getRequest()
+                    .mutate()
+                    .header(HeaderKeys.USER_ID, userId)
+                    .header(HeaderKeys.ORG_ID, organizationId)
+                    .header(HeaderKeys.ROLES, roles)
+                    .header(HeaderKeys.INTERNAL, "true")
+                    .build();
+
+            ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
+            return chain.filter(newExchange);
         } catch (JwtException ex) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
-
-        // 4) 검증 되었다면 다음 필터 호출
-        return chain.filter(exchange);
     }
 }
