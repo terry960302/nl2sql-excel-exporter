@@ -1,0 +1,93 @@
+plugins {
+    id("io.micronaut.application") version "4.5.3"
+    id("com.gradleup.shadow") version "8.3.6"
+    id("io.micronaut.aot") version "4.5.3"
+}
+
+version = "0.1"
+group = "com.pandaterry"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':shared:msa-contracts')
+
+    annotationProcessor("io.micronaut:micronaut-http-validation")
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    compileOnly("io.micronaut:micronaut-http-client")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    testImplementation("io.micronaut:micronaut-http-client")
+    implementation("org.postgresql:postgresql")
+    implementation("com.alibaba:easyexcel:3.3.2")
+    implementation("com.github.jsqlparser:jsqlparser:4.5")
+    compileOnly("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    
+    // HikariCP
+    implementation("com.zaxxer:HikariCP:5.1.0")
+
+
+    // jsql parser
+    implementation("com.github.jsqlparser:jsqlparser:4.6")
+    
+    // YAML
+    runtimeOnly("org.yaml:snakeyaml:2.2")
+    
+    // Test dependencies
+    testImplementation("org.testcontainers:testcontainers:1.19.7")
+    testImplementation("org.testcontainers:postgresql:1.19.7")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.7")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
+    testImplementation("org.assertj:assertj-core:3.25.3")
+}
+
+application {
+    mainClass = "com.pandaterry.Application"
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+graalvmNative.toolchainDetection = false
+
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("com.pandaterry.*")
+    }
+    aot {
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+        optimizeNetty = true
+        replaceLogbackXml = true
+    }
+}
+
+tasks.named("dockerfileNative") {
+    jdkVersion = "17"
+}
+
+test {
+    useJUnitPlatform()
+    if (project.hasProperty('ci')) {
+        useJUnitPlatform {
+            includeEngines 'junit-jupiter'
+            excludeTags 'Docker'
+        }
+    }
+}
+
+

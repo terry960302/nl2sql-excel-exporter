@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active : local
+
+schema:
+  service:
+    url: ${SCHEMA_SERVICE_URL:http://localhost:8081}
+
+quota:
+  usage:
+    topic: quota-usage
