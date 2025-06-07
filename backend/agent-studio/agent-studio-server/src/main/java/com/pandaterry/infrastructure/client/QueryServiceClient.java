@@ -1,6 +1,7 @@
 package com.pandaterry.infrastructure.client;
 
 import com.pandaterry.domain.model.ExecutionJob;
+import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.presentation.dto.request.QueryRequest;
 import io.micronaut.http.client.HttpClient;
@@ -23,7 +24,7 @@ public class QueryServiceClient extends BaseServiceClient {
     // 자연어 질의 요청
     public Optional<ExecutionJob> requestQuery(UUID orgId, QueryRequest payload) {
         try {
-            Map<String, String> headers = Map.of("X-Organization-Id", orgId.toString());
+            Map<String, String> headers = Map.of(HeaderKeys.ORG_ID, orgId.toString());
             ExecutionJob job = post("/api/v1/queries", payload, headers, ExecutionJob.class);
             return Optional.ofNullable(job);
         } catch (Exception e) {
