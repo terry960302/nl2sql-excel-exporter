@@ -1,6 +1,9 @@
 package com.pandaterry.gateway.shared.config;
 
 import com.pandaterry.gateway.presentation.TestController;
+import com.pandaterry.gateway.shared.filters.AgentAuthenticationFilter;
+import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
+import com.pandaterry.gateway.shared.service.AgentAuthService;
 import com.pandaterry.gateway.shared.utils.JwtUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +23,11 @@ import static org.mockito.Mockito.when;
 
 
 @WebFluxTest(controllers = TestController.class)
-@Import({SecurityConfig.class, JwtAuthenticationConverter.class, JwtUtil.class})
+@Import({SecurityConfig.class, JwtAuthenticationConverter.class, JwtUtil.class,
+        JwtAuthenticationFilter.class,
+        AgentAuthenticationFilter.class,
+        AgentAuthService.class
+})
 @TestPropertySource(properties = {
         "spring.cloud.config.enabled=false",
         "spring.cloud.discovery.enabled=false",
