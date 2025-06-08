@@ -1,22 +1,33 @@
 import styled from "@emotion/styled";
 import logo from "@assets/nl2sql_logo_no_bg.png";
+import { breakpoints } from "@constants/breakpoints";
 
 const FooterContainer = styled.footer`
   width: 100%;
   padding: 4rem 0;
   background-color: #f8f8f8;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 2rem 0;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 0 1rem;
+  }
 `;
 
 const ContentWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 `;
 
 const LeftSection = styled.div`
@@ -62,6 +73,10 @@ const RightSection = styled.div`
   text-align: right;
   flex-direction: column;
   justify-content: space-between;
+  @media (max-width: ${breakpoints.mobile}) {
+    text-align: left;
+    justify-content: flex-start;
+  }
 `;
 
 const Copyright = styled.p`

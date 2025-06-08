@@ -1,10 +1,14 @@
 import styled from "styled-components";
 import { analytics } from "@lib/analytics";
+import { breakpoints } from "@constants/breakpoints";
 
 const Section = styled.section`
   padding: 4rem 0;
   text-align: center;
   scroll-margin-top: 80px;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 2rem 0;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -12,12 +16,18 @@ const SectionTitle = styled.h2`
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1.75rem;
+  }
 `;
 
 const SectionDescription = styled.p`
   font-size: 1.25rem;
   color: #4a4a4a;
   margin-bottom: 2rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1rem;
+  }
 `;
 
 const PlanCard = styled.div`
@@ -33,6 +43,9 @@ const PlanCard = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   transition: all 0.3s ease;
+  @media (max-width: ${breakpoints.mobile}) {
+    width: 100%;
+  }
 
   &:hover {
     background-color: #f8f8f8;
@@ -47,6 +60,9 @@ const PlanName = styled.h4`
   color: #1a1a1a;
   margin-bottom: 0.5rem;
   transition: color 0.3s ease;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1.25rem;
+  }
 `;
 
 const PlanPrice = styled.div`
@@ -55,12 +71,18 @@ const PlanPrice = styled.div`
   color: #1a1a1a;
   margin-bottom: 0.5rem;
   transition: color 0.3s ease;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 2rem;
+  }
 `;
 
 const PlanPeriod = styled.p`
   font-size: 0.875rem;
   color: #4a4a4a;
   transition: color 0.3s ease;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 0.75rem;
+  }
 `;
 
 const FeatureItem = styled.li`
@@ -76,6 +98,9 @@ const FeatureItem = styled.li`
     color: #007acc;
     transition: color 0.3s ease;
   }
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 0.75rem;
+  }
 `;
 
 const PlansContainer = styled.div`
@@ -84,6 +109,9 @@ const PlansContainer = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 3rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    gap: 1rem;
+  }
 `;
 
 const Button = styled.button`
@@ -99,6 +127,9 @@ const Button = styled.button`
 
   &:hover {
     background-color: #4a753f;
+  }
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 0.875rem;
   }
 `;
 
