@@ -43,7 +43,7 @@ const Description = styled.p`
 `;
 
 const DemoButton = styled.button`
-  background-color: #2e4f21;
+  background-color: #007acc;
   color: white;
   padding: 1rem 2rem;
   border: none;

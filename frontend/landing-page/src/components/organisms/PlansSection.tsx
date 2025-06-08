@@ -73,7 +73,7 @@ const FeatureItem = styled.li`
 
   &::before {
     content: "✓";
-    color: #2e4f21;
+    color: #007acc;
     transition: color 0.3s ease;
   }
 `;
@@ -87,7 +87,7 @@ const PlansContainer = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #2e4f21;
+  background-color: #007acc;
   color: #ffffff;
   border: none;
   border-radius: 8px;

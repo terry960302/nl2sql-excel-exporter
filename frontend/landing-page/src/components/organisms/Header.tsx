@@ -15,7 +15,7 @@ const HeaderContainer = styled.header<{ isScrolled: boolean }>`
 `;
 
 const Container = styled.div`
-  max-width: 100vw;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
@@ -35,7 +35,7 @@ const Nav = styled.nav`
 `;
 
 const NavLink = styled.a`
-  color: #2e4f21;
+  color: #005f91;
   text-decoration: none;
   font-size: 16px;
   font-weight: 500;

@@ -24,7 +24,7 @@ const Container = styled.div`
 const Title = styled.h2`
   font-size: 48px;
   font-weight: 700;
-  color: #2e4f21;
+  color: #000000;
   letter-spacing: -4.2px;
   line-height: 1;
   text-align: center;
@@ -55,7 +55,7 @@ const TestimonialContent = styled.div`
 const Quote = styled.p`
   font-size: 30px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -1.35px;
   line-height: 1.4;
   margin-bottom: 2rem;
@@ -77,7 +77,7 @@ const AuthorImage = styled.img`
 const AuthorName = styled.p`
   font-size: 16px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.72px;
 `;
 

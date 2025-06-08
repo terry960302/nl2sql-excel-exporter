@@ -29,7 +29,7 @@ const HeaderWrapper = styled.div`
 const Title = styled.h2`
   font-size: 1rem;
   font-weight: 500;
-  color: #6c7f65;
+  color: #005f91;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 `;
@@ -37,7 +37,7 @@ const Title = styled.h2`
 const Subtitle = styled.h3`
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #000000;
   line-height: 1.2;
   letter-spacing: -0.02em;
 `;
@@ -59,7 +59,7 @@ const ServiceCard = styled.div<{ isReversed?: boolean }>`
   gap: 2rem;
   align-items: flex-start;
   flex-direction: ${({ isReversed }) => (isReversed ? "row-reverse" : "row")};
-  background-color: #ffffff;
+  background-color: #eaf6ff;
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -115,7 +115,7 @@ const Tag = styled.span`
   border-radius: 8px;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #6c7f65;
+  color: #4a4a4a;
   letter-spacing: -0.54px;
 `;
 

@@ -43,7 +43,7 @@ const CompanyInfo = styled.div`
 const CompanyName = styled.h3`
   font-size: 24px;
   font-weight: 500;
-  color: #2e4f21;
+  color: #005f91;
   letter-spacing: -1.08px;
   margin: 0;
 `;
@@ -51,7 +51,7 @@ const CompanyName = styled.h3`
 const CompanyDescription = styled.p`
   font-size: 16px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.72px;
   line-height: 1.5;
   margin: 0;
@@ -67,7 +67,7 @@ const RightSection = styled.div`
 const Copyright = styled.p`
   font-size: 16px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.72px;
   margin: 0;
 `;

@@ -30,7 +30,7 @@ const Title = styled.h2`
 `;
 
 const ConnectButton = styled.button`
-  background-color: #2e4f21;
+  background-color: #007acc;
   border: none;
   border-radius: 8px;
   color: white;

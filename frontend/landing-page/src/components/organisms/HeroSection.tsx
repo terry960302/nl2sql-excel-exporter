@@ -4,7 +4,7 @@ import heroImage from "@assets/icons/ask_bubble_database.jpg";
 const Section = styled.section`
   width: 100%;
   padding: 4rem 0;
-  background-color: #f5f5f5;
+  background-color: #eaf6ff;
 `;
 
 const Container = styled.div`
@@ -29,7 +29,7 @@ const TextContent = styled.div`
 const Title = styled.h1`
   font-size: 60px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #000000;
   letter-spacing: -3px;
   line-height: 1.1;
   margin: 0;
@@ -38,7 +38,7 @@ const Title = styled.h1`
 const Description = styled.p`
   font-size: 18px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.81px;
   line-height: 1.5;
   margin: 0;
