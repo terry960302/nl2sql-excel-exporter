@@ -1,17 +1,24 @@
 import styled from "@emotion/styled";
 import { analytics } from "@lib/analytics";
+import { breakpoints } from "@constants/breakpoints";
 
 const Section = styled.section`
   width: 100%;
   padding: 4rem 0;
   background-color: #ffffff;
   scroll-margin-top: 80px;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 2rem 0;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 0 1rem;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -19,6 +26,9 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   gap: 2rem;
   align-items: center;
+  @media (max-width: ${breakpoints.mobile}) {
+    gap: 1.5rem;
+  }
 `;
 
 const Title = styled.h2`
@@ -27,6 +37,9 @@ const Title = styled.h2`
   color: #1a1a1a;
   text-align: center;
   margin-bottom: 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1.75rem;
+  }
 `;
 
 const ConnectButton = styled.button`
@@ -43,6 +56,9 @@ const ConnectButton = styled.button`
   &:hover {
     background-color: #1e3f11;
     transform: translateY(-2px);
+  }
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1rem;
   }
 `;
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import logo from "@assets/nl2sql_logo_no_bg.png";
+import { breakpoints } from "@constants/breakpoints";
 
 const HeaderContainer = styled.header<{ isScrolled: boolean }>`
   width: 100%;
@@ -12,6 +13,9 @@ const HeaderContainer = styled.header<{ isScrolled: boolean }>`
   transition: box-shadow 0.3s ease;
   box-shadow: ${({ isScrolled }) =>
     isScrolled ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "none"};
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 1rem 0;
+  }
 `;
 
 const Container = styled.div`
@@ -21,6 +25,10 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  @media (max-width: ${breakpoints.mobile}) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 `;
 
 const Logo = styled.img`
@@ -32,6 +40,9 @@ const Nav = styled.nav`
   display: flex;
   gap: 2rem;
   align-items: center;
+  @media (max-width: ${breakpoints.mobile}) {
+    gap: 1rem;
+  }
 `;
 
 const NavLink = styled.a`
@@ -41,6 +52,9 @@ const NavLink = styled.a`
   font-weight: 500;
   transition: color 0.3s ease;
   cursor: pointer;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 14px;
+  }
 
   &:hover {
     color: #1a2f13;

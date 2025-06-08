@@ -1,16 +1,23 @@
 import styled from "@emotion/styled";
 import FeatureImage from "@atoms/FeatureImage";
+import { breakpoints } from "@constants/breakpoints";
 
 const Section = styled.section`
   width: 100%;
   padding: 4rem 0;
   background-color: #ffffff;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 2rem 0;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 0 1rem;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -18,6 +25,10 @@ const ContentWrapper = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+  @media (max-width: ${breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 `;
 
 const TextContent = styled.div`
@@ -36,6 +47,9 @@ const Title = styled.h2`
   letter-spacing: -2.16px;
   line-height: 1;
   margin: 0;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 32px;
+  }
 `;
 
 const Description = styled.p`
@@ -45,6 +59,9 @@ const Description = styled.p`
   letter-spacing: -0.81px;
   line-height: 1.5;
   margin: 0;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 16px;
+  }
 `;
 
 const LearnMoreButton = styled.button`
@@ -62,6 +79,9 @@ const LearnMoreButton = styled.button`
 
   &:hover {
     background-color: #f5f5f5;
+  }
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 14px;
   }
 `;
 

@@ -3,18 +3,25 @@ import Button from "@atoms/Button";
 import bubbleTalkDb from "@assets/icons/bubble_talk_with_db.png";
 import security from "@assets/icons/security.png";
 import excel from "@assets/icons/excel.png";
+import { breakpoints } from "@constants/breakpoints";
 
 const Section = styled.section`
   width: 100%;
   padding: 4rem 0;
   background-color: #ffffff;
   scroll-margin-top: 80px;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 2rem 0;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 0 1rem;
+  }
 `;
 
 const HeaderWrapper = styled.div`
@@ -24,6 +31,9 @@ const HeaderWrapper = styled.div`
   align-items: center;
   text-align: center;
   margin-bottom: 4rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    margin-bottom: 2rem;
+  }
 `;
 
 const Title = styled.h2`
@@ -32,6 +42,9 @@ const Title = styled.h2`
   color: #005f91;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 0.875rem;
+  }
 `;
 
 const Subtitle = styled.h3`
@@ -40,18 +53,27 @@ const Subtitle = styled.h3`
   color: #000000;
   line-height: 1.2;
   letter-spacing: -0.02em;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1.75rem;
+  }
 `;
 
 const Description = styled.p`
   font-size: 1.125rem;
   line-height: 1.5;
   color: #4a4a4a;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1rem;
+  }
 `;
 
 const ServicesContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    gap: 3rem;
+  }
 `;
 
 const ServiceCard = styled.div<{ isReversed?: boolean }>`
@@ -66,6 +88,11 @@ const ServiceCard = styled.div<{ isReversed?: boolean }>`
   max-width: calc(100% - 4rem);
   margin-left: ${({ isReversed }) => (isReversed ? "10rem" : "0")};
   margin-right: ${({ isReversed }) => (isReversed ? "0" : "10rem")};
+  @media (max-width: ${breakpoints.mobile}) {
+    flex-direction: column;
+    margin: 0;
+    max-width: 100%;
+  }
 `;
 
 const ServiceImage = styled.div`
@@ -79,6 +106,9 @@ const ServiceImage = styled.div`
     height: auto;
     object-fit: cover;
   }
+  @media (max-width: ${breakpoints.mobile}) {
+    flex: none;
+  }
 `;
 
 const ServiceContent = styled.div`
@@ -87,6 +117,9 @@ const ServiceContent = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   padding: 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 0;
+  }
 `;
 
 const ServiceTitle = styled.h4`
@@ -94,18 +127,27 @@ const ServiceTitle = styled.h4`
   font-weight: 700;
   color: #1a1a1a;
   letter-spacing: -0.02em;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1.25rem;
+  }
 `;
 
 const ServiceDescription = styled.p`
   font-size: 1.125rem;
   line-height: 1.5;
   color: #4a4a4a;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 1rem;
+  }
 `;
 
 const TagsContainer = styled.div`
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  @media (max-width: ${breakpoints.mobile}) {
+    justify-content: center;
+  }
 `;
 
 const Tag = styled.span`
@@ -117,6 +159,9 @@ const Tag = styled.span`
   font-weight: 500;
   color: #4a4a4a;
   letter-spacing: -0.54px;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 0.75rem;
+  }
 `;
 
 const services = [
