@@ -6,6 +6,7 @@ public enum RoleType implements GrantedAuthority {
     USER,
     OPERATOR,
     ADMIN,
+    AGENT,
     ;
 
     public static final String PREFIX = "ROLE_";

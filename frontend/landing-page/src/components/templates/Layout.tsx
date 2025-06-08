@@ -18,7 +18,6 @@ const ContentWrapper = styled.div`
   width: 100%;
   max-width: 100vw;
   margin: 0 auto;
-  padding: 0 2rem;
 `;
 
 const MainContent = styled.main`

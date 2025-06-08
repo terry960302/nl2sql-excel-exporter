@@ -38,6 +38,9 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/api/auth/**").permitAll()  // 인증 엔드포인트는 허용
+                        .pathMatchers("/queries/**", "/schemas/**", "/quota/me").hasAnyRole("USER", "ADMIN")
+                        .pathMatchers("/agents/**", "/quota/users/**").hasRole("ADMIN")
+                        .pathMatchers("/jobs/**", "/datasources/**").hasAuthority("AGENT")
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
