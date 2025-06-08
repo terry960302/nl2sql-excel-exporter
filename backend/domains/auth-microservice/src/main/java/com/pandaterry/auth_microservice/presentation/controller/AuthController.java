@@ -2,6 +2,7 @@ package com.pandaterry.auth_microservice.presentation.controller;
 
 import com.pandaterry.auth_microservice.application.service.AuthService;
 import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
 import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
 import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
@@ -28,17 +29,17 @@ public class AuthController {
     }
 
     @GetMapping(ApiPath.Auth.ME_SUFFIX)
-    public ResponseEntity<UserInfoResponse> getMyInfo(@RequestHeader("X-User-Id") String userId) {
+    public ResponseEntity<UserInfoResponse> getMyInfo(@RequestHeader(HeaderKeys.USER_ID) String userId) {
         return ResponseEntity.ok(authService.getMyInfo(userId));
     }
 
     @PostMapping(ApiPath.Auth.REFRESH_TOKEN_SUFFIX)
-    public ResponseEntity<TokenResponse> refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken) {
+    public ResponseEntity<TokenResponse> refreshToken(@RequestHeader(HeaderKeys.REFRESH_TOKEN) String refreshToken) {
         return ResponseEntity.ok(authService.refreshToken(refreshToken));
     }
 
     @PostMapping(ApiPath.Auth.LOGOUT_SUFFIX)
-    public ResponseEntity<Void> logout(@RequestHeader("X-Refresh-Token") String refreshToken) {
+    public ResponseEntity<Void> logout(@RequestHeader(HeaderKeys.REFRESH_TOKEN) String refreshToken) {
         authService.logout(refreshToken);
         return ResponseEntity.ok().build();
     }

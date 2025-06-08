@@ -1,22 +1,33 @@
 import styled from "@emotion/styled";
 import logo from "@assets/nl2sql_logo_no_bg.png";
+import { breakpoints } from "@constants/breakpoints";
 
 const FooterContainer = styled.footer`
   width: 100%;
   padding: 4rem 0;
   background-color: #f8f8f8;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 2rem 0;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 0 1rem;
+  }
 `;
 
 const ContentWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 `;
 
 const LeftSection = styled.div`
@@ -43,7 +54,7 @@ const CompanyInfo = styled.div`
 const CompanyName = styled.h3`
   font-size: 24px;
   font-weight: 500;
-  color: #2e4f21;
+  color: #005f91;
   letter-spacing: -1.08px;
   margin: 0;
 `;
@@ -51,7 +62,7 @@ const CompanyName = styled.h3`
 const CompanyDescription = styled.p`
   font-size: 16px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.72px;
   line-height: 1.5;
   margin: 0;
@@ -62,12 +73,16 @@ const RightSection = styled.div`
   text-align: right;
   flex-direction: column;
   justify-content: space-between;
+  @media (max-width: ${breakpoints.mobile}) {
+    text-align: left;
+    justify-content: flex-start;
+  }
 `;
 
 const Copyright = styled.p`
   font-size: 16px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.72px;
   margin: 0;
 `;

@@ -7,7 +7,7 @@ interface ButtonProps {
 }
 
 const StyledButton = styled.button`
-  background-color: #2e4f21;
+  background-color: #007acc;
   color: #ffffff;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -18,7 +18,7 @@ const StyledButton = styled.button`
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: #1a2f13;
+    background-color: #005f91;
   }
 `;
 

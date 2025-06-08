@@ -1,16 +1,23 @@
 import styled from "@emotion/styled";
 import FeatureImage from "@atoms/FeatureImage";
+import { breakpoints } from "@constants/breakpoints";
 
 const Section = styled.section`
   width: 100%;
   padding: 4rem 0;
   background-color: #ffffff;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 2rem 0;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 0 1rem;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -18,6 +25,10 @@ const ContentWrapper = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+  @media (max-width: ${breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 `;
 
 const TextContent = styled.div`
@@ -32,19 +43,25 @@ const TextContent = styled.div`
 const Title = styled.h2`
   font-size: 48px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #000000;
   letter-spacing: -2.16px;
   line-height: 1;
   margin: 0;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 32px;
+  }
 `;
 
 const Description = styled.p`
   font-size: 18px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.81px;
   line-height: 1.5;
   margin: 0;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 16px;
+  }
 `;
 
 const LearnMoreButton = styled.button`
@@ -54,7 +71,7 @@ const LearnMoreButton = styled.button`
   padding: 1rem 2rem;
   font-size: 12px;
   font-weight: 500;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.54px;
   cursor: pointer;
   width: fit-content;
@@ -63,15 +80,18 @@ const LearnMoreButton = styled.button`
   &:hover {
     background-color: #f5f5f5;
   }
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 14px;
+  }
 `;
 
-const PlanSection = () => {
+const AdditionalFeatureSection = () => {
   return (
     <Section>
       <Container>
         <ContentWrapper>
           <TextContent>
-            <Title>단순한 조회가 아니에요</Title>
+            <Title>단순 조회가 아니에요</Title>
             <Description>
               NL2SQL Studio는 엑셀 파일로 자동 셀병합까지 하여 쉽고 편하게
               데이터를 조회할 수 있습니다.
@@ -85,4 +105,4 @@ const PlanSection = () => {
   );
 };
 
-export default PlanSection;
+export default AdditionalFeatureSection;
