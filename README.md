@@ -59,7 +59,8 @@ nl2sql-studio/
 
 ### 1. 사전 요구사항
 
-* Java 11 이상
+* Java 17 이상
+  - Ubuntu 기준 설치 예시: `sudo apt-get install openjdk-17-jdk`
 * Node.js 16 이상 (프론트엔드 빌드용)
 * 각 DB에 대한 JDBC 드라이버 (MySQL, PostgreSQL, Oracle)
 
