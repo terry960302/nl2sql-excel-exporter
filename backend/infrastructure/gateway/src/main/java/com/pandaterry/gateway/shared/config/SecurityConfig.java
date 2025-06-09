@@ -7,6 +7,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.pandaterry.gateway.shared.converters.CustomJwtAuthenticationConverter;
+import com.pandaterry.gateway.shared.enums.RoleType;
 import com.pandaterry.gateway.shared.filters.AgentAuthenticationFilter;
 import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +26,34 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebFluxSecurity
 public class SecurityConfig {
     @Value("${jwt.secret}")
-    private String secretKey;  // 32바이트 이상의 HMAC SHA 키
+    private String secretKey; // 32바이트 이상의 HMAC SHA 키
 
     private final String SECRET_KEY_ALGORITHM = "HmacSHA256";
+
+    // 허용 경로
+    private static final String[] PUBLIC_PATHS = {
+            "/actuator/**",
+            "/api/v1/auth/**"
+    };
+
+    // USER, ADMIN 공통 접근
+    private static final String[] USER_ADMIN_PATHS = {
+            "/api/v1/queries/**",
+            "/api/v1/schemas/**",
+            "/api/v1/quota/me"
+    };
+
+    // ADMIN 전용
+    private static final String[] ADMIN_PATHS = {
+            "/api/v1/agents/**",
+            "/api/v1/quota/users/**"
+    };
+
+    // AGENT 전용
+    private static final String[] AGENT_PATHS = {
+            "/api/v1/jobs/**",
+            "/api/v1/datasources/**"
+    };
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http,
@@ -35,12 +61,13 @@ public class SecurityConfig {
                                                             AgentAuthenticationFilter agentAuthenticationFilter) {
         http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .addFilterAt(agentAuthenticationFilter, SecurityWebFiltersOrder.FIRST)
+                .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/actuator/**").permitAll()
-                        .pathMatchers("/api/auth/**").permitAll()  // 인증 엔드포인트는 허용
-                        .pathMatchers("/queries/**", "/schemas/**", "/quota/me").hasAnyRole("USER", "ADMIN")
-                        .pathMatchers("/agents/**", "/quota/users/**").hasRole("ADMIN")
-                        .pathMatchers("/jobs/**", "/datasources/**").hasAuthority("AGENT")
+                        .pathMatchers(PUBLIC_PATHS).permitAll()
+                        .pathMatchers(USER_ADMIN_PATHS).hasAnyAuthority(RoleType.USER.getAuthority(),
+                                RoleType.ADMIN.getAuthority())
+                        .pathMatchers(ADMIN_PATHS).hasAuthority(RoleType.ADMIN.getAuthority())
+                        .pathMatchers(AGENT_PATHS).hasAuthority(RoleType.AGENT.getAuthority())
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -52,6 +79,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
     public ReactiveJwtDecoder reactiveJwtDecoder() {
         byte[] keyBytes = secretKey.getBytes();

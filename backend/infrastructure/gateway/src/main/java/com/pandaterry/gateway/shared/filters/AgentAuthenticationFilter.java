@@ -2,6 +2,7 @@ package com.pandaterry.gateway.shared.filters;
 
 import com.pandaterry.gateway.shared.service.AgentAuthService;
 import com.pandaterry.gateway.shared.service.AgentInfo;
+import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,6 @@ import reactor.core.publisher.Mono;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AgentAuthenticationFilter implements WebFilter {
-
-    private static final String SECRET_HEADER = "X-AGENT-SECRET";
     private final AgentAuthService agentAuthService;
 
     public AgentAuthenticationFilter(AgentAuthService agentAuthService) {
@@ -24,7 +23,7 @@ public class AgentAuthenticationFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String secret = exchange.getRequest().getHeaders().getFirst(SECRET_HEADER);
+        String secret = exchange.getRequest().getHeaders().getFirst(HeaderKeys.AGENT_SECRET);
         if (secret == null) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
@@ -38,11 +37,11 @@ public class AgentAuthenticationFilter implements WebFilter {
 
         var mutatedRequest = exchange.getRequest().mutate()
                 .headers(headers -> {
-                    headers.remove(SECRET_HEADER);
-                    headers.add("X-Agent-Id", info.agentId());
-                    headers.add("X-Org-Id", info.orgId());
-                    headers.add("X-Roles", "AGENT");
-                    headers.add("X-Internal-Request", "true");
+                    headers.remove(HeaderKeys.AGENT_SECRET);
+                    headers.add(HeaderKeys.AGENT_ID, info.agentId());
+                    headers.add(HeaderKeys.ORG_ID, info.orgId());
+                    headers.add(HeaderKeys.ROLES, "AGENT");
+                    headers.add(HeaderKeys.INTERNAL_REQUEST, "true");
                 })
                 .build();
 

@@ -2,8 +2,6 @@ package com.pandaterry.query_microservice.presentation.config;
 
 import com.pandaterry.query_microservice.presentation.interceptor.MdcLoggingInterceptor;
 import lombok.RequiredArgsConstructor;
-import com.pandaterry.msa_contracts.interceptor.MdcLoggingInterceptor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
