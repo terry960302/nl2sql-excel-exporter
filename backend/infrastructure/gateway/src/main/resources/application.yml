@@ -6,3 +6,11 @@ spring:
     name: gateway
   profiles:
     active: local
+
+auth-service:
+  base-url: http://localhost:8081
+
+jwt:
+  secret: 01234567890123456789012345678901
+  header: Authorization
+  prefix: Bearer

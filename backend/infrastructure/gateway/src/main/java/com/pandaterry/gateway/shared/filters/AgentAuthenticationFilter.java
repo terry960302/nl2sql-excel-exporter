@@ -24,9 +24,9 @@ public class AgentAuthenticationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String secret = exchange.getRequest().getHeaders().getFirst(HeaderKeys.AGENT_SECRET);
+        // 에이전트가 아닌 일반 요청의 경우 필터를 통과시킨다
         if (secret == null) {
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
+            return chain.filter(exchange);
         }
 
         AgentInfo info = agentAuthService.authenticate(secret);
