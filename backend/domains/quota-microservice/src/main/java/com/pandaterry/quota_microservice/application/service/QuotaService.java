@@ -2,6 +2,8 @@ package com.pandaterry.quota_microservice.application.service;
 
 import com.pandaterry.msa_contracts.dto.quota.response.*;
 import com.pandaterry.quota_microservice.domain.entity.*;
+import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
+import org.springframework.kafka.annotation.KafkaListener;
 import com.pandaterry.quota_microservice.domain.exception.ErrorCode;
 import com.pandaterry.quota_microservice.domain.exception.QuotaException;
 import com.pandaterry.quota_microservice.domain.repository.*;
@@ -101,6 +103,11 @@ public class QuotaService {
         QuotaUsageMonthly monthly = getOrCreateMonthly(orgId, monthKey);
         monthly.increase(increment);
         monthlyRepository.save(monthly);
+    }
+
+    @KafkaListener(topics = "${quota.usage.topic:quota-usage}")
+    public void consumeQuotaUsage(QuotaUsageRecordRequest request) {
+        recordQuotaUsage(request.getOrgId(), request.getIncrement());
     }
 
     private String currentMonthKey() {
