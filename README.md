@@ -2,6 +2,7 @@
 
 NL2SQL Studio는 한국어 자연어 질의를 기반으로 사전에 정의된 데이터베이스 스키마에 맞춰 SQL을 자동 생성·실행하고, 그 결과를 엑셀 파일로 다운로드할 수 있는 설치형 애플리케이션입니다.
 
+백엔드 세부 구성은 `backend/README.md`를 참고하세요.
 ## 주요 기능
 
 * **자연어 → SQL 변환**
@@ -62,6 +63,7 @@ nl2sql-studio/
 * Java 17 이상
   - Ubuntu 기준 설치 예시: `sudo apt-get install openjdk-17-jdk`
 * Node.js 16 이상 (프론트엔드 빌드용)
+* Flutter SDK 3.10 이상 (Desktop App 빌드용)
 * 각 DB에 대한 JDBC 드라이버 (MySQL, PostgreSQL, Oracle)
 
 ### 2. 백엔드(SQL 실행 모듈) 실행
@@ -98,6 +100,7 @@ npm run build                    # 프로덕션 빌드
 cd server
 ./gradlew bootRun                # 개발용 실행
 ```
+해당 서버 모듈은 현재 이 저장소에 포함되어 있지 않습니다.
 
 ## 환경 변수 설정
 
@@ -112,6 +115,11 @@ cd server
 
   ```properties
   VITE_API_URL=https://api.yourdomain.com
+  ```
+* **backend/domains/query-microservice**/.env
+
+  ```properties
+  OPENAI_API_KEY=your-openai-key
   ```
 * **server**/.env
 
