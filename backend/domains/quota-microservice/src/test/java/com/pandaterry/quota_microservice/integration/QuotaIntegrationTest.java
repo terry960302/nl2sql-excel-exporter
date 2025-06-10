@@ -1,6 +1,6 @@
 package com.pandaterry.quota_microservice.integration;
 
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
@@ -58,7 +58,7 @@ class QuotaIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("초기 사용량은 0")
     void getQuota_initial_zero() throws Exception {
-        MvcResult result = mockMvc.perform(get(ApiPath.Quota.ORG_ME)
+        MvcResult result = mockMvc.perform(get(RoutePath.Quota.ORG_ME)
                         .header(HeaderKeys.ORG_ID, orgId))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -80,12 +80,12 @@ class QuotaIntegrationTest extends IntegrationTestBase {
                 .increment(3L)
                 .build();
 
-        mockMvc.perform(post(ApiPath.Quota.USAGE)
+        mockMvc.perform(post(RoutePath.Quota.USAGE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNoContent());
 
-        MvcResult result = mockMvc.perform(get(ApiPath.Quota.ORG_ME)
+        MvcResult result = mockMvc.perform(get(RoutePath.Quota.ORG_ME)
                         .header(HeaderKeys.ORG_ID, orgId))
                 .andExpect(status().isOk())
                 .andReturn();

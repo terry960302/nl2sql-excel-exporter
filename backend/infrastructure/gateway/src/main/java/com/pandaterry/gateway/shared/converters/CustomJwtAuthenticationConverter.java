@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
@@ -24,7 +25,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
         Instant expiredAt = jwt.getExpiresAt();
 
-        if (expiredAt.isBefore(Instant.now())) {
+        if (Objects.requireNonNull(expiredAt).isBefore(Instant.now())) {
             throw new GatewayException(ErrorCode.JWT_EXPIRED);
         }
 

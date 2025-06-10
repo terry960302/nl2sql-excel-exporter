@@ -4,6 +4,7 @@ import com.pandaterry.quota_microservice.presentation.config.WebConfig;
 import com.pandaterry.quota_microservice.presentation.interceptor.MdcLoggingInterceptor;
 import com.pandaterry.quota_microservice.integration.support.ContextEchoController;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
+import com.pandaterry.quota_microservice.config.TestSecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ContextEchoController.class)
-@Import({MdcLoggingInterceptor.class, WebConfig.class})
+@Import({MdcLoggingInterceptor.class, WebConfig.class, TestSecurityConfig.class})
 class MdcLoggingInterceptorTest {
 
     @Autowired

@@ -6,7 +6,7 @@ import com.pandaterry.auth_microservice.domain.exception.AuthException;
 import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
 import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import com.pandaterry.auth_microservice.presentation.controller.AuthController;
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
 import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
@@ -65,7 +65,7 @@ class AuthControllerTest {
                     .build();
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
+            mockMvc.perform(post(VERSION + RoutePath.Auth.SIGNUP)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
@@ -85,7 +85,7 @@ class AuthControllerTest {
             Mockito.doThrow(new AuthException(ErrorCode.DUPLICATE_EMAIL)).when(authService).signup(any());
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
+            mockMvc.perform(post(VERSION + RoutePath.Auth.SIGNUP)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
@@ -107,7 +107,7 @@ class AuthControllerTest {
             Mockito.doThrow(new AuthException(ErrorCode.WEAK_PASSWORD)).when(authService).signup(any());
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
+            mockMvc.perform(post(VERSION + RoutePath.Auth.SIGNUP)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -136,7 +136,7 @@ class AuthControllerTest {
             when(authService.login(any())).thenReturn(tokenResponse);
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.LOGIN)
+            mockMvc.perform(post(VERSION + RoutePath.Auth.LOGIN)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -157,7 +157,7 @@ class AuthControllerTest {
             when(authService.login(any())).thenThrow(new AuthException(ErrorCode.INVALID_CREDENTIALS));
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.LOGIN)
+            mockMvc.perform(post(VERSION + RoutePath.Auth.LOGIN)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized())
@@ -194,7 +194,7 @@ class AuthControllerTest {
             when(authService.getMyInfo(userId)).thenReturn(userInfo);
 
             // when & then
-            mockMvc.perform(get(VERSION + ApiPath.Auth.ME)
+            mockMvc.perform(get(VERSION + RoutePath.Auth.ME)
                     .header(HeaderKeys.USER_ID, userId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.userId").value(userId))
@@ -215,7 +215,7 @@ class AuthControllerTest {
             when(authService.getMyInfo(userId)).thenThrow(new AuthException(ErrorCode.USER_NOT_FOUND));
 
             // when & then
-            mockMvc.perform(get(VERSION + ApiPath.Auth.ME)
+            mockMvc.perform(get(VERSION + RoutePath.Auth.ME)
                     .header(HeaderKeys.USER_ID, userId))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_FOUND.getCode()))
@@ -239,7 +239,7 @@ class AuthControllerTest {
             when(authService.refreshToken(refreshToken)).thenReturn(tokenResponse);
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            mockMvc.perform(post(VERSION + RoutePath.Auth.REFRESH_TOKEN)
                     .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").value("newAccessToken"))
@@ -255,7 +255,7 @@ class AuthControllerTest {
             when(authService.refreshToken(refreshToken)).thenThrow(new AuthException(ErrorCode.INVALID_TOKEN));
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            mockMvc.perform(post(VERSION + RoutePath.Auth.REFRESH_TOKEN)
                     .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_TOKEN.getCode()))
@@ -270,7 +270,7 @@ class AuthControllerTest {
             String refreshToken = "validRefreshToken";
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.LOGOUT)
+            mockMvc.perform(post(VERSION + RoutePath.Auth.LOGOUT)
                     .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
                     .andExpect(status().isOk());
 

@@ -1,6 +1,6 @@
 # NL2SQL Studio
 
-NL2SQL Studio는 한국어 자연어 질의를 기반으로 사전에 정의된 데이터베이스 스키마에 맞춰 SQL을 자동 생성·실행하고, 그 결과를 엑셀 파일로 다운로드할 수 있는 설치형 애플리케이션입니다.
+NL2SQL Studio는 한국어 자연어 질의를 기반으로 사전에 정의된 데이터베이스 스키마에 맞춰 SQL을 자동 생성·실행하고, 그 결과를 엑셀 파일로 다운로드할 수 있는 설치형 애플리케이션입니다. [랜딩페이지 바로가기](https://nl2sql.pandaterry.com)
 
 ## 주요 기능
 
@@ -59,7 +59,8 @@ nl2sql-studio/
 
 ### 1. 사전 요구사항
 
-* Java 11 이상
+* Java 17 이상
+  - Ubuntu 기준 설치 예시: `sudo apt-get install openjdk-17-jdk`
 * Node.js 16 이상 (프론트엔드 빌드용)
 * 각 DB에 대한 JDBC 드라이버 (MySQL, PostgreSQL, Oracle)
 

@@ -1,6 +1,10 @@
 # NL2SQL Excel Exporter
 > natural language to SQL and generating EXCEL from it.
 
+## 개발 환경
+
+* JDK 17 이상 (Ubuntu 예시: `sudo apt-get install openjdk-17-jdk`)
+
 ## 서비스별 역할
 
 | 구성 요소 | 주요 역할 | 통신 방식 | 비고 |

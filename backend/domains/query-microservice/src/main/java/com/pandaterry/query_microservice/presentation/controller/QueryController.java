@@ -1,6 +1,6 @@
 package com.pandaterry.query_microservice.presentation.controller;
 
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.query_microservice.domain.exception.QueryException;
 import com.pandaterry.query_microservice.application.service.QueryService;
 import com.pandaterry.msa_contracts.dto.query.request.NaturalLanguageQueryRequest;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/v1" + ApiPath.Query.BASE)
+@RequestMapping("/v1" + RoutePath.Query.BASE)
 @RequiredArgsConstructor
 public class QueryController {
     private final QueryService queryService;
