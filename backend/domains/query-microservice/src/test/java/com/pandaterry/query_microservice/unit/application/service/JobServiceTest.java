@@ -41,10 +41,25 @@ class JobServiceTest {
         assertEquals(JobStatus.COMPLETED, updated.status());
     }
 
+    @Test
+    void report_result_sends_quota_usage_event() {
+        UUID orgId = UUID.randomUUID();
+        ExecutionJob created = jobService.createJob(orgId, "select 1").block();
+
+        jobService.reportResult(created.jobId(),
+                new JobResultRequest(created.jobId(), JobStatus.COMPLETED, "ok", null)).block();
+
+        assertNotNull(producer.lastRequest);
+        assertEquals(orgId, producer.lastRequest.getOrgId());
+        assertEquals(1L, producer.lastRequest.getIncrement());
+    }
+
     static class DummyProducer implements QuotaUsageProducer {
+        private QuotaUsageRecordRequest lastRequest;
+
         @Override
         public void sendQuotaUsage(QuotaUsageRecordRequest request) {
-            // no-op for tests
+            this.lastRequest = request;
         }
     }
 }
