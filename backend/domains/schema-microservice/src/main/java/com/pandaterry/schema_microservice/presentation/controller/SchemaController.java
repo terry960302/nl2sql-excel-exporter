@@ -1,6 +1,6 @@
 package com.pandaterry.schema_microservice.presentation.controller;
 
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.schema.request.RegisterSchemaRequest;
 import com.pandaterry.msa_contracts.dto.schema.response.RegisterSchemaResponse;
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/v1" + ApiPath.Schema.BASE)
+@RequestMapping("/v1" + RoutePath.Schema.BASE)
 @RequiredArgsConstructor
 public class SchemaController {
     private final SchemaService schemaService;

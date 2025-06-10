@@ -2,13 +2,12 @@ server:
   port: 8080
 
 spring:
+  main:
+    web-application-type: reactive
   application:
     name: gateway
   profiles:
     active: local
-
-auth-service:
-  base-url: http://localhost:8081
 
 jwt:
   secret: 01234567890123456789012345678901

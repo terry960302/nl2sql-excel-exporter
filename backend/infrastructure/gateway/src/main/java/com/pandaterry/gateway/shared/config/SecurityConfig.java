@@ -10,6 +10,7 @@ import com.pandaterry.gateway.shared.converters.CustomJwtAuthenticationConverter
 import com.pandaterry.gateway.shared.enums.RoleType;
 import com.pandaterry.gateway.shared.filters.AgentAuthenticationFilter;
 import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,28 +32,28 @@ public class SecurityConfig {
     private final String SECRET_KEY_ALGORITHM = "HmacSHA256";
 
     // 허용 경로
-    private static final String[] PUBLIC_PATHS = {
-            "/actuator/**",
-            "/api/v1/auth/**"
+    public static final String[] PUBLIC_PATHS = {
+            RoutePath.Common.ACTUATOR + "/**",
+            RoutePath.Auth.BASE + "/**"
     };
 
     // USER, ADMIN 공통 접근
     private static final String[] USER_ADMIN_PATHS = {
-            "/api/v1/queries/**",
-            "/api/v1/schemas/**",
-            "/api/v1/quota/me"
+            RoutePath.Query.BASE + "/**",
+            RoutePath.Schema.BASE + "/**",
+            RoutePath.Quota.ORG_ME
     };
 
     // ADMIN 전용
     private static final String[] ADMIN_PATHS = {
-            "/api/v1/agents/**",
-            "/api/v1/quota/users/**"
+            RoutePath.Agent.BASE + "/**",
+            RoutePath.Quota.ORGS + "/**"
     };
 
     // AGENT 전용
     private static final String[] AGENT_PATHS = {
-            "/api/v1/jobs/**",
-            "/api/v1/datasources/**"
+            RoutePath.Job.BASE + "/**",
+            RoutePath.Datasource.BASE + "/**"
     };
 
     @Bean

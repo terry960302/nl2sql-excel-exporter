@@ -1,11 +1,22 @@
 package com.pandaterry.msa_contracts.constants;
 
-public final class ApiPath {
-    private ApiPath() {
+public final class RoutePath {
+    private RoutePath() {
+    }
+
+    public static final String VERSION1 = "/v1";
+    public static final String PREFIX = "/api" + VERSION1;
+
+    public static final class Common{
+        public static final String ACTUATOR = "/actuator";
+    }
+
+    public static final class Agent{
+        public static final String BASE = PREFIX + "/agents";
     }
 
     public static final class Auth {
-        public static final String BASE = "/auth";
+        public static final String BASE = PREFIX + "/auth";
 
         // 회원가입
         public static final String SIGNUP_SUFFIX = "/signup";
@@ -29,7 +40,7 @@ public final class ApiPath {
     }
 
     public static final class Datasource {
-        public static final String BASE = "/datasources";
+        public static final String BASE = PREFIX + "/datasources";
 
         // 데이터소스 연결 확인(에이전트 서버)
         public static final String TEST_SUFFIX = "/test";
@@ -41,7 +52,7 @@ public final class ApiPath {
     }
 
     public static final class Schema {
-        public static final String BASE = "/schemas";
+        public static final String BASE = PREFIX + "/schemas";
 
         // 스키마 스캔(에이전트 서버)
         public static final String SCAN_SUFFIX = "/scan";
@@ -53,7 +64,7 @@ public final class ApiPath {
     }
 
     public static final class Query {
-        public static final String BASE = "/queries";
+        public static final String BASE = PREFIX + "/queries";
 
         // 쿼리 실행(에이전트 서버)
         public static final String EXECUTE_SUFFIX = "/execute";
@@ -61,7 +72,7 @@ public final class ApiPath {
     }
 
     public static final class Job {
-        public static final String BASE = "/jobs";
+        public static final String BASE = PREFIX + "/jobs";
 
         // 특정 작업
         public static final String DETAIL_SUFFIX = "/{jobId}";
@@ -72,7 +83,7 @@ public final class ApiPath {
     }
 
     public static final class Quota {
-        public static final String BASE = "/quota";
+        public static final String BASE = PREFIX + "/quota";
 
         // 내 조직 사용량 조회
         public static final String ORG_ME_SUFFIX = "/organizations/me";
