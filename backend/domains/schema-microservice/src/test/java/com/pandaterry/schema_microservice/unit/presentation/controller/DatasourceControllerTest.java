@@ -1,7 +1,7 @@
 package com.pandaterry.schema_microservice.unit.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.schema.request.DatasourceUpdateRequest;
 import com.pandaterry.schema_microservice.application.service.DatasourceService;
@@ -36,14 +36,14 @@ class DatasourceControllerTest {
     @Test
     @DisplayName("헤더 누락 시 400 반환")
     void initDatasource_헤더없음_실패() throws Exception {
-        mockMvc.perform(post(VERSION + ApiPath.Datasource.BASE))
+        mockMvc.perform(post(VERSION + RoutePath.Datasource.BASE))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("정상 호출 시 서비스 실행")
     void initDatasource_성공() throws Exception {
-        mockMvc.perform(post(VERSION + ApiPath.Datasource.BASE)
+        mockMvc.perform(post(VERSION + RoutePath.Datasource.BASE)
                 .header(HeaderKeys.ORG_ID, UUID.randomUUID())
                 .header(HeaderKeys.USER_ID, UUID.randomUUID())
                 .header(HeaderKeys.AGENT_ID, UUID.randomUUID()))
@@ -57,7 +57,7 @@ class DatasourceControllerTest {
     void activateDatasource_성공() throws Exception {
         DatasourceUpdateRequest request = new DatasourceUpdateRequest();
         UUID datasourceId = UUID.randomUUID();
-        mockMvc.perform(put(VERSION + ApiPath.Datasource.BASE + "/" + datasourceId)
+        mockMvc.perform(put(VERSION + RoutePath.Datasource.BASE + "/" + datasourceId)
                         .header(HeaderKeys.ORG_ID, UUID.randomUUID())
                         .header(HeaderKeys.USER_ID, UUID.randomUUID())
                         .header(HeaderKeys.AGENT_ID, UUID.randomUUID())

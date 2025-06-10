@@ -1,13 +1,10 @@
 package com.pandaterry.gateway.shared.config;
 
 import com.pandaterry.gateway.presentation.TestController;
-import com.pandaterry.gateway.shared.converters.CustomJwtAuthenticationConverter;
 import com.pandaterry.gateway.shared.enums.RoleType;
 import com.pandaterry.gateway.shared.filters.AgentAuthenticationFilter;
 import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
-import com.pandaterry.gateway.shared.service.AgentAuthService;
-import com.pandaterry.gateway.shared.utils.JwtUtil;
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 @WebFluxTest(controllers = TestController.class)
-@Import({ SecurityConfig.class })
+@Import({SecurityConfig.class})
 @TestPropertySource(properties = {
         "spring.cloud.config.enabled=false",
         "spring.cloud.discovery.enabled=false",
@@ -72,9 +69,9 @@ class SecurityConfigTest {
     @DisplayName("USER 권한으로 /queries 접근 시 성공해야 한다")
     void userRoleAccessQueries_thenSuccess() {
         webTestClient.mutateWith(SecurityMockServerConfigurers.mockJwt()
-                .authorities(new SimpleGrantedAuthority(RoleType.USER.getAuthority()))
-                .jwt(jwt -> jwt.claim("roles", List.of(RoleType.USER.name()))))
-                .get().uri("/api/v1" + ApiPath.Query.BASE + "/test")
+                        .authorities(new SimpleGrantedAuthority(RoleType.USER.getAuthority()))
+                        .jwt(jwt -> jwt.claim("roles", List.of(RoleType.USER.name()))))
+                .get().uri(RoutePath.Query.BASE + "/test")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class).isEqualTo("queries");
@@ -84,9 +81,9 @@ class SecurityConfigTest {
     @DisplayName("USER 권한으로 /agents 접근 시 Forbidden 이 발생해야 한다")
     void userRoleAccessAgents_thenForbidden() {
         webTestClient.mutateWith(SecurityMockServerConfigurers.mockJwt()
-                .authorities(new SimpleGrantedAuthority(RoleType.USER.getAuthority()))
-                .jwt(jwt -> jwt.claim("roles", List.of(RoleType.USER.name()))))
-                .get().uri("/api/v1/agents/test")
+                        .authorities(new SimpleGrantedAuthority(RoleType.USER.getAuthority()))
+                        .jwt(jwt -> jwt.claim("roles", List.of(RoleType.USER.name()))))
+                .get().uri(RoutePath.Agent.BASE + "/test")
                 .exchange()
                 .expectStatus().isForbidden();
     }
@@ -97,7 +94,7 @@ class SecurityConfigTest {
         webTestClient.mutateWith(SecurityMockServerConfigurers.mockJwt()
                 .authorities(new SimpleGrantedAuthority(RoleType.AGENT.getAuthority()))
                 .jwt(jwt -> jwt.claim("roles", List.of(RoleType.AGENT.name()))))
-                .get().uri("/api/v1" + ApiPath.Job.BASE + "/test")
+                .get().uri(RoutePath.Job.BASE + "/test")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class).isEqualTo("jobs");

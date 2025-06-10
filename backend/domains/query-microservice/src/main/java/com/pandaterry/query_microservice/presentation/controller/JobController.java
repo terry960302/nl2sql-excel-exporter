@@ -1,6 +1,6 @@
 package com.pandaterry.query_microservice.presentation.controller;
 
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.query_microservice.application.service.JobService;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1" + ApiPath.Job.BASE)
+@RequestMapping("/v1" + RoutePath.Job.BASE)
 @RequiredArgsConstructor
 public class JobController {
     private final JobService jobService;
@@ -25,7 +25,7 @@ public class JobController {
                 .defaultIfEmpty(ResponseEntity.noContent().build());
     }
 
-    @PostMapping(ApiPath.Job.DETAIL_RESULT)
+    @PostMapping(RoutePath.Job.DETAIL_RESULT)
     public Mono<ResponseEntity<Void>> reportResult(@PathVariable UUID jobId,
                                                    @RequestBody JobResultRequest request) {
         return jobService.reportResult(jobId, request)

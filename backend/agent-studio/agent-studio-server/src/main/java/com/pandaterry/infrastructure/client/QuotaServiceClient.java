@@ -1,6 +1,6 @@
 package com.pandaterry.infrastructure.client;
 
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
@@ -25,11 +25,11 @@ public class QuotaServiceClient extends BaseServiceClient {
     public QuotaOrgResponse getMyOrgQuota(UUID orgId) {
         Map<String, String> header = new HashMap<>();
         header.put(HeaderKeys.ORG_ID, orgId.toString());
-        return get(PREFIX + ApiPath.Quota.ORG_ME, header, QuotaOrgResponse.class);
+        return get(PREFIX + RoutePath.Quota.ORG_ME, header, QuotaOrgResponse.class);
     }
 
     // 사용량 기록
     public Void recordUsage(QuotaUsageRecordRequest request) {
-        return post(PREFIX + ApiPath.Quota.USAGE, request, Void.class);
+        return post(PREFIX + RoutePath.Quota.USAGE, request, Void.class);
     }
 }
