@@ -1,7 +1,7 @@
 package com.pandaterry.gateway.shared.config;
 
 import com.pandaterry.gateway.presentation.TestController;
-import com.pandaterry.gateway.shared.enums.RoleType;
+import com.pandaterry.msa_contracts.enums.auth.RoleType;
 import com.pandaterry.gateway.shared.filters.AgentAuthenticationFilter;
 import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
 import com.pandaterry.msa_contracts.constants.RoutePath;

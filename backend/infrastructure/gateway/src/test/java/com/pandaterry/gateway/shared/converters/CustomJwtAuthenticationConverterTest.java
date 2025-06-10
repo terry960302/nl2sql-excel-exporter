@@ -1,6 +1,6 @@
 package com.pandaterry.gateway.shared.converters;
 
-import com.pandaterry.gateway.shared.enums.RoleType;
+import com.pandaterry.msa_contracts.enums.auth.RoleType;
 import com.pandaterry.gateway.shared.exceptions.GatewayException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

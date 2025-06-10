@@ -2,9 +2,9 @@ package com.pandaterry.auth_microservice.unit.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pandaterry.auth_microservice.application.service.AuthService;
+import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import com.pandaterry.auth_microservice.domain.exception.AuthException;
 import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
-import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import com.pandaterry.auth_microservice.presentation.controller.AuthController;
 import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;

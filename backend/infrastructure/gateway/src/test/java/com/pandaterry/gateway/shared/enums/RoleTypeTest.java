@@ -1,5 +1,6 @@
 package com.pandaterry.gateway.shared.enums;
 
+import com.pandaterry.msa_contracts.enums.auth.RoleType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

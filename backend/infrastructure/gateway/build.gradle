@@ -43,7 +43,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server' // OAuth2 Resource Server (JWT 검증)
     implementation 'org.springframework.security:spring-security-oauth2-jose'  // JWT 서명/검증을 위한 JOSE 지원 (선택)
-    implementation 'io.jsonwebtoken:jjwt:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     // 테스트
     testImplementation project(':infrastructure:eureka-server')

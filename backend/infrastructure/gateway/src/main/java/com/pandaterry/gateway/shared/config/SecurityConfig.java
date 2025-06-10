@@ -1,32 +1,21 @@
 package com.pandaterry.gateway.shared.config;
 
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.OctetSequenceKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
-import com.pandaterry.gateway.shared.converters.CustomJwtAuthenticationConverter;
-import com.pandaterry.gateway.shared.enums.RoleType;
+import com.pandaterry.msa_contracts.enums.auth.RoleType;
 import com.pandaterry.gateway.shared.filters.AgentAuthenticationFilter;
 import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
 import com.pandaterry.msa_contracts.constants.RoutePath;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
-import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-
-import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret-key}")
     private String secretKey; // 32바이트 이상의 HMAC SHA 키
 
     private final String SECRET_KEY_ALGORITHM = "HmacSHA256";
@@ -34,7 +23,8 @@ public class SecurityConfig {
     // 허용 경로
     public static final String[] PUBLIC_PATHS = {
             RoutePath.Common.ACTUATOR + "/**",
-            RoutePath.Auth.BASE + "/**"
+            RoutePath.Auth.SIGNUP + "/**",
+            RoutePath.Auth.LOGIN + "/**"
     };
 
     // USER, ADMIN 공통 접근
@@ -70,22 +60,22 @@ public class SecurityConfig {
                         .pathMatchers(ADMIN_PATHS).hasAuthority(RoleType.ADMIN.getAuthority())
                         .pathMatchers(AGENT_PATHS).hasAuthority(RoleType.AGENT.getAuthority())
                         .anyExchange().authenticated()
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .jwtDecoder(reactiveJwtDecoder())
-                                .jwtAuthenticationConverter(new CustomJwtAuthenticationConverter())
-                        )
                 );
+//                .oauth2ResourceServer(oauth2 -> oauth2
+//                        .jwt(jwt -> jwt
+//                                .jwtDecoder(reactiveJwtDecoder())
+//                                .jwtAuthenticationConverter(new CustomJwtAuthenticationConverter())
+//                        )
+//                );
 
         return http.build();
     }
 
-    @Bean
-    public ReactiveJwtDecoder reactiveJwtDecoder() {
-        byte[] keyBytes = secretKey.getBytes();
-        SecretKeySpec key = new SecretKeySpec(keyBytes, SECRET_KEY_ALGORITHM);
-        return NimbusReactiveJwtDecoder.withSecretKey(key).build();
-    }
+//    @Bean
+//    public ReactiveJwtDecoder reactiveJwtDecoder() {
+//        byte[] keyBytes = secretKey.getBytes();
+//        SecretKeySpec key = new SecretKeySpec(keyBytes, SECRET_KEY_ALGORITHM);
+//        return NimbusReactiveJwtDecoder.withSecretKey(key).build();
+//    }
 
 }

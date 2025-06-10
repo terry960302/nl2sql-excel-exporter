@@ -1,18 +1,13 @@
-package com.pandaterry.auth_microservice.infrastructure.util;
+package com.pandaterry.msa_contracts.util;
 
-import com.pandaterry.auth_microservice.domain.exception.AuthException;
-import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
+import com.pandaterry.msa_contracts.enums.auth.RoleType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class JwtUtil {
@@ -22,9 +17,9 @@ public class JwtUtil {
     private final long refreshTokenExpirationTime;
 
     public JwtUtil(
-            @Value("${jwt.secret-key}") String secretKey,
-            @Value("${jwt.access-token.expiration-time}") long accessTokenExpirationTime,
-            @Value("${jwt.refresh-token.expiration-time}") long refreshTokenExpirationTime
+            String secretKey,
+            long accessTokenExpirationTime,
+            long refreshTokenExpirationTime
     ) {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         this.accessTokenExpirationTime = accessTokenExpirationTime;
@@ -36,6 +31,7 @@ public class JwtUtil {
         claims.put("email", email);
         claims.put("organizationId", organizationId.toString());
         claims.put("planName", planName);
+        claims.put("roles", List.of(RoleType.USER.name()));
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -51,7 +47,7 @@ public class JwtUtil {
         return this.generateRefreshToken(userId, new Date(System.currentTimeMillis() + refreshTokenExpirationTime));
     }
 
-    public String generateRefreshToken(UUID userId, Date expiredAt){
+    public String generateRefreshToken(UUID userId, Date expiredAt) {
         return Jwts.builder()
                 .setSubject(userId.toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -61,18 +57,11 @@ public class JwtUtil {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            throw new AuthException(ErrorCode.TOKEN_EXPIRED);
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new AuthException(ErrorCode.INVALID_TOKEN);
-        }
+    public Jws<Claims> validateToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
     }
 
     public UUID getUserIdFromToken(String token) {

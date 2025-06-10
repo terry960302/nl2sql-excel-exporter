@@ -1,8 +1,6 @@
-package com.pandaterry.gateway.shared.enums;
+package com.pandaterry.msa_contracts.enums.auth;
 
-import org.springframework.security.core.GrantedAuthority;
-
-public enum RoleType implements GrantedAuthority {
+public enum RoleType {
     USER,
     OPERATOR,
     ADMIN,
@@ -11,7 +9,6 @@ public enum RoleType implements GrantedAuthority {
 
     public static final String PREFIX = "ROLE_";
 
-    @Override
     public String getAuthority() {
         return PREFIX + this.name();
     }

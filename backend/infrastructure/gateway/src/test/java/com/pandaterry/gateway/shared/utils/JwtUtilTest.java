@@ -1,5 +1,6 @@
 package com.pandaterry.gateway.shared.utils;
 
+import com.pandaterry.msa_contracts.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -17,10 +18,12 @@ class JwtUtilTest {
 
     private JwtUtil jwtUtil;
     private final String secret = "01234567890123456789012345678901"; // 32바이트 이상
+    private final long accessExpiredAt = 7200000L;
+    private final long refreshExpiredAt = 2592000000L;
 
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil(secret);
+        jwtUtil = new JwtUtil(secret, accessExpiredAt, refreshExpiredAt);
     }
 
     @Test
@@ -28,17 +31,17 @@ class JwtUtilTest {
     void validateToken_ValidToken_ReturnsClaims() {
         // 토큰 생성
         String token = Jwts.builder()
-                .subject("test-user")
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 60_000))
+                .setSubject("test-user")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 60_000))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
 
         // 검증 수행
         Jws<Claims> jws = jwtUtil.validateToken(token);
 
-        assertNotNull(jws.getPayload());
-        assertEquals("test-user", jws.getPayload().getSubject());
+        assertNotNull(jws.getBody());
+        assertEquals("test-user", jws.getBody().getSubject());
     }
 
     @Test
@@ -53,9 +56,9 @@ class JwtUtilTest {
     void validateToken_ExpiredToken_ThrowsJwtException() {
         // 만료된 토큰 생성
         String expiredToken = Jwts.builder()
-                .subject("expired-user")
-                .issuedAt(new Date(System.currentTimeMillis() - 120_000))
-                .expiration(new Date(System.currentTimeMillis() - 60_000))
+                .setSubject("expired-user")
+                .setIssuedAt(new Date(System.currentTimeMillis() - 120_000))
+                .setExpiration(new Date(System.currentTimeMillis() - 60_000))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
 

@@ -11,13 +11,13 @@ import com.pandaterry.auth_microservice.domain.repository.RefreshTokenRepository
 import com.pandaterry.auth_microservice.domain.repository.UserRepository;
 import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import com.pandaterry.auth_microservice.infrastructure.client.QuotaClient;
-import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
 import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
 import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
 import com.pandaterry.msa_contracts.dto.auth.response.QuotaInfo;
 import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
+import com.pandaterry.msa_contracts.util.JwtUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,11 +45,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(
         classes = {
                 AuthMicroserviceApplication.class,
-                SecurityTestConfig.class
+//                SecurityTestConfig.class
         }
 )
 @AutoConfigureMockMvc
-@Import(SecurityTestConfig.class)
+//@Import(SecurityTestConfig.class)
 @ActiveProfiles("test")
 @Transactional
 class AuthIntegrationTest {

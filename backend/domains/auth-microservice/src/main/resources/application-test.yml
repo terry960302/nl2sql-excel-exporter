@@ -14,7 +14,9 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
 
 jwt:
-  secret-key: testSecretKey123456789012345678901234567890123456789012345678901234567890
+  header: Authorization
+  prefix: Bearer
+  secret-key: ce032ca2ca8daf17719a7cb37e27a6b02a815f3730a9b06fe859e288a1e826c85d3f90981d6be0b063fec2257985ee4e6031508be22a59799f8209d40129d4fc
   access-token:
     expiration-time: 7200000 # 2시간 (밀리초)
   refresh-token:

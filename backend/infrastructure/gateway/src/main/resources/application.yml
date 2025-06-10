@@ -1,7 +1,5 @@
 server:
   port: 8080
-#  servlet:
-#    context-path: /api
 
 spring:
   main:
@@ -12,6 +10,5 @@ spring:
     active: local
 
 jwt:
-  secret: 01234567890123456789012345678901
   header: Authorization
   prefix: Bearer
