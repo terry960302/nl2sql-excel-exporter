@@ -46,10 +46,14 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
 
     // 테스트
+    testImplementation project(':infrastructure:eureka-server')
+    testImplementation project(':domains:auth-microservice')
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'io.projectreactor:reactor-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
 }
 
 dependencyManagement {

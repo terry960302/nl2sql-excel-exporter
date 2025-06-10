@@ -12,6 +12,9 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
+  cloud:
+    discovery:
+      enabled: false
 
 jwt:
   secret-key: testSecretKey123456789012345678901234567890123456789012345678901234567890
@@ -19,3 +22,7 @@ jwt:
     expiration-time: 7200000 # 2시간 (밀리초)
   refresh-token:
     expiration-time: 2592000000 # 30일 (밀리초)
+
+quota:
+  client:
+    base-url: localhost
