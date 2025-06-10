@@ -1,3 +1,5 @@
+package com.pandaterry.gateway.integration;
+
 import com.pandaterry.eureka_server.EurekaServerApplication;
 import com.pandaterry.auth_microservice.AuthMicroserviceApplication;
 import com.pandaterry.gateway.GatewayApplication;
