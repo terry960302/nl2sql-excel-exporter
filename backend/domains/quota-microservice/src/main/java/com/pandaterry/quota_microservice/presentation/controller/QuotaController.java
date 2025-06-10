@@ -7,6 +7,7 @@ import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgDetailResponse;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgsPageResponse;
 import com.pandaterry.quota_microservice.application.service.QuotaService;
+import com.pandaterry.quota_microservice.infrastructure.messaging.QuotaUsageProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class QuotaController {
 
     private final QuotaService quotaService;
+    private final QuotaUsageProducer quotaUsageProducer;
 
     @GetMapping(RoutePath.Quota.ORG_ME_SUFFIX)
     public ResponseEntity<QuotaOrgResponse> getMyOrgQuota(@RequestHeader(HeaderKeys.ORG_ID) UUID orgId) {
@@ -47,7 +49,7 @@ public class QuotaController {
     // TODO: 컨트롤러 호출은 불가피한 경우에, 일반적으론 쿼리서비스에서 이벤트 기반 호출
     @PostMapping(RoutePath.Quota.USAGE_SUFFIX)
     public ResponseEntity<Void> recordUsage(@RequestBody QuotaUsageRecordRequest request) {
-        quotaService.recordQuotaUsage(request.getOrgId(), request.getIncrement());
+        quotaUsageProducer.sendQuotaUsage(request);
         return ResponseEntity.noContent().build();
     }
 }
