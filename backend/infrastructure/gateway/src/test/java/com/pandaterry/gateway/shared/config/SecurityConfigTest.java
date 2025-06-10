@@ -74,7 +74,7 @@ class SecurityConfigTest {
         webTestClient.mutateWith(SecurityMockServerConfigurers.mockJwt()
                 .authorities(new SimpleGrantedAuthority(RoleType.USER.getAuthority()))
                 .jwt(jwt -> jwt.claim("roles", List.of(RoleType.USER.name()))))
-                .get().uri("/api" + ApiPath.Query.BASE + "/test")
+                .get().uri("/api/v1" + ApiPath.Query.BASE + "/test")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class).isEqualTo("queries");
@@ -86,7 +86,7 @@ class SecurityConfigTest {
         webTestClient.mutateWith(SecurityMockServerConfigurers.mockJwt()
                 .authorities(new SimpleGrantedAuthority(RoleType.USER.getAuthority()))
                 .jwt(jwt -> jwt.claim("roles", List.of(RoleType.USER.name()))))
-                .get().uri("/api/agents/test")
+                .get().uri("/api/v1/agents/test")
                 .exchange()
                 .expectStatus().isForbidden();
     }
@@ -97,7 +97,7 @@ class SecurityConfigTest {
         webTestClient.mutateWith(SecurityMockServerConfigurers.mockJwt()
                 .authorities(new SimpleGrantedAuthority(RoleType.AGENT.getAuthority()))
                 .jwt(jwt -> jwt.claim("roles", List.of(RoleType.AGENT.name()))))
-                .get().uri("/api" + ApiPath.Job.BASE + "/test")
+                .get().uri("/api/v1" + ApiPath.Job.BASE + "/test")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class).isEqualTo("jobs");

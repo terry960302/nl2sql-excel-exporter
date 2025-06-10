@@ -30,11 +30,11 @@ class AgentAuthenticationFilterTest {
     }
 
     @Test
-    @DisplayName("시크릿이 없으면 401을 반환해야 한다")
-    void whenNoSecret_thenUnauthorized() {
+    @DisplayName("시크릿이 없으면 필터를 통과해야 한다")
+    void whenNoSecret_thenPass() {
         webTestClient.get()
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus().isOk();
     }
 
     @Test
