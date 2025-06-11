@@ -1,5 +1,6 @@
 package com.pandaterry.gateway.shared.config;
 
+import com.pandaterry.gateway.shared.filters.AuthHeaderPropagationFilter;
 import com.pandaterry.msa_contracts.enums.auth.RoleType;
 import com.pandaterry.gateway.shared.filters.AgentAuthenticationFilter;
 import com.pandaterry.gateway.shared.filters.JwtAuthenticationFilter;
@@ -49,7 +50,8 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http,
                                                             JwtAuthenticationFilter jwtAuthenticationFilter,
-                                                            AgentAuthenticationFilter agentAuthenticationFilter) {
+                                                            AgentAuthenticationFilter agentAuthenticationFilter,
+                                                            AuthHeaderPropagationFilter propagationFilter) {
         http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .addFilterAt(agentAuthenticationFilter, SecurityWebFiltersOrder.FIRST)
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
@@ -60,7 +62,9 @@ public class SecurityConfig {
                         .pathMatchers(ADMIN_PATHS).hasAuthority(RoleType.ADMIN.getAuthority())
                         .pathMatchers(AGENT_PATHS).hasAuthority(RoleType.AGENT.getAuthority())
                         .anyExchange().authenticated()
-                );
+                )
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable);
 //                .oauth2ResourceServer(oauth2 -> oauth2
 //                        .jwt(jwt -> jwt
 //                                .jwtDecoder(reactiveJwtDecoder())

@@ -193,7 +193,7 @@ class AuthServiceTest {
     void refreshToken_성공() {
         // given
         String refreshToken = "validRefreshToken";
-        doNothing().when(jwtUtil.validateToken(refreshToken));
+        when(jwtUtil.validateToken(refreshToken)).thenReturn(any());
         when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(testRefreshToken));
         when(jwtUtil.generateAccessToken(any(), any(), any(), any())).thenReturn("newAccessToken");
         when(jwtUtil.generateRefreshToken(any())).thenReturn("newRefreshToken");

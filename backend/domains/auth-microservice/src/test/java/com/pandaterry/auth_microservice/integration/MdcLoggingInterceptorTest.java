@@ -4,7 +4,7 @@ import com.pandaterry.auth_microservice.presentation.config.WebConfig;
 import com.pandaterry.auth_microservice.presentation.interceptor.MdcLoggingInterceptor;
 import com.pandaterry.auth_microservice.integration.support.ContextEchoController;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
-import com.pandaterry.auth_microservice.config.SecurityTestConfig;
+//import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,7 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ContextEchoController.class)
-@Import({MdcLoggingInterceptor.class, WebConfig.class, SecurityTestConfig.class})
+@Import({MdcLoggingInterceptor.class, WebConfig.class,
+//        SecurityTestConfig.class
+})
 class MdcLoggingInterceptorTest {
 
     @Autowired

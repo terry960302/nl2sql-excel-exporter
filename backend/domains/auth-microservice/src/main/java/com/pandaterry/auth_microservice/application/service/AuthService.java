@@ -20,6 +20,8 @@ import com.pandaterry.msa_contracts.dto.auth.response.QuotaInfo;
 import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
 import com.pandaterry.msa_contracts.dto.auth.response.UserInfoResponse;
 import com.pandaterry.msa_contracts.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -96,7 +98,13 @@ public class AuthService {
     }
 
     public TokenResponse refreshToken(String refreshToken) {
-        jwtUtil.validateToken(refreshToken);
+        try {
+            jwtUtil.validateToken(refreshToken);
+        } catch (MalformedJwtException e) {
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
+        } catch (ExpiredJwtException e) {
+            throw new AuthException(ErrorCode.TOKEN_EXPIRED);
+        }
 
         RefreshToken existingToken = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new AuthException(ErrorCode.INVALID_TOKEN));

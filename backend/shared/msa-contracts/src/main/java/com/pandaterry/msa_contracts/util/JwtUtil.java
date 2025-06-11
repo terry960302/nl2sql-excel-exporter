@@ -1,5 +1,6 @@
 package com.pandaterry.msa_contracts.util;
 
+import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.enums.auth.RoleType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -28,10 +29,12 @@ public class JwtUtil {
 
     public String generateAccessToken(UUID userId, String email, UUID organizationId, String planName) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put(HeaderKeys.USER_ID, userId.toString());           // "X-User-Id"
+        claims.put(HeaderKeys.ORG_ID, organizationId.toString());    // "X-Organization-Id"
+        claims.put(HeaderKeys.ROLES, List.of(RoleType.USER.name())); // "X-Roles"
+        // 선택적
         claims.put("email", email);
-        claims.put("organizationId", organizationId.toString());
         claims.put("planName", planName);
-        claims.put("roles", List.of(RoleType.USER.name()));
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -42,6 +45,23 @@ public class JwtUtil {
                 .setId(UUID.randomUUID().toString())
                 .compact();
     }
+
+    public String generateAgentToken(UUID agentId, UUID organizationId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(HeaderKeys.AGENT_ID, agentId.toString());
+        claims.put(HeaderKeys.ORG_ID, organizationId.toString());
+        claims.put(HeaderKeys.ROLES, List.of("AGENT"));
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject("agent::" + agentId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationTime))
+                .setId(UUID.randomUUID().toString())
+                .signWith(key)
+                .compact();
+    }
+
 
     public String generateRefreshToken(UUID userId) {
         return this.generateRefreshToken(userId, new Date(System.currentTimeMillis() + refreshTokenExpirationTime));
@@ -57,7 +77,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Jws<Claims> validateToken(String token) {
+    public Jws<Claims> validateToken(String token) throws ClaimJwtException {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

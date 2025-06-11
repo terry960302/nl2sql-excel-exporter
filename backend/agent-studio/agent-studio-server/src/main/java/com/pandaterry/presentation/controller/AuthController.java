@@ -13,7 +13,7 @@ import jakarta.inject.Inject;
 
 import java.util.UUID;
 
-@Controller("/api/v1/" + RoutePath.Auth.BASE)
+@Controller(RoutePath.Auth.BASE)
 public class AuthController {
 
     @Inject
