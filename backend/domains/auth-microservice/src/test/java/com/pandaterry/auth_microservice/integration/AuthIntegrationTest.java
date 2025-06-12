@@ -9,15 +9,15 @@ import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
 import com.pandaterry.auth_microservice.domain.repository.PlanRepository;
 import com.pandaterry.auth_microservice.domain.repository.RefreshTokenRepository;
 import com.pandaterry.auth_microservice.domain.repository.UserRepository;
-import com.pandaterry.auth_microservice.config.SecurityTestConfig;
+//import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import com.pandaterry.auth_microservice.infrastructure.client.QuotaClient;
-import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
 import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
 import com.pandaterry.msa_contracts.dto.auth.response.QuotaInfo;
 import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
+import com.pandaterry.msa_contracts.util.JwtUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,11 +45,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(
         classes = {
                 AuthMicroserviceApplication.class,
-                SecurityTestConfig.class
+//                SecurityTestConfig.class
         }
 )
 @AutoConfigureMockMvc
-@Import(SecurityTestConfig.class)
+//@Import(SecurityTestConfig.class)
 @ActiveProfiles("test")
 @Transactional
 class AuthIntegrationTest {
@@ -75,8 +75,6 @@ class AuthIntegrationTest {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private static final String VERSION = "/v1";
-
     @BeforeEach
     void setUp() {
         // QuotaClient의 임의 설정
@@ -98,7 +96,7 @@ class AuthIntegrationTest {
                     .build();
 
             // when
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
+            mockMvc.perform(post(RoutePath.Auth.SIGNUP)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
@@ -121,13 +119,13 @@ class AuthIntegrationTest {
                     .build();
 
             // 첫 번째 회원가입
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
+            mockMvc.perform(post(RoutePath.Auth.SIGNUP)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
             // 두 번째 회원가입 시도
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
+            mockMvc.perform(post(RoutePath.Auth.SIGNUP)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
@@ -157,7 +155,7 @@ class AuthIntegrationTest {
                     .build();
 
             try {
-                mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
+                mockMvc.perform(post(RoutePath.Auth.SIGNUP)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(signupRequest)))
                         .andExpect(status().isOk());
@@ -176,7 +174,7 @@ class AuthIntegrationTest {
                     .build();
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.LOGIN)
+            mockMvc.perform(post(RoutePath.Auth.LOGIN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -196,7 +194,7 @@ class AuthIntegrationTest {
                     .build();
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.LOGIN)
+            mockMvc.perform(post(RoutePath.Auth.LOGIN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized())
@@ -224,7 +222,7 @@ class AuthIntegrationTest {
                     .password(userPassword)
                     .build();
 
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
+            mockMvc.perform(post(RoutePath.Auth.SIGNUP)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(signupRequest)))
                     .andExpect(status().isOk());
@@ -239,7 +237,7 @@ class AuthIntegrationTest {
                     .password(userPassword)
                     .build();
 
-            String loginResponse = mockMvc.perform(post(VERSION + ApiPath.Auth.LOGIN)
+            String loginResponse = mockMvc.perform(post(RoutePath.Auth.LOGIN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(loginRequest)))
                     .andExpect(status().isOk())
@@ -260,7 +258,7 @@ class AuthIntegrationTest {
 
             String validRefreshToken = tokenResponse.getRefreshToken();
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
                             .header(HeaderKeys.REFRESH_TOKEN, validRefreshToken))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").exists())
@@ -272,7 +270,7 @@ class AuthIntegrationTest {
                     .getContentAsString();
 
             // 새로운 토큰으로 사용자 정보 조회 테스트
-            mockMvc.perform(get(VERSION + ApiPath.Auth.ME)
+            mockMvc.perform(get(RoutePath.Auth.ME)
                             .header(HeaderKeys.USER_ID, testUser.getId().toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.email").value(userEmail))
@@ -293,7 +291,7 @@ class AuthIntegrationTest {
             refreshTokenRepository.save(newToken);
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
                             .header(HeaderKeys.REFRESH_TOKEN, expiredRefreshToken))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value(ErrorCode.TOKEN_EXPIRED.getCode()))
@@ -310,7 +308,7 @@ class AuthIntegrationTest {
 
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
                             .header(HeaderKeys.REFRESH_TOKEN, token.getToken()))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value(ErrorCode.TOKEN_REVOKED.getCode()))
@@ -321,7 +319,7 @@ class AuthIntegrationTest {
         @DisplayName("유효하지 않은 리프레시 토큰으로 갱신 실패")
         void refreshToken_유효하지않은토큰_실패() throws Exception {
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
                             .header(HeaderKeys.REFRESH_TOKEN, "invalid.token.here"))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_TOKEN.getCode()))
@@ -333,7 +331,7 @@ class AuthIntegrationTest {
         void refreshToken_이전토큰재사용_실패() throws Exception {
             String firstRefreshToken = tokenResponse.getRefreshToken();
             // 첫 번째 토큰 갱신
-            String response = mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            String response = mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
                             .header(HeaderKeys.REFRESH_TOKEN, firstRefreshToken))
                     .andReturn()
                     .getResponse()
@@ -344,14 +342,14 @@ class AuthIntegrationTest {
             String secondRefreshToken = secondTokens.getRefreshToken();
 
             // 이전 토큰으로 재시도
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
                             .header(HeaderKeys.REFRESH_TOKEN, firstRefreshToken)) // 첫번째 발급받은 토큰은 이미 폐기처리돼서 갱신을 못함.
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value(ErrorCode.TOKEN_REVOKED.getCode()))
                     .andExpect(jsonPath("$.message").value(ErrorCode.TOKEN_REVOKED.getMessage()));
 
             // 두번째로 받은(갱신한) 새로운 토큰으로 시도 -> 성공해야함.
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
+            mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
                             .header(HeaderKeys.REFRESH_TOKEN, secondRefreshToken))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").exists())

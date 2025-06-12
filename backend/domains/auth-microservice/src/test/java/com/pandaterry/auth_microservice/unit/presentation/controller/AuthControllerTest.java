@@ -2,11 +2,11 @@ package com.pandaterry.auth_microservice.unit.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pandaterry.auth_microservice.application.service.AuthService;
+//import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import com.pandaterry.auth_microservice.domain.exception.AuthException;
 import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
-import com.pandaterry.auth_microservice.config.SecurityTestConfig;
 import com.pandaterry.auth_microservice.presentation.controller.AuthController;
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
 import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-@Import(SecurityTestConfig.class)
+//@Import(SecurityTestConfig.class)
 class AuthControllerTest {
 
     @Autowired
@@ -47,8 +47,6 @@ class AuthControllerTest {
 
     @MockitoBean
     private AuthService authService;
-
-    private final String VERSION = "/v1";
 
     @Nested
     @DisplayName("회원가입 관련 테스트")
@@ -65,9 +63,9 @@ class AuthControllerTest {
                     .build();
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+            mockMvc.perform(post(RoutePath.Auth.SIGNUP)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
         }
 
@@ -85,9 +83,9 @@ class AuthControllerTest {
             Mockito.doThrow(new AuthException(ErrorCode.DUPLICATE_EMAIL)).when(authService).signup(any());
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+            mockMvc.perform(post(RoutePath.Auth.SIGNUP)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
                     .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_EMAIL.getCode()))
                     .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_EMAIL.getMessage()));
@@ -107,9 +105,9 @@ class AuthControllerTest {
             Mockito.doThrow(new AuthException(ErrorCode.WEAK_PASSWORD)).when(authService).signup(any());
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.SIGNUP)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+            mockMvc.perform(post(RoutePath.Auth.SIGNUP)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(ErrorCode.WEAK_PASSWORD.getCode()))
                     .andExpect(jsonPath("$.message").value(ErrorCode.WEAK_PASSWORD.getMessage()));
@@ -136,9 +134,9 @@ class AuthControllerTest {
             when(authService.login(any())).thenReturn(tokenResponse);
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.LOGIN)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+            mockMvc.perform(post(RoutePath.Auth.LOGIN)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").value("accessToken"))
                     .andExpect(jsonPath("$.refreshToken").value("refreshToken"));
@@ -157,9 +155,9 @@ class AuthControllerTest {
             when(authService.login(any())).thenThrow(new AuthException(ErrorCode.INVALID_CREDENTIALS));
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.LOGIN)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+            mockMvc.perform(post(RoutePath.Auth.LOGIN)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_CREDENTIALS.getCode()))
                     .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_CREDENTIALS.getMessage()));
@@ -194,8 +192,8 @@ class AuthControllerTest {
             when(authService.getMyInfo(userId)).thenReturn(userInfo);
 
             // when & then
-            mockMvc.perform(get(VERSION + ApiPath.Auth.ME)
-                    .header(HeaderKeys.USER_ID, userId))
+            mockMvc.perform(get(RoutePath.Auth.ME)
+                            .header(HeaderKeys.USER_ID, userId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.userId").value(userId))
                     .andExpect(jsonPath("$.email").value("test@example.com"))
@@ -215,8 +213,8 @@ class AuthControllerTest {
             when(authService.getMyInfo(userId)).thenThrow(new AuthException(ErrorCode.USER_NOT_FOUND));
 
             // when & then
-            mockMvc.perform(get(VERSION + ApiPath.Auth.ME)
-                    .header(HeaderKeys.USER_ID, userId))
+            mockMvc.perform(get(RoutePath.Auth.ME)
+                            .header(HeaderKeys.USER_ID, userId))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_FOUND.getCode()))
                     .andExpect(jsonPath("$.message").value(ErrorCode.USER_NOT_FOUND.getMessage()));
@@ -239,8 +237,8 @@ class AuthControllerTest {
             when(authService.refreshToken(refreshToken)).thenReturn(tokenResponse);
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
-                    .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
+            mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
+                            .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").value("newAccessToken"))
                     .andExpect(jsonPath("$.refreshToken").value("newRefreshToken"));
@@ -255,8 +253,8 @@ class AuthControllerTest {
             when(authService.refreshToken(refreshToken)).thenThrow(new AuthException(ErrorCode.INVALID_TOKEN));
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.REFRESH_TOKEN)
-                    .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
+            mockMvc.perform(post(RoutePath.Auth.REFRESH_TOKEN)
+                            .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_TOKEN.getCode()))
                     .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_TOKEN.getMessage()));
@@ -270,8 +268,8 @@ class AuthControllerTest {
             String refreshToken = "validRefreshToken";
 
             // when & then
-            mockMvc.perform(post(VERSION + ApiPath.Auth.LOGOUT)
-                    .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
+            mockMvc.perform(post(RoutePath.Auth.LOGOUT)
+                            .header(HeaderKeys.REFRESH_TOKEN, refreshToken))
                     .andExpect(status().isOk());
 
             verify(authService).logout(refreshToken);

@@ -7,8 +7,8 @@ import com.pandaterry.msa_contracts.vo.schema.TableSchema;
 import com.pandaterry.schema_microservice.domain.entity.ColumnDefinition;
 import com.pandaterry.schema_microservice.domain.entity.Schema;
 import com.pandaterry.schema_microservice.domain.entity.TableDefinition;
-import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
-import com.pandaterry.schema_microservice.domain.exception.SchemaException;
+import com.pandaterry.schema_microservice.shared.exception.ErrorCode;
+import com.pandaterry.schema_microservice.shared.exception.SchemaException;
 import com.pandaterry.schema_microservice.infrastructure.repository.ColumnDefinitionRepository;
 import com.pandaterry.schema_microservice.infrastructure.repository.SchemaRepository;
 import com.pandaterry.schema_microservice.infrastructure.repository.TableDefinitionRepository;
@@ -29,12 +29,12 @@ public class SchemaService {
     private final ColumnDefinitionRepository columnDefinitionRepository;
     private final TableDefinitionRepository tableDefinitionRepository;
 
-    public RegisterSchemaResponse uploadSchema(UUID orgId, UUID userId, UUID agentId, RegisterSchemaRequest req) {
+    public RegisterSchemaResponse uploadSchema(String orgId, String userId, String agentId, RegisterSchemaRequest req) {
         if (orgId == null){
             throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
         }
 
-        Schema schema = Schema.create(orgId, req.datasourceId(), userId, req.name(), req.rawSchema());
+        Schema schema = Schema.create(UUID.fromString(orgId), req.datasourceId(), UUID.fromString(userId), req.name(), req.rawSchema());
         Schema saved = schemaRepository.save(schema);
         this.createTables(saved.getId(), req.schemas());
         return SchemaMapper.toResponse(saved);

@@ -11,12 +11,14 @@ import com.pandaterry.auth_microservice.domain.repository.OrganizationRepository
 import com.pandaterry.auth_microservice.domain.repository.PlanRepository;
 import com.pandaterry.auth_microservice.domain.repository.RefreshTokenRepository;
 import com.pandaterry.auth_microservice.domain.repository.UserRepository;
-import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
 import com.pandaterry.msa_contracts.dto.auth.request.LoginRequest;
 import com.pandaterry.msa_contracts.dto.auth.request.SignupRequest;
 import com.pandaterry.msa_contracts.dto.auth.response.QuotaInfo;
 import com.pandaterry.msa_contracts.dto.auth.response.TokenResponse;
 import com.pandaterry.msa_contracts.dto.auth.response.UserInfoResponse;
+import com.pandaterry.msa_contracts.util.JwtUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -191,7 +193,7 @@ class AuthServiceTest {
     void refreshToken_성공() {
         // given
         String refreshToken = "validRefreshToken";
-        when(jwtUtil.validateToken(refreshToken)).thenReturn(true);
+        when(jwtUtil.validateToken(refreshToken)).thenReturn(any());
         when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(testRefreshToken));
         when(jwtUtil.generateAccessToken(any(), any(), any(), any())).thenReturn("newAccessToken");
         when(jwtUtil.generateRefreshToken(any())).thenReturn("newRefreshToken");

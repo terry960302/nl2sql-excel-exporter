@@ -1,20 +1,19 @@
 package com.pandaterry.gateway.shared.converters;
 
-import com.pandaterry.gateway.shared.enums.RoleType;
+import com.pandaterry.gateway.shared.utils.AuthorityMapper;
+import com.pandaterry.msa_contracts.enums.auth.RoleType;
 import com.pandaterry.gateway.shared.exceptions.ErrorCode;
 import com.pandaterry.gateway.shared.exceptions.GatewayException;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
@@ -24,7 +23,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
     public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
         Instant expiredAt = jwt.getExpiresAt();
 
-        if (expiredAt.isBefore(Instant.now())) {
+        if (Objects.requireNonNull(expiredAt).isBefore(Instant.now())) {
             throw new GatewayException(ErrorCode.JWT_EXPIRED);
         }
 
@@ -36,7 +35,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Mono<Abs
         return Mono.just(
                 new JwtAuthenticationToken(
                         jwt,
-                        roles.stream().map(RoleType::from).toList()
+                        AuthorityMapper.toGranted(roles.stream().map(RoleType::from).toList())
                 )
         );
     }

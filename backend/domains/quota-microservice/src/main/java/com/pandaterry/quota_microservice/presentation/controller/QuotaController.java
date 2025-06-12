@@ -1,12 +1,13 @@
 package com.pandaterry.quota_microservice.presentation.controller;
 
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgDetailResponse;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgsPageResponse;
 import com.pandaterry.quota_microservice.application.service.QuotaService;
+import com.pandaterry.quota_microservice.infrastructure.messaging.QuotaUsageProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -16,26 +17,27 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(ApiPath.Quota.BASE)
+@RequestMapping(RoutePath.Quota.BASE)
 @RequiredArgsConstructor
 public class QuotaController {
 
     private final QuotaService quotaService;
+    private final QuotaUsageProducer quotaUsageProducer;
 
-    @GetMapping(ApiPath.Quota.ORG_ME_SUFFIX)
+    @GetMapping(RoutePath.Quota.ORG_ME_SUFFIX)
     public ResponseEntity<QuotaOrgResponse> getMyOrgQuota(@RequestHeader(HeaderKeys.ORG_ID) UUID orgId) {
         return ResponseEntity.ok(quotaService.getQuotaForOrg(orgId));
     }
 
     // ADMIN
-    @GetMapping(ApiPath.Quota.ORGS_SUFFIX)
+    @GetMapping(RoutePath.Quota.ORGS_SUFFIX)
     public ResponseEntity<QuotaOrgsPageResponse> getAllQuota(@RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "50") int size) {
         return ResponseEntity.ok(quotaService.getAllQuotaStatus(PageRequest.of(page, size)));
     }
 
     // ADMIN
-    @GetMapping(ApiPath.Quota.ORG_DETAIL_SUFFIX)
+    @GetMapping(RoutePath.Quota.ORG_DETAIL_SUFFIX)
     public ResponseEntity<QuotaOrgDetailResponse> getQuotaDetail(@PathVariable UUID orgId,
                                                                  @RequestParam String startDate,
                                                                  @RequestParam String endDate) {
@@ -45,9 +47,9 @@ public class QuotaController {
     }
 
     // TODO: 컨트롤러 호출은 불가피한 경우에, 일반적으론 쿼리서비스에서 이벤트 기반 호출
-    @PostMapping(ApiPath.Quota.USAGE_SUFFIX)
+    @PostMapping(RoutePath.Quota.USAGE_SUFFIX)
     public ResponseEntity<Void> recordUsage(@RequestBody QuotaUsageRecordRequest request) {
-        quotaService.recordQuotaUsage(request.getOrgId(), request.getIncrement());
+        quotaUsageProducer.sendQuotaUsage(request);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,8 @@
 package com.pandaterry.infrastructure.client;
 
 import com.pandaterry.domain.model.ExecutionJob;
+import com.pandaterry.msa_contracts.constants.HeaderKeys;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.presentation.dto.request.QueryRequest;
 import io.micronaut.http.client.HttpClient;
@@ -16,6 +18,8 @@ import java.util.UUID;
 public class QueryServiceClient extends BaseServiceClient {
     private static final Logger logger = LoggerFactory.getLogger(QueryServiceClient.class);
 
+    private static final String PREFIX = "/api/v1";
+
     public QueryServiceClient(HttpClient httpClient, String baseUrl, String agentSecret) {
         super(httpClient, baseUrl, agentSecret);
     }
@@ -23,8 +27,8 @@ public class QueryServiceClient extends BaseServiceClient {
     // 자연어 질의 요청
     public Optional<ExecutionJob> requestQuery(UUID orgId, QueryRequest payload) {
         try {
-            Map<String, String> headers = Map.of("X-Organization-Id", orgId.toString());
-            ExecutionJob job = post("/api/v1/queries", payload, headers, ExecutionJob.class);
+            Map<String, String> headers = Map.of(HeaderKeys.ORG_ID, orgId.toString());
+            ExecutionJob job = post(RoutePath.Query.BASE, payload, headers, ExecutionJob.class);
             return Optional.ofNullable(job);
         } catch (Exception e) {
             logger.error("Failed to request query", e);
@@ -35,7 +39,7 @@ public class QueryServiceClient extends BaseServiceClient {
     // 1. 작업 Polling
     public Optional<ExecutionJob> pollPendingJob(UUID agentId) {
         try {
-            String path = "/jobs?agentId=" + agentId + "&status=PENDING";
+            String path = PREFIX + "/jobs?agentId=" + agentId + "&status=PENDING";
             ExecutionJob job = get(path, ExecutionJob.class);
             return Optional.ofNullable(job);
         } catch (Exception e) {
@@ -46,7 +50,7 @@ public class QueryServiceClient extends BaseServiceClient {
 
     // 2. 작업 결과 보고
     public void reportJobResult(UUID jobId, JobResultRequest payload) {
-        String path = "/jobs/" + jobId + "/result";
+        String path = PREFIX + "/jobs/" + jobId + "/result";
         post(path, payload, null);
     }
 

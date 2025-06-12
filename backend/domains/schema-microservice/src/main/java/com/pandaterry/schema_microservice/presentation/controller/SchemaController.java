@@ -1,6 +1,6 @@
 package com.pandaterry.schema_microservice.presentation.controller;
 
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.schema.request.RegisterSchemaRequest;
 import com.pandaterry.msa_contracts.dto.schema.response.RegisterSchemaResponse;
@@ -13,16 +13,16 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/v1" + ApiPath.Schema.BASE)
+@RequestMapping(RoutePath.Schema.BASE)
 @RequiredArgsConstructor
 public class SchemaController {
     private final SchemaService schemaService;
 
     @PostMapping
     public ResponseEntity<RegisterSchemaResponse> uploadSchema(
-            @RequestHeader(HeaderKeys.ORG_ID) UUID orgId,
-            @RequestHeader(HeaderKeys.USER_ID) UUID userId,
-            @RequestHeader(HeaderKeys.AGENT_ID) UUID agentId,
+            @RequestHeader(HeaderKeys.ORG_ID) String orgId,
+            @RequestHeader(HeaderKeys.USER_ID) String userId,
+            @RequestHeader(HeaderKeys.AGENT_ID) String agentId,
             @RequestBody RegisterSchemaRequest req){
         return ResponseEntity.ok(schemaService.uploadSchema(orgId, userId, agentId, req));
     }

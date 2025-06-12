@@ -1,6 +1,6 @@
 package com.pandaterry.quota_microservice.integration;
 
-import com.pandaterry.msa_contracts.constants.ApiPath;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
 import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
@@ -9,6 +9,9 @@ import com.pandaterry.quota_microservice.domain.entity.Organization;
 import com.pandaterry.quota_microservice.domain.entity.Plan;
 import com.pandaterry.quota_microservice.domain.repository.OrganizationRepository;
 import com.pandaterry.quota_microservice.domain.repository.PlanRepository;
+import com.pandaterry.quota_microservice.infrastructure.messaging.QuotaUsageProducer;
+import com.pandaterry.quota_microservice.application.service.QuotaService;
+import org.springframework.context.annotation.Bean;
 import com.pandaterry.quota_microservice.integration.common.IntegrationTestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Import(TestSecurityConfig.class)
+@Import({TestSecurityConfig.class, QuotaIntegrationTest.DummyProducerConfig.class})
 class QuotaIntegrationTest extends IntegrationTestBase {
 
     @Autowired
@@ -35,6 +38,13 @@ class QuotaIntegrationTest extends IntegrationTestBase {
     private PlanRepository planRepository;
 
     private UUID orgId;
+
+    static class DummyProducerConfig {
+        @Bean
+        public QuotaUsageProducer quotaUsageProducer(QuotaService quotaService) {
+            return request -> quotaService.consumeQuotaUsage(request);
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -48,7 +58,7 @@ class QuotaIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("초기 사용량은 0")
     void getQuota_initial_zero() throws Exception {
-        MvcResult result = mockMvc.perform(get(ApiPath.Quota.ORG_ME)
+        MvcResult result = mockMvc.perform(get(RoutePath.Quota.ORG_ME)
                         .header(HeaderKeys.ORG_ID, orgId))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -70,12 +80,12 @@ class QuotaIntegrationTest extends IntegrationTestBase {
                 .increment(3L)
                 .build();
 
-        mockMvc.perform(post(ApiPath.Quota.USAGE)
+        mockMvc.perform(post(RoutePath.Quota.USAGE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNoContent());
 
-        MvcResult result = mockMvc.perform(get(ApiPath.Quota.ORG_ME)
+        MvcResult result = mockMvc.perform(get(RoutePath.Quota.ORG_ME)
                         .header(HeaderKeys.ORG_ID, orgId))
                 .andExpect(status().isOk())
                 .andReturn();

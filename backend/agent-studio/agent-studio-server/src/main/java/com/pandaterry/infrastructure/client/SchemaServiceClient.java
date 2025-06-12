@@ -1,5 +1,7 @@
 package com.pandaterry.infrastructure.client;
 
+import com.pandaterry.msa_contracts.constants.HeaderKeys;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.dto.schema.request.RegisterSchemaRequest;
 import com.pandaterry.msa_contracts.dto.schema.response.RegisterSchemaResponse;
 import io.micronaut.http.client.HttpClient;
@@ -17,10 +19,10 @@ public class SchemaServiceClient extends BaseServiceClient {
     // 스키마 업로드
     public RegisterSchemaResponse uploadSchema(RegisterSchemaRequest req) {
         Map<String, String> header = new HashMap<>();
-        header.put("X-Organization-Id", req.orgId().toString());
-        header.put("X-User-Id", req.userId().toString());
-        header.put("X-Agent-Id", req.agentId().toString());
+        header.put(HeaderKeys.ORG_ID, req.orgId().toString());
+        header.put(HeaderKeys.USER_ID, req.userId().toString());
+        header.put(HeaderKeys.AGENT_ID, req.agentId().toString());
 
-        return post("/schemas", req, header, null);
+        return post(RoutePath.Schema.BASE, req, header, null);
     }
 }

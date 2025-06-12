@@ -6,10 +6,30 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/api/v1")
 public class TestController {
-    @GetMapping
+    @GetMapping("/test")
     public Mono<String> test() {
         return Mono.just("test");
+    }
+
+    @GetMapping("/queries/test")
+    public Mono<String> queries() {
+        return Mono.just("queries");
+    }
+
+    @GetMapping("/agents/test")
+    public Mono<String> agents() {
+        return Mono.just("agents");
+    }
+
+    @GetMapping("/jobs/test")
+    public Mono<String> jobs() {
+        return Mono.just("jobs");
+    }
+
+    @GetMapping("/datasources/test")
+    public Mono<String> datasources() {
+        return Mono.just("datasources");
     }
 }

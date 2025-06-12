@@ -3,8 +3,8 @@ package com.pandaterry.schema_microservice.infrastructure.util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
-import com.pandaterry.schema_microservice.domain.exception.SchemaException;
+import com.pandaterry.schema_microservice.shared.exception.ErrorCode;
+import com.pandaterry.schema_microservice.shared.exception.SchemaException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;

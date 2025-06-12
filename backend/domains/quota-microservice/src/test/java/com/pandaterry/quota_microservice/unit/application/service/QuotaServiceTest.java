@@ -1,5 +1,6 @@
 package com.pandaterry.quota_microservice.unit.application.service;
 
+import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
 import com.pandaterry.quota_microservice.application.service.QuotaService;
 import com.pandaterry.quota_microservice.domain.entity.*;
@@ -84,5 +85,26 @@ class QuotaServiceTest {
 
         assertThat(dailyCaptor.getValue().getCount()).isEqualTo(2L);
         assertThat(monthlyCaptor.getValue().getCount()).isEqualTo(2L);
+    }
+
+    @Test
+    void consumeQuotaUsage_호출시_사용량증가() {
+        LocalDate today = LocalDate.now();
+        String monthKey = YearMonth.now().format(DateTimeFormatter.ofPattern("yyyyMM"));
+        when(dailyRepository.findById(QuotaUsageDailyKey.builder().orgId(orgId).dateKey(today).build())).thenReturn(Optional.empty());
+        when(monthlyRepository.findById(QuotaUsageMonthlyKey.builder().orgId(orgId).monthKey(monthKey).build())).thenReturn(Optional.empty());
+
+        quotaService.consumeQuotaUsage(
+                QuotaUsageRecordRequest.builder().orgId(orgId).increment(1L).build()
+        );
+
+        ArgumentCaptor<QuotaUsageDaily> dailyCaptor = ArgumentCaptor.forClass(QuotaUsageDaily.class);
+        ArgumentCaptor<QuotaUsageMonthly> monthlyCaptor = ArgumentCaptor.forClass(QuotaUsageMonthly.class);
+
+        verify(dailyRepository).save(dailyCaptor.capture());
+        verify(monthlyRepository).save(monthlyCaptor.capture());
+
+        assertThat(dailyCaptor.getValue().getCount()).isEqualTo(1L);
+        assertThat(monthlyCaptor.getValue().getCount()).isEqualTo(1L);
     }
 }

@@ -1,7 +1,7 @@
 package com.pandaterry.schema_microservice.unit.infrastructure.util;
 
-import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
-import com.pandaterry.schema_microservice.domain.exception.SchemaException;
+import com.pandaterry.schema_microservice.shared.exception.ErrorCode;
+import com.pandaterry.schema_microservice.shared.exception.SchemaException;
 import com.pandaterry.schema_microservice.infrastructure.util.EncryptionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -6,8 +6,8 @@ import com.pandaterry.schema_microservice.application.service.SchemaService;
 import com.pandaterry.schema_microservice.domain.entity.ColumnDefinition;
 import com.pandaterry.schema_microservice.domain.entity.Schema;
 import com.pandaterry.schema_microservice.domain.entity.TableDefinition;
-import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
-import com.pandaterry.schema_microservice.domain.exception.SchemaException;
+import com.pandaterry.schema_microservice.shared.exception.ErrorCode;
+import com.pandaterry.schema_microservice.shared.exception.SchemaException;
 import com.pandaterry.schema_microservice.infrastructure.repository.ColumnDefinitionRepository;
 import com.pandaterry.schema_microservice.infrastructure.repository.SchemaRepository;
 import com.pandaterry.schema_microservice.infrastructure.repository.TableDefinitionRepository;
@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,7 +63,7 @@ class SchemaServiceTest {
         when(tableDefinitionRepository.save(any(TableDefinition.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(columnDefinitionRepository.save(any(ColumnDefinition.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        RegisterSchemaResponse response = schemaService.uploadSchema(orgId, userId, agentId, request);
+        RegisterSchemaResponse response = schemaService.uploadSchema(orgId.toString(), userId.toString(), agentId.toString(), request);
 
         assertThat(response.id()).isNotNull();
         verify(schemaRepository).save(any(Schema.class));
@@ -75,7 +74,7 @@ class SchemaServiceTest {
     @Test
     @DisplayName("조직 ID 누락으로 인한 스키마 업로드 실패")
     void uploadSchema_OrgIdNull_실패() {
-        assertThatThrownBy(() -> schemaService.uploadSchema(null, userId, agentId, request))
+        assertThatThrownBy(() -> schemaService.uploadSchema(null, userId.toString(), agentId.toString(), request))
                 .isInstanceOf(SchemaException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORG_ID_NOT_FOUND);
     }

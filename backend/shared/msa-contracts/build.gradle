@@ -6,8 +6,9 @@ group = 'com.pandaterry.msa-contracts'
 version = '1.0.0'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 repositories {
@@ -15,17 +16,24 @@ repositories {
 }
 
 dependencies {
+    // lombok
     implementation 'org.projectlombok:lombok:1.18.22'
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
-    // Spring-Boot, Micronaut 에서 모두 지원하는 표준 validation 라이브러리 사용필요(대신 각 프레임워크 별로 다음 라이브리 필요 -> spring-boot-starter-validation, micronaut-validation + micronaut-hibernate-validator)
-    // Validation API만 의존: 런타임 구현체는 각 프레임워크에서 추가로 붙여준다.
-    compileOnly("jakarta.validation:jakarta.validation-api:3.0.2")
-
-    // (선택) IDE autocomplete나 컴파일 시점 애노테이션 프로세서를 위해
+    // Validation API
+    compileOnly("jakarta.validation:jakarta.validation-api:3.0.2") // Spring-Boot, Micronaut 에서 모두 지원하는 표준 validation
     annotationProcessor("jakarta.validation:jakarta.validation-api:3.0.2")
-}
 
-// 여기에 공통으로 쓸 의존성이 있으면 추가합니다.
-// e.g. implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    // 로깅
+    compileOnly 'org.slf4j:slf4j-api:2.0.9'
+
+    // 웹
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    implementation 'org.springframework:spring-webmvc:6.2.7'
+
+    // 인증
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+}

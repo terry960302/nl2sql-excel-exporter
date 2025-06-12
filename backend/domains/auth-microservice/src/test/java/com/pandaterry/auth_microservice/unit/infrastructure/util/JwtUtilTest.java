@@ -5,7 +5,9 @@ import com.pandaterry.auth_microservice.domain.entity.Plan;
 import com.pandaterry.auth_microservice.domain.entity.User;
 import com.pandaterry.auth_microservice.domain.exception.AuthException;
 import com.pandaterry.auth_microservice.domain.exception.ErrorCode;
-import com.pandaterry.auth_microservice.infrastructure.util.JwtUtil;
+import com.pandaterry.msa_contracts.util.JwtUtil;
+import io.jsonwebtoken.ClaimJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +60,7 @@ class JwtUtilTest {
 
         // then
         assertThat(token).isNotNull();
-        assertThat(jwtUtil.validateToken(token)).isTrue();
+        assertThat(jwtUtil.validateToken(token)).isNotNull();
     }
 
     @Test
@@ -68,7 +70,7 @@ class JwtUtilTest {
 
         // then
         assertThat(token).isNotNull();
-        assertThat(jwtUtil.validateToken(token)).isTrue();
+        assertThat(jwtUtil.validateToken(token)).isNotNull();
     }
 
     @Test
@@ -81,7 +83,7 @@ class JwtUtilTest {
                 testPlan.getName());
 
         // when
-        boolean isValid = jwtUtil.validateToken(token);
+        boolean isValid = jwtUtil.validateToken(token).getBody() != null;
 
         // then
         assertThat(isValid).isTrue();
@@ -95,11 +97,11 @@ class JwtUtilTest {
         // when
 
         // then
-        RuntimeException exception = Assertions.assertThrows(AuthException.class,  () -> {
+        Exception exception = Assertions.assertThrows(Exception.class,  () -> {
             jwtUtil.validateToken(invalidToken);
         });
 
-        assertThat(exception.getMessage()).isEqualTo(ErrorCode.INVALID_TOKEN.getMessage());
+        assertThat(exception).isInstanceOf(MalformedJwtException.class);
     }
 
     @Test

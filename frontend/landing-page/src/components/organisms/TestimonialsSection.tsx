@@ -4,12 +4,16 @@ import { useState } from "react";
 import marketerAvatar from "@assets/avatar/marketer_avatar.jpg";
 import pmAvatar from "@assets/avatar/pm_avatar.jpg";
 import designerAvatar from "@assets/avatar/designer_avatar.jpg";
+import { breakpoints } from "@constants/breakpoints";
 
 const Section = styled.section`
   width: 100%;
   padding: 4rem 0;
   background-color: #ffffff;
   scroll-margin-top: 80px;
+  @media (max-width: ${breakpoints.mobile}) {
+    padding: 2rem 0;
+  }
 `;
 
 const Container = styled.div`
@@ -19,16 +23,23 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    gap: 1.5rem;
+  }
 `;
 
 const Title = styled.h2`
   font-size: 48px;
   font-weight: 700;
-  color: #2e4f21;
+  color: #000000;
   letter-spacing: -4.2px;
   line-height: 1;
   text-align: center;
   margin-bottom: 4rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 32px;
+    margin-bottom: 2rem;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -37,6 +48,9 @@ const ContentWrapper = styled.div`
   max-width: 1000px;
   margin: 0 auto;
   width: 100%;
+  @media (max-width: ${breakpoints.mobile}) {
+    flex-direction: column;
+  }
 `;
 
 const CardsContainer = styled.div`
@@ -44,27 +58,42 @@ const CardsContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
   width: 300px;
+  @media (max-width: ${breakpoints.mobile}) {
+    flex-direction: row;
+    overflow-x: auto;
+    width: 100%;
+  }
 `;
 
 const TestimonialContent = styled.div`
   flex: 1;
   border-left: 1px solid #2e4f21;
   padding-left: 2rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    border-left: none;
+    padding-left: 0;
+  }
 `;
 
 const Quote = styled.p`
   font-size: 30px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -1.35px;
   line-height: 1.4;
   margin-bottom: 2rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 24px;
+  }
 `;
 
 const AuthorInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+  @media (max-width: ${breakpoints.mobile}) {
+    gap: 0.5rem;
+  }
 `;
 
 const AuthorImage = styled.img`
@@ -72,13 +101,20 @@ const AuthorImage = styled.img`
   height: 46px;
   border-radius: 16px;
   object-fit: cover;
+  @media (max-width: ${breakpoints.mobile}) {
+    width: 36px;
+    height: 36px;
+  }
 `;
 
 const AuthorName = styled.p`
   font-size: 16px;
   font-weight: 400;
-  color: #2e4f21;
+  color: #4a4a4a;
   letter-spacing: -0.72px;
+  @media (max-width: ${breakpoints.mobile}) {
+    font-size: 14px;
+  }
 `;
 
 const testimonials = [

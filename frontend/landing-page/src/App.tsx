@@ -4,7 +4,7 @@ import HeroSection from "@organisms/HeroSection";
 import ServicesSection from "@organisms/ServicesSection";
 import TestimonialsSection from "@organisms/TestimonialsSection";
 import PlansSection from "@/components/organisms/PlansSection";
-import PlanSection from "@organisms/PlanSection";
+import AdditionalFeatureSection from "@/components/organisms/AdditionalFeatureSection";
 import CTASection from "@organisms/CTASection";
 import DemoSection from "@organisms/DemoSection";
 import Footer from "@organisms/Footer";
@@ -23,7 +23,7 @@ function App() {
         <TestimonialsSection />
         <DemoSection />
         <PlansSection />
-        <PlanSection />
+        <AdditionalFeatureSection />
         <CTASection />
       </Layout>
       <Footer />

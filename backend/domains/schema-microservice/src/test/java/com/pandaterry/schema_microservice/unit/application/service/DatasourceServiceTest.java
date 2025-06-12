@@ -7,8 +7,8 @@ import com.pandaterry.msa_contracts.enums.schema.DatabaseType;
 import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 import com.pandaterry.schema_microservice.application.service.DatasourceService;
 import com.pandaterry.schema_microservice.domain.entity.Datasource;
-import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
-import com.pandaterry.schema_microservice.domain.exception.SchemaException;
+import com.pandaterry.schema_microservice.shared.exception.ErrorCode;
+import com.pandaterry.schema_microservice.shared.exception.SchemaException;
 import com.pandaterry.schema_microservice.infrastructure.repository.DatasourceRepository;
 import com.pandaterry.schema_microservice.presentation.mappers.DatasourceMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +56,7 @@ class DatasourceServiceTest {
     void initDatasource_성공() {
         when(datasourceRepository.save(any(Datasource.class))).thenReturn(datasource);
 
-        DatasourceResponse response = datasourceService.initDatasource(orgId, userId, agentId);
+        DatasourceResponse response = datasourceService.initDatasource(orgId.toString(), userId.toString(), agentId.toString());
 
         assertThat(response.getId()).isNotNull();
         verify(datasourceRepository).save(any(Datasource.class));
@@ -65,7 +65,7 @@ class DatasourceServiceTest {
     @Test
     @DisplayName("조직 ID 누락으로 초기화 실패")
     void initDatasource_OrgIdNull_실패() {
-        assertThatThrownBy(() -> datasourceService.initDatasource(null, userId, agentId))
+        assertThatThrownBy(() -> datasourceService.initDatasource(null, userId.toString(), agentId.toString()))
                 .isInstanceOf(SchemaException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORG_ID_NOT_FOUND);
     }
@@ -77,7 +77,7 @@ class DatasourceServiceTest {
         when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.of(datasource));
         when(datasourceRepository.save(any(Datasource.class))).thenReturn(datasource);
 
-        DatasourceResponse response = datasourceService.activateDatasource(datasource.getId(), orgId, userId, agentId, request);
+        DatasourceResponse response = datasourceService.activateDatasource(datasource.getId().toString(), orgId.toString(), userId.toString(), agentId.toString(), request);
 
         assertThat(response.getName()).isEqualTo("test");
         verify(datasourceRepository).findById(datasource.getId());
@@ -89,7 +89,7 @@ class DatasourceServiceTest {
     void getDatasource_성공() {
         when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.of(datasource));
 
-        DatasourceResponse response = datasourceService.getDatasource(datasource.getId());
+        DatasourceResponse response = datasourceService.getDatasource(datasource.getId().toString());
 
         assertThat(response.getId()).isEqualTo(datasource.getId());
     }
@@ -99,7 +99,7 @@ class DatasourceServiceTest {
     void getDatasource_없음_실패() {
         when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> datasourceService.getDatasource(datasource.getId()))
+        assertThatThrownBy(() -> datasourceService.getDatasource(datasource.getId().toString()))
                 .isInstanceOf(SchemaException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.DATASOURCE_NOT_FOUND);
     }
@@ -109,7 +109,7 @@ class DatasourceServiceTest {
     void getDatasources_성공() {
         when(datasourceRepository.findByOrgIdAndIsEnabled(orgId, EnableStatus.ENABLED)).thenReturn(List.of(datasource));
 
-        List<DatasourceResponse> responses = datasourceService.getDatasources(orgId);
+        List<DatasourceResponse> responses = datasourceService.getDatasources(orgId.toString());
 
         assertThat(responses).hasSize(1);
         verify(datasourceRepository).findByOrgIdAndIsEnabled(orgId, EnableStatus.ENABLED);
@@ -120,7 +120,7 @@ class DatasourceServiceTest {
     void deactivateDatasource_없음_실패() {
         when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> datasourceService.deactivateDatasource(datasource.getId()))
+        assertThatThrownBy(() -> datasourceService.deactivateDatasource(datasource.getId().toString()))
                 .isInstanceOf(SchemaException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.DATASOURCE_NOT_FOUND);
     }
@@ -130,7 +130,7 @@ class DatasourceServiceTest {
     void deactivateDatasource_성공() {
         when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.of(datasource));
 
-        datasourceService.deactivateDatasource(datasource.getId());
+        datasourceService.deactivateDatasource(datasource.getId().toString());
 
         verify(datasourceRepository).findById(datasource.getId());
         assertThat(datasource.getIsEnabled()).isEqualTo(EnableStatus.DISABLED);

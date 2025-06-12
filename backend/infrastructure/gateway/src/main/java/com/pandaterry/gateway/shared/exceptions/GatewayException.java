@@ -6,4 +6,8 @@ public class GatewayException extends RuntimeException{
     public GatewayException(final ErrorCode errorCode){
         this.errorCode = errorCode;
     }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
 }
