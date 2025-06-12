@@ -1,14 +1,12 @@
 package com.pandaterry.schema_microservice.application.service;
 
-import com.pandaterry.msa_contracts.dto.schema.request.DatasourceCreateRequest;
 import com.pandaterry.msa_contracts.dto.schema.response.DatasourceResponse;
 import com.pandaterry.msa_contracts.dto.schema.request.DatasourceUpdateRequest;
 import com.pandaterry.schema_microservice.domain.entity.Datasource;
 import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
-import com.pandaterry.schema_microservice.domain.exception.ErrorCode;
-import com.pandaterry.schema_microservice.domain.exception.SchemaException;
+import com.pandaterry.schema_microservice.shared.exception.ErrorCode;
+import com.pandaterry.schema_microservice.shared.exception.SchemaException;
 import com.pandaterry.schema_microservice.infrastructure.repository.DatasourceRepository;
-import com.pandaterry.schema_microservice.infrastructure.util.EncryptionUtil;
 import com.pandaterry.schema_microservice.presentation.mappers.DatasourceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,17 +23,17 @@ public class DatasourceService {
     private final DatasourceRepository datasourceRepository;
 
     // UUID 반환용
-    public DatasourceResponse initDatasource(UUID orgId, UUID userId, UUID agentId) {
+    public DatasourceResponse initDatasource(String orgId, String userId, String agentId) {
         if (orgId == null) throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
-        Datasource datasource = Datasource.init(orgId, userId, agentId);
+        Datasource datasource = Datasource.init(UUID.fromString(orgId), UUID.fromString(userId), UUID.fromString(agentId));
         Datasource saved = datasourceRepository.save(datasource);
         return DatasourceMapper.toResponse(saved);
     }
 
-    public DatasourceResponse activateDatasource(UUID datasourceId, UUID orgId, UUID userId, UUID agentId, DatasourceUpdateRequest request) {
+    public DatasourceResponse activateDatasource(String datasourceId, String orgId, String userId, String agentId, DatasourceUpdateRequest request) {
         if (orgId == null) throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
 
-        Datasource datasource = datasourceRepository.findById(datasourceId)
+        Datasource datasource = datasourceRepository.findById(UUID.fromString(datasourceId))
                 .orElseThrow(() -> new SchemaException(ErrorCode.DATASOURCE_NOT_FOUND));
 
         datasource.updateName(request.getName());
@@ -48,24 +46,24 @@ public class DatasourceService {
     }
 
     @Transactional(readOnly = true)
-    public List<DatasourceResponse> getDatasources(UUID orgId) {
+    public List<DatasourceResponse> getDatasources(String orgId) {
         if (orgId == null) throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
-        return datasourceRepository.findByOrgIdAndIsEnabled(orgId, EnableStatus.ENABLED)
+        return datasourceRepository.findByOrgIdAndIsEnabled(UUID.fromString(orgId), EnableStatus.ENABLED)
                 .stream()
                 .map(DatasourceMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public DatasourceResponse getDatasource(UUID datasourceId) {
-        Datasource datasource = datasourceRepository.findById(datasourceId)
+    public DatasourceResponse getDatasource(String datasourceId) {
+        Datasource datasource = datasourceRepository.findById(UUID.fromString(datasourceId))
                 .orElseThrow(() -> new SchemaException(ErrorCode.DATASOURCE_NOT_FOUND));
         return DatasourceMapper.toResponse(datasource);
     }
 
 
-    public void deactivateDatasource(UUID datasourceId) {
-        Datasource datasource = datasourceRepository.findById(datasourceId)
+    public void deactivateDatasource(String datasourceId) {
+        Datasource datasource = datasourceRepository.findById(UUID.fromString(datasourceId))
                 .orElseThrow(() -> new SchemaException(ErrorCode.DATASOURCE_NOT_FOUND));
         datasource.deactivate();
     }

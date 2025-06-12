@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class AuthHeaderPropagationFilter extends AbstractGatewayFilterFactory<Object> {
 
@@ -46,8 +48,10 @@ public class AuthHeaderPropagationFilter extends AbstractGatewayFilterFactory<Ob
         headers.set(HeaderKeys.ORG_ID, principal.getOrgId());
         headers.set(HeaderKeys.ROLES, String.join(",", principal.getRoles()));
 
-        if (principal.getAgentId() != null) {
-            headers.set(HeaderKeys.AGENT_ID, principal.getAgentId());
-        }
+        // TODO: 나중에 롤백처리
+        headers.set(HeaderKeys.AGENT_ID, UUID.randomUUID().toString());
+//        if (principal.getAgentId() != null) {
+//            headers.set(HeaderKeys.AGENT_ID, principal.getAgentId());
+//        }
     }
 }

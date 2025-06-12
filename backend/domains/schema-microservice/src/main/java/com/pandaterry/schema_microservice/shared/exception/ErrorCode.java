@@ -1,4 +1,4 @@
-package com.pandaterry.schema_microservice.domain.exception;
+package com.pandaterry.schema_microservice.shared.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

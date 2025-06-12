@@ -65,6 +65,6 @@ class DatasourceControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
 
-        verify(datasourceService).activateDatasource(eq(datasourceId), any(), any(), any(), any());
+        verify(datasourceService).activateDatasource(eq(datasourceId.toString()), any(), any(), any(), any());
     }
 }

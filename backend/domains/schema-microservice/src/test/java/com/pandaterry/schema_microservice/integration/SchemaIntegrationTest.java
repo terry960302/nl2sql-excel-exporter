@@ -46,7 +46,7 @@ class SchemaIntegrationTest {
         UUID userId = UUID.randomUUID();
         UUID agentId = UUID.randomUUID();
 
-        DatasourceResponse init = datasourceService.initDatasource(orgId, userId, agentId);
+        DatasourceResponse init = datasourceService.initDatasource(orgId.toString(), userId.toString(), agentId.toString());
         UUID datasourceId = init.getId();
 
         DatasourceUpdateRequest update = DatasourceUpdateRequest.builder()
@@ -54,12 +54,12 @@ class SchemaIntegrationTest {
                 .dbType(null)
                 .engineType(null)
                 .build();
-        datasourceService.activateDatasource(datasourceId, orgId, userId, agentId, update);
+        datasourceService.activateDatasource(datasourceId.toString(), orgId.toString(), userId.toString(), agentId.toString(), update);
 
         ColumnSchema column = ColumnSchema.create("id", "INT", false, true);
         TableSchema table = TableSchema.create("t1", List.of(column));
         RegisterSchemaRequest req = new RegisterSchemaRequest(orgId, userId, agentId, datasourceId, "schema", List.of(table), "{}");
 
-        assertThat(schemaService.uploadSchema(orgId, userId, agentId, req)).isNotNull();
+        assertThat(schemaService.uploadSchema(orgId.toString(), userId.toString(), agentId.toString(), req)).isNotNull();
     }
 }
