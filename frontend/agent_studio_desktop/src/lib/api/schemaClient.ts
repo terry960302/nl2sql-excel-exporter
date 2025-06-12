@@ -20,11 +20,15 @@ export const schemaClient = {
   },
 
   async testConnection(accessToken: string): Promise<Datasource> {
-    const response = await apiClient.post(`${API_ENDPOINTS.DATASOURCES}`, {
-      headers: {
-        [HEADERS.AUTHORIZATION]: `${AUTH_HEADER_PREFIX} ${accessToken}`,
-      },
-    });
+    const response = await apiClient.post(
+      `${API_ENDPOINTS.DATASOURCES}/test`,
+      {},
+      {
+        headers: {
+          [HEADERS.AUTHORIZATION]: `${AUTH_HEADER_PREFIX} ${accessToken}`,
+        },
+      }
+    );
     return response.data;
   },
 
@@ -55,6 +59,40 @@ export const schemaClient = {
       {
         headers: {
           [HEADERS.AUTHORIZATION]: `${AUTH_HEADER_PREFIX} ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  },
+
+  async scanSchema(
+    accessToken: string,
+    datasourceId: string
+  ): Promise<ScanSchemaResponse> {
+    const response = await apiClient.post<ScanSchemaResponse>(
+      `${API_ENDPOINTS.SCHEMAS}/scan`,
+      { datasourceId },
+      {
+        headers: {
+          [HEADERS.AUTHORIZATION]: `${AUTH_HEADER_PREFIX} ${accessToken}`,
+          [HEADERS.CONTENT_TYPE]: CONTENT_TYPES.APPLICATION_JSON,
+        },
+      }
+    );
+    return response.data;
+  },
+
+  async registerSchema(
+    accessToken: string,
+    data: RegisterSchemaRequest
+  ): Promise<RegisterSchemaResponse> {
+    const response = await apiClient.post<RegisterSchemaResponse>(
+      `${API_ENDPOINTS.SCHEMAS}/register`,
+      data,
+      {
+        headers: {
+          [HEADERS.AUTHORIZATION]: `${AUTH_HEADER_PREFIX} ${accessToken}`,
+          [HEADERS.CONTENT_TYPE]: CONTENT_TYPES.APPLICATION_JSON,
         },
       }
     );
@@ -104,6 +142,28 @@ export interface CreateSchemaRequest {
   name: string;
   schemas: TableSchema[];
   rawSchema: string;
+}
+
+export interface ScanSchemaResponse {
+  datasourceId: string;
+  schemas: TableSchema[];
+  rawSchema: string;
+}
+
+export interface RegisterSchemaRequest {
+  orgId: string;
+  userId: string;
+  agentId: string;
+  datasourceId: string;
+  name: string;
+  schemas: TableSchema[];
+  rawSchema: string;
+}
+
+export interface RegisterSchemaResponse {
+  id: string;
+  name: string;
+  rawJson: string;
 }
 
 export interface UpdateDatasourceRequest {
