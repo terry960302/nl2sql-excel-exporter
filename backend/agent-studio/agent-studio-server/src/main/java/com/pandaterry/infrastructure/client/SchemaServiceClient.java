@@ -1,6 +1,7 @@
 package com.pandaterry.infrastructure.client;
 
 import com.pandaterry.msa_contracts.constants.HeaderKeys;
+import com.pandaterry.msa_contracts.constants.RoutePath;
 import com.pandaterry.msa_contracts.dto.schema.request.RegisterSchemaRequest;
 import com.pandaterry.msa_contracts.dto.schema.response.RegisterSchemaResponse;
 import io.micronaut.http.client.HttpClient;
@@ -22,6 +23,6 @@ public class SchemaServiceClient extends BaseServiceClient {
         header.put(HeaderKeys.USER_ID, req.userId().toString());
         header.put(HeaderKeys.AGENT_ID, req.agentId().toString());
 
-        return post("/schemas", req, header, null);
+        return post(RoutePath.Schema.BASE, req, header, null);
     }
 }
