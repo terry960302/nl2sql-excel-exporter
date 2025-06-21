@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  auth-service:
+    image: ${AUTH_SERVICE_IMAGE:-auth-service:latest}
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/${AUTH_DB_NAME:-auth_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-password}
+      SERVER_PORT: 8081
+    depends_on:
+      - postgres-auth
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true

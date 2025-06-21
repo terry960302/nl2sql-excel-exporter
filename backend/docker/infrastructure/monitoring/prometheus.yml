@@ -1,0 +1,109 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Alertmanager 설정 (선택사항)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# 규칙 파일 로드 (선택사항)
+rule_files:
+# - "alert_rules.yml"
+
+scrape_configs:
+  # Prometheus 자체 모니터링
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Spring Boot 서비스들 (Actuator)
+  - job_name: 'auth-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['auth-service:8081']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  - job_name: 'schema-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['schema-service:8082']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  - job_name: 'query-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['query-service:8083']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  - job_name: 'quota-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['quota-service:8084']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  - job_name: 'gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['gateway:8080']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Micronaut 서비스 (다른 메트릭 경로)
+  - job_name: 'agent-server'
+    metrics_path: '/prometheus'
+    static_configs:
+      - targets: ['agent-server:3930']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Kafka JMX 메트릭 (JMX Exporter 사용 시)
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['kafka:9308']  # JMX Exporter 포트
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # PostgreSQL 메트릭 (postgres_exporter 사용 시)
+  - job_name: 'postgres-auth'
+    static_configs:
+      - targets: ['postgres-exporter-auth:9187']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  - job_name: 'postgres-schema'
+    static_configs:
+      - targets: ['postgres-exporter-schema:9187']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  - job_name: 'postgres-query'
+    static_configs:
+      - targets: ['postgres-exporter-query:9187']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  - job_name: 'postgres-quota'
+    static_configs:
+      - targets: ['postgres-exporter-quota:9187']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Docker 메트릭 (cAdvisor 사용 시)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Node Exporter (시스템 메트릭)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+    scrape_timeout: 10s

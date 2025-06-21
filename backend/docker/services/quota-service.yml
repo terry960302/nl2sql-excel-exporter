@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  quota-service:
+    image: ${QUOTA_SERVICE_IMAGE:-quota-service:latest}
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-quota:5432/${QUOTA_DB_NAME:-quota_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-password}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC_QUOTA_USAGE: quota.usage
+      KAFKA_CONSUMER_GROUP_ID: quota-service-consumer
+      SERVER_PORT: 8084
+    depends_on:
+      - postgres-quota
+      - kafka
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true

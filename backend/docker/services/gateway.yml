@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  gateway:
+    image: ${GATEWAY_SERVICE_IMAGE:-gateway-service:latest}
+    environment:
+      SERVER_PORT: 8080
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_URL:-http://eureka:8761/eureka}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-default}
+
+      # Gateway Routes 설정
+      SPRING_CLOUD_GATEWAY_ROUTES_0_ID: auth-service
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: lb://auth-service
+      SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/auth/**
+
+      SPRING_CLOUD_GATEWAY_ROUTES_1_ID: schema-service
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: lb://schema-service
+      SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0: Path=/schema/**
+
+      SPRING_CLOUD_GATEWAY_ROUTES_2_ID: query-service
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: lb://query-service
+      SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0: Path=/query/**
+
+      SPRING_CLOUD_GATEWAY_ROUTES_3_ID: quota-service
+      SPRING_CLOUD_GATEWAY_ROUTES_3_URI: lb://quota-service
+      SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0: Path=/quota/**
+
+      # CORS 설정
+      SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDORIGINS: "*"
+      SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDMETHODS: GET,POST,PUT,DELETE,OPTIONS
+      SPRING_CLOUD_GATEWAY_GLOBALCORS_CORSCONFIGURATIONS_[/**]_ALLOWEDHEADERS: "*"
+
+      # Actuator 설정
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics,prometheus,gateway
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: always
+    ports:
+      - "${GATEWAY_SERVICE_PORT:-8080}:8080"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  app-network:
+    external: true

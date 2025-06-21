@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  schema-service:
+    image: ${SCHEMA_SERVICE_IMAGE:-schema-service:latest}
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-schema:5432/${SCHEMA_DB_NAME:-schema_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-password}
+      SERVER_PORT: 8082
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_URL:-http://eureka:8761/eureka}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-default}
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics,prometheus
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: always
+    ports:
+      - "${SCHEMA_SERVICE_PORT:-8082}:8082"
+    depends_on:
+      - postgres-schema
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  app-network:
+    external: true
