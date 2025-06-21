@@ -1,0 +1,79 @@
+version: '3.8'
+services:
+  # Kafka 프로덕션 설정
+  kafka:
+    environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_HEAP_OPTS: "-Xmx2G -Xms2G"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+
+  # DB 프로덕션 최적화
+  postgres-auth:
+    environment:
+      POSTGRES_SHARED_PRELOAD_LIBRARIES: pg_stat_statements
+      POSTGRES_MAX_CONNECTIONS: 200
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  postgres-schema:
+    environment:
+      POSTGRES_SHARED_PRELOAD_LIBRARIES: pg_stat_statements
+      POSTGRES_MAX_CONNECTIONS: 200
+
+  postgres-query:
+    environment:
+      POSTGRES_SHARED_PRELOAD_LIBRARIES: pg_stat_statements
+      POSTGRES_MAX_CONNECTIONS: 200
+
+  postgres-quota:
+    environment:
+      POSTGRES_SHARED_PRELOAD_LIBRARIES: pg_stat_statements
+      POSTGRES_MAX_CONNECTIONS: 200
+
+  # 서비스들 프로덕션 설정
+  auth-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      LOGGING_LEVEL_ROOT: WARN
+      SPRING_JPA_SHOW_SQL: false
+    deploy:
+      replicas: 2
+
+  schema-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      LOGGING_LEVEL_ROOT: WARN
+
+  query-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      LOGGING_LEVEL_ROOT: WARN
+
+  quota-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      LOGGING_LEVEL_ROOT: WARN
+
+  gateway-service:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      LOGGING_LEVEL_ROOT: WARN
+    deploy:
+      replicas: 2
+
+  agent-service:
+    environment:
+      MICRONAUT_ENVIRONMENTS: prod
+      LOG_LEVEL: WARN

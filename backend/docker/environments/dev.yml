@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  # Dev 환경에서는 게이트웨이만 포트 노출
+  gateway-service:
+    ports:
+      - "8080:8080"
+
+  # 로그 레벨 조정
+  auth-service:
+    environment:
+      LOGGING_LEVEL_ROOT: DEBUG
+  schema-service:
+    environment:
+      LOGGING_LEVEL_ROOT: DEBUG

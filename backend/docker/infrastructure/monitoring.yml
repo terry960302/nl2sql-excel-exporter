@@ -1,0 +1,115 @@
+version: '3.8'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - app-network
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "14268:14268"
+      - "16686:16686"
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+    networks:
+      - app-network
+
+  # PostgreSQL Exporter들
+  postgres-exporter-auth:
+    image: prometheuscommunity/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres-auth:5432/${AUTH_DB_NAME:-auth_db}?sslmode=disable"
+    depends_on:
+      - postgres-auth
+    networks:
+      - app-network
+
+  postgres-exporter-schema:
+    image: prometheuscommunity/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres-schema:5432/${SCHEMA_DB_NAME:-schema_db}?sslmode=disable"
+    depends_on:
+      - postgres-schema
+    networks:
+      - app-network
+
+  postgres-exporter-query:
+    image: prometheuscommunity/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres-query:5432/${QUERY_DB_NAME:-query_db}?sslmode=disable"
+    depends_on:
+      - postgres-query
+    networks:
+      - app-network
+
+  postgres-exporter-quota:
+    image: prometheuscommunity/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres-quota:5432/${QUOTA_DB_NAME:-quota_db}?sslmode=disable"
+    depends_on:
+      - postgres-quota
+    networks:
+      - app-network
+
+  # cAdvisor (컨테이너 메트릭)
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    ports:
+      - "8091:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - app-network
+
+  # Node Exporter (시스템 메트릭)
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - app-network
+
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  app-network:
+#    external: true
+    name: app-network

@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  agent-server:
+    image: ${AGENT_SERVICE_IMAGE:-agent-service:latest}
+    environment:
+      MICRONAUT_SERVER_PORT: 3930
+
+      # Gateway 연결 설정
+      GATEWAY_BASE_URL: ${GATEWAY_BASE_URL:-http://gateway-service:8080}
+
+      # HTTP Client 설정
+      MICRONAUT_HTTP_CLIENT_READ_TIMEOUT: 30s
+      MICRONAUT_HTTP_CLIENT_CONNECT_TIMEOUT: 10s
+      MICRONAUT_HTTP_CLIENT_POOL_ENABLED: true
+      MICRONAUT_HTTP_CLIENT_POOL_MAX_CONNECTIONS: 10
+
+      # Logging 설정
+      MICRONAUT_LOGGER_LEVELS_IO_MICRONAUT_HTTP_CLIENT: ${LOG_LEVEL:-INFO}
+      MICRONAUT_LOGGER_LEVELS_ROOT: ${LOG_LEVEL:-INFO}
+
+      # Environment 설정
+      MICRONAUT_ENVIRONMENTS: ${MICRONAUT_ENVIRONMENTS:-default}
+
+      # Actuator 설정 (Micronaut Management)
+      ENDPOINTS_ALL_ENABLED: true
+      ENDPOINTS_ALL_SENSITIVE: false
+      ENDPOINTS_HEALTH_ENABLED: true
+      ENDPOINTS_INFO_ENABLED: true
+    ports:
+      - "${AGENT_SERVICE_PORT:-3930}:3930"
+    depends_on:
+      - gateway-service
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3930/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  app-network:
+    external: true

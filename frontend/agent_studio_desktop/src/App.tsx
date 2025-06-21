@@ -5,7 +5,9 @@ import { PublicOnlyRoute } from "@/components/auth/PublicOnlyRoute";
 import { Login } from "@/components/pages/Login";
 import { Signup } from "@/components/pages/Signup";
 import { Datasources } from "@/components/pages/Datasources";
+import { DatasourceDetail } from "@/components/pages/DatasourceDetail";
 import { Me } from "@/components/pages/Me";
+import { Query } from "@/components/pages/Query";
 import NotFound from "@/components/pages/NotFound";
 import { RootRedirect } from "@/components/auth/RootRedirect";
 import { useAuthInit } from "@/hooks/useAuthInit";
@@ -38,6 +40,22 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <Datasources />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/datasources/:datasourceId"
+          element={
+            <ProtectedRoute>
+              <DatasourceDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/query"
+          element={
+            <ProtectedRoute>
+              <Query />
             </ProtectedRoute>
           }
         />
