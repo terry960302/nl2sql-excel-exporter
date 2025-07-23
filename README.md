@@ -1,6 +1,7 @@
 # NL2SQL Studio
+> NL2SQL Studio는 한국어 자연어 질의를 기반으로 사전에 정의된 데이터베이스 스키마에 맞춰 SQL을 자동 생성·실행하고, 그 결과를 엑셀 파일로 다운로드할 수 있는 설치형 애플리케이션입니다. [랜딩페이지 바로가기](https://nl2sql.pandaterry.com)
 
-NL2SQL Studio는 한국어 자연어 질의를 기반으로 사전에 정의된 데이터베이스 스키마에 맞춰 SQL을 자동 생성·실행하고, 그 결과를 엑셀 파일로 다운로드할 수 있는 설치형 애플리케이션입니다. [랜딩페이지 바로가기](https://nl2sql.pandaterry.com)
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/72a58f88-2331-4dc6-815c-8c1b081cfdc5" />
 
 ## 주요 기능
 
@@ -31,7 +32,7 @@ NL2SQL Studio는 한국어 자연어 질의를 기반으로 사전에 정의된 
 └────────────────────────┘
 ```
 
-* **NL2SQL Studio**: React/Electron 또는 JavaFX 기반 설치형 프론트엔드
+* **NL2SQL Studio**: React/Electron 또는 Tauri 기반 설치형 프론트엔드
 * **로컬 DB 커넥터**: Spring Boot 기반 백엔드 모듈, JDBC 드라이버로 SQL 실행
 * **SaaS 관리 서버**: 사용자·스키마 관리, 로그 및 사용량 집계용 REST API 서버
 
