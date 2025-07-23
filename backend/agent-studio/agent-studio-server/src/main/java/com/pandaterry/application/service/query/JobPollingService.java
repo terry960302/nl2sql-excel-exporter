@@ -1,7 +1,7 @@
 package com.pandaterry.application.service.query;
 
 import com.pandaterry.domain.model.ExecutionJob;
-import com.pandaterry.infrastructure.client.QueryServiceClient;
+import com.pandaterry.infrastructure.client.DefaultQueryClient;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -17,16 +17,16 @@ public class JobPollingService {
     private static final Logger log = LoggerFactory.getLogger(JobPollingService.class);
 
     @Inject
-    private QueryServiceClient queryServiceClient;
+    private DefaultQueryClient queryClient;
 
     /**
      * 지정한 jobId가 할당된 작업을 polling
      * 일정 시간동안 polling 후에도 작업이 없으면 null을 반환
      */
-    public ExecutionJob poll(UUID agentId, UUID jobId) {
+    public ExecutionJob poll(String authorization, UUID jobId) {
         for (int i = 0; i < 5; i++) {
-            Optional<ExecutionJob> opt = queryServiceClient.pollPendingJob(agentId);
-            if (opt.isPresent() && opt.get().jobId().equals(jobId.toString())) {
+            Optional<ExecutionJob> opt = queryClient.pollPendingJob(authorization);
+            if (opt.isPresent() && opt.get().jobId().equals(jobId)) {
                 return opt.get();
             }
             try {
@@ -36,7 +36,7 @@ public class JobPollingService {
                 break;
             }
         }
-        log.warn("Job {} not found for agent {}", jobId, agentId);
+        log.warn("Job {} not found", jobId);
         return null;
     }
 }

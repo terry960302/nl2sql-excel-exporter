@@ -1,6 +1,6 @@
 package com.pandaterry.quota_microservice.integration;
 
-import com.pandaterry.quota_microservice.presentation.config.WebConfig;
+import com.pandaterry.quota_microservice.infrastructure.config.WebConfig;
 import com.pandaterry.quota_microservice.presentation.interceptor.MdcLoggingInterceptor;
 import com.pandaterry.quota_microservice.integration.support.ContextEchoController;
 import com.pandaterry.msa_contracts.constants.HeaderKeys;

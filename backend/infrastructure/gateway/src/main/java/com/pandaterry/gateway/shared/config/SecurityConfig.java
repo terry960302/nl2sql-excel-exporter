@@ -81,7 +81,7 @@ public class SecurityConfig {
     @Profile({"local", "test"})
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:1420"));
+        configuration.setAllowedOrigins(List.of("http://localhost:1420", "http://localhost:3930"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

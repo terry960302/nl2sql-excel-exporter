@@ -21,17 +21,19 @@ public class DatasourceMapper {
                 .name(datasource.getName())
                 .dbType(datasource.getDbType())
                 .engineType(datasource.getEngineType())
+                .description(datasource.getDescription())
                 .isEnabled(datasource.getIsEnabled())
                 .createdAt(datasource.getCreatedAt())
                 .updatedAt(datasource.getUpdatedAt())
                 .build();
     }
 
-    public static DatasourceUpdateRequest of(String name, DatabaseType dbType, DatabaseEngineType engineType) {
+    public static DatasourceUpdateRequest of(String name, DatabaseType dbType, DatabaseEngineType engineType, String description) {
         return DatasourceUpdateRequest.builder()
                 .name(name)
                 .dbType(dbType)
                 .engineType(engineType)
+                .description(description)
                 .build();
     }
 }

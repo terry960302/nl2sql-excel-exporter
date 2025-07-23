@@ -1,3 +1,17 @@
 
 server:
   port: 8084
+
+spring:
+  profiles:
+    active: local
+
+  application:
+    name: quota-service
+
+app:
+  kafka:
+    topics:
+      quota-usage: quota-usage-topic
+    consumers:
+      quota-group: quota-service-consumer

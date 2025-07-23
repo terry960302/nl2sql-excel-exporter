@@ -1,8 +1,8 @@
 package com.pandaterry.quota_microservice.application.service;
 
 import com.pandaterry.msa_contracts.dto.quota.response.*;
+import com.pandaterry.msa_contracts.event.QuotaUsageEvent;
 import com.pandaterry.quota_microservice.domain.entity.*;
-import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
 import org.springframework.kafka.annotation.KafkaListener;
 import com.pandaterry.quota_microservice.domain.exception.ErrorCode;
 import com.pandaterry.quota_microservice.domain.exception.QuotaException;
@@ -92,7 +92,7 @@ public class QuotaService {
                 .build();
     }
 
-    public void recordQuotaUsage(UUID orgId, long increment) {
+    public void recordQuotaUsage(UUID orgId, UUID userId, long increment) {
         LocalDate today = LocalDate.now();
         String monthKey = currentMonthKey();
 
@@ -105,9 +105,9 @@ public class QuotaService {
         monthlyRepository.save(monthly);
     }
 
-    @KafkaListener(topics = "${quota.usage.topic:quota-usage}")
-    public void consumeQuotaUsage(QuotaUsageRecordRequest request) {
-        recordQuotaUsage(request.getOrgId(), request.getIncrement());
+    @KafkaListener( topics = "${quota.usage.topic:quota-usage}")
+    public void consumeQuotaUsage(QuotaUsageEvent event) {
+        recordQuotaUsage(event.orgId(), event.userId(), event.increment());
     }
 
     private String currentMonthKey() {

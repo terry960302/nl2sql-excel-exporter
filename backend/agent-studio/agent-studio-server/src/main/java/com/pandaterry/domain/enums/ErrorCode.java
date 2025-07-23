@@ -13,8 +13,12 @@ public enum ErrorCode {
     DATABASE_SCHEMA_SCAN_FAILED(500, "DB_003", "데이터베이스 스키마 스캔에 실패했습니다"),
     INVALID_DATABASE_TYPE(400, "DB_004", "지원하지 않는 데이터베이스 타입입니다"),
     SCHEMA_PARSING_FAILED(500, "DB_005", "스키마 파싱에 실패했습니다"),
-    UNSUPPORTED_DB_TYPE(400, "DB_006", "지원하지 않는 데이터베이스 타입입니다."),
     DATASOURCE_NOT_CLOSED_BEFORE_REMOVE(500, "DB_007", "커넥션풀을 삭제하려면 그 전에 커넥션 풀을 해제해야 합니다."),
+
+    FILE_AWS_PRESIGNED_DOWNLOAD_FAILED(500, "FILE_001", "Aws Presigned URL 파일 다운로드에 실패했습니다."),
+    FILE_TEMP_WRITE_FAILED(500, "FILE_002", "임시 파일을 생성하는데 실패했습니다."),
+
+    ROWS_EMPTRY(500, "EXCEL_001", "SQL로 반환된 행이 비어있습니다."),
 
     // 외부 서비스 에러 (SchemaService, QueryService, QuotaService 등)
     QUERY_SERVICE_ERROR(500, "EXT_001", "쿼리 서비스 통신 중 오류가 발생했습니다"),

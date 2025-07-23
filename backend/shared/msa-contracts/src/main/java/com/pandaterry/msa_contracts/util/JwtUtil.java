@@ -78,18 +78,18 @@ public class JwtUtil {
     }
 
     public Jws<Claims> validateToken(String token) throws ClaimJwtException {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
+        return Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token);
+                .parseSignedClaims(token);
     }
 
     public UUID getUserIdFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
         return UUID.fromString(claims.getSubject());
     }

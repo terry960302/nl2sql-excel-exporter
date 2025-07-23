@@ -34,9 +34,9 @@ public class SchemaService {
             throw new SchemaException(ErrorCode.ORG_ID_NOT_FOUND);
         }
 
-        Schema schema = Schema.create(UUID.fromString(orgId), req.datasourceId(), UUID.fromString(userId), req.name(), req.rawSchema());
+        Schema schema = Schema.create(UUID.fromString(orgId), req.getDatasourceId(), UUID.fromString(userId), req.getName(), req.getRawSchema());
         Schema saved = schemaRepository.save(schema);
-        this.createTables(saved.getId(), req.schemas());
+        this.createTables(saved.getId(), req.getSchemas());
         return SchemaMapper.toResponse(saved);
     }
 

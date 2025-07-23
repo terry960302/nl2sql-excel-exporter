@@ -2,6 +2,7 @@ package com.pandaterry.query_microservice.unit.application.service;
 
 import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.msa_contracts.enums.query.JobStatus;
+import com.pandaterry.msa_contracts.event.QuotaUsageEvent;
 import com.pandaterry.query_microservice.application.service.JobService;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
 import com.pandaterry.query_microservice.infrastructure.messaging.QuotaUsageProducer;
@@ -26,7 +27,7 @@ class JobServiceTest {
 
     @Test
     void create_and_poll_job() {
-        ExecutionJob created = jobService.createJob(UUID.randomUUID(), "select 1").block();
+        ExecutionJob created = jobService.createJob(UUID.randomUUID(), UUID.randomUUID(), "select 1").block();
         assertNotNull(created);
         ExecutionJob polled = jobService.pollPendingJob(UUID.randomUUID()).block();
         assertEquals(created.jobId(), polled.jobId());
@@ -34,7 +35,7 @@ class JobServiceTest {
 
     @Test
     void report_result_updates_status() {
-        ExecutionJob created = jobService.createJob(UUID.randomUUID(), "select 1").block();
+        ExecutionJob created = jobService.createJob(UUID.randomUUID(), UUID.randomUUID(), "select 1").block();
         jobService.reportResult(created.jobId(),
                 new JobResultRequest(created.jobId(), JobStatus.COMPLETED, "ok", null)).block();
         ExecutionJob updated = jobService.getJob(created.jobId()).block();
@@ -44,22 +45,22 @@ class JobServiceTest {
     @Test
     void report_result_sends_quota_usage_event() {
         UUID orgId = UUID.randomUUID();
-        ExecutionJob created = jobService.createJob(orgId, "select 1").block();
+        UUID userId = UUID.randomUUID();
+        ExecutionJob created = jobService.createJob(orgId, userId, "select 1").block();
 
         jobService.reportResult(created.jobId(),
                 new JobResultRequest(created.jobId(), JobStatus.COMPLETED, "ok", null)).block();
 
-        assertNotNull(producer.lastRequest);
-        assertEquals(orgId, producer.lastRequest.getOrgId());
-        assertEquals(1L, producer.lastRequest.getIncrement());
+        assertNotNull(producer.lastEvent);
+        assertEquals(1L, producer.lastEvent.increment());
     }
 
     static class DummyProducer implements QuotaUsageProducer {
-        private QuotaUsageRecordRequest lastRequest;
+        private QuotaUsageEvent lastEvent;
 
         @Override
-        public void sendQuotaUsage(QuotaUsageRecordRequest request) {
-            this.lastRequest = request;
+        public void sendQuotaUsage(QuotaUsageEvent event) {
+            this.lastEvent = event;
         }
     }
 }

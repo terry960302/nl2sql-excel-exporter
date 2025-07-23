@@ -2,6 +2,7 @@ package com.pandaterry.quota_microservice.unit.application.service;
 
 import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
+import com.pandaterry.msa_contracts.event.QuotaUsageEvent;
 import com.pandaterry.quota_microservice.application.service.QuotaService;
 import com.pandaterry.quota_microservice.domain.entity.*;
 import com.pandaterry.quota_microservice.domain.repository.*;
@@ -75,7 +76,7 @@ class QuotaServiceTest {
         when(dailyRepository.findById(QuotaUsageDailyKey.builder().orgId(orgId).dateKey(today).build())).thenReturn(Optional.empty());
         when(monthlyRepository.findById(QuotaUsageMonthlyKey.builder().orgId(orgId).monthKey(monthKey).build())).thenReturn(Optional.empty());
 
-        quotaService.recordQuotaUsage(orgId, 2L);
+        quotaService.recordQuotaUsage(orgId, UUID.randomUUID(), 2L);
 
         ArgumentCaptor<QuotaUsageDaily> dailyCaptor = ArgumentCaptor.forClass(QuotaUsageDaily.class);
         ArgumentCaptor<QuotaUsageMonthly> monthlyCaptor = ArgumentCaptor.forClass(QuotaUsageMonthly.class);
@@ -95,7 +96,7 @@ class QuotaServiceTest {
         when(monthlyRepository.findById(QuotaUsageMonthlyKey.builder().orgId(orgId).monthKey(monthKey).build())).thenReturn(Optional.empty());
 
         quotaService.consumeQuotaUsage(
-                QuotaUsageRecordRequest.builder().orgId(orgId).increment(1L).build()
+                new QuotaUsageEvent(orgId, UUID.randomUUID(), 1)
         );
 
         ArgumentCaptor<QuotaUsageDaily> dailyCaptor = ArgumentCaptor.forClass(QuotaUsageDaily.class);

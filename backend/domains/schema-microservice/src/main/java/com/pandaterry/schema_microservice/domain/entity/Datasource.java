@@ -36,6 +36,9 @@ public class Datasource {
     @Column(nullable = true)
     private DatabaseEngineType engineType;
 
+    @Column(nullable = true)
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "is_enabled", nullable = false)
     private EnableStatus isEnabled = EnableStatus.DISABLED;
@@ -105,5 +108,10 @@ public class Datasource {
         if (engineType != null) {  
             this.engineType = engineType;
         }
+    }
+
+    public void updateDescription(String description){
+        if(description == null) return;
+        this.description = description;
     }
 }

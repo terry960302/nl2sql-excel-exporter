@@ -12,7 +12,7 @@ import java.nio.file.StandardCopyOption;
 /**
  * 로컬 파일 시스템에 결과 파일을 저장하는 구현체.
  */
-@Requires(property = "storage.type", value = "local")
+@Requires(property = "app.storage.type", value = "local")
 @Singleton
 public class LocalUploadClient implements UploadClient {
 

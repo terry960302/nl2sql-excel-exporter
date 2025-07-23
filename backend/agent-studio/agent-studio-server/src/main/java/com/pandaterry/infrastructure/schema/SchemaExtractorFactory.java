@@ -1,24 +1,28 @@
 package com.pandaterry.infrastructure.schema;
 
-import com.pandaterry.domain.enums.DatabaseType;
-import com.pandaterry.domain.service.SchemaExtractor;
-import com.pandaterry.application.exception.AgentException;
-import com.pandaterry.domain.enums.ErrorCode;
+import io.micronaut.context.annotation.Factory;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import java.util.List;
 
-@Singleton
+
+@Factory
 public class SchemaExtractorFactory {
-    private final List<SchemaExtractor> extractors;
 
-    public SchemaExtractorFactory(List<SchemaExtractor> extractors) {
-        this.extractors = extractors;
+    @Singleton
+    @Named("mysql")
+    public MySqlSchemaExtractor mySqlSchemaExtractor() {
+        return new MySqlSchemaExtractor();
     }
 
-    public SchemaExtractor getExtractor(DatabaseType databaseType) {
-        return extractors.stream()
-                .filter(extractor -> extractor.supports(databaseType))
-                .findFirst()
-                .orElseThrow(() -> new AgentException(ErrorCode.INVALID_DATABASE_TYPE));
+    @Singleton
+    @Named("postgresql")
+    public PostgresSchemaExtractor postgresSchemaExtractor() {
+        return new PostgresSchemaExtractor();
+    }
+
+    @Singleton
+    @Named("oracle")
+    public OracleSchemaExtractor oracleSchemaExtractor() {
+        return new OracleSchemaExtractor();
     }
 }

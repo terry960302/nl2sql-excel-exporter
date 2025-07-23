@@ -15,33 +15,33 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class QueryService {
-        private final LLMClient llmClient;
-        private final SchemaService schemaService;
-        private final PromptService promptService;
-        private final JobService jobService;
+    private final LLMClient llmClient;
+    private final SchemaService schemaService;
+    private final PromptService promptService;
+    private final JobService jobService;
 
-        public Mono<String> convertToSQL(NaturalLanguageQueryRequest request) {
-                return schemaService.getSchemasWithAliases(request.getOrgId())
-                                .flatMap(schemaResponses -> {
-                                        List<SchemaInfo> schemas = schemaResponses.stream()
-                                                        .map(SchemaInfo::from)
-                                                        .collect(Collectors.toList());
+    public Mono<String> convertToSQL(NaturalLanguageQueryRequest request) {
+        return schemaService.getSchemasWithAliases(request.getOrgId())
+                .flatMap(schemaResponses -> {
+                    List<SchemaInfo> schemas = schemaResponses.stream()
+                            .map(SchemaInfo::from)
+                            .collect(Collectors.toList());
 
-                                        PromptContext context = PromptContext.builder()
-                                                        .schemas(schemas)
-                                                        .naturalText(request.getNaturalText())
-                                                        .orgId(request.getOrgId())
-                                                        .userId(request.getUserId())
-                                                        .build();
+                    PromptContext context = PromptContext.builder()
+                            .schemas(schemas)
+                            .naturalText(request.getNaturalText())
+                            .orgId(request.getOrgId())
+                            .userId(request.getUserId())
+                            .build();
 
-                                        String prompt = promptService.generatePrompt(context);
-                                        return llmClient.generateSQL(prompt);
-                                });
-        }
+                    String prompt = promptService.generatePrompt(context);
+                    return llmClient.generateSQL(prompt);
+                });
+    }
 
-        public Mono<ExecutionJob> createQueryJob(NaturalLanguageQueryRequest request) {
-                return convertToSQL(request)
-                                .flatMap(sql -> jobService.createJob(request.getOrgId(), sql));
-        }
+    public Mono<ExecutionJob> createQueryJob(NaturalLanguageQueryRequest request) {
+        return convertToSQL(request)
+                .flatMap(sql -> jobService.createJob(request.getOrgId(), request.getUserId(), sql));
+    }
 
 }

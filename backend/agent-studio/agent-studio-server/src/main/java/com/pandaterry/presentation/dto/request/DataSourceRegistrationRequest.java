@@ -1,6 +1,7 @@
 package com.pandaterry.presentation.dto.request;
 
-import com.pandaterry.domain.model.database.TableSchema;
+import com.pandaterry.msa_contracts.vo.schema.TableSchema;
+
 import java.util.List;
 
 public record DataSourceRegistrationRequest(

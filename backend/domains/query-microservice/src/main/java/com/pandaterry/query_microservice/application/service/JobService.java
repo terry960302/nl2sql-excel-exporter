@@ -2,6 +2,7 @@ package com.pandaterry.query_microservice.application.service;
 
 import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.msa_contracts.enums.query.JobStatus;
+import com.pandaterry.msa_contracts.event.QuotaUsageEvent;
 import com.pandaterry.query_microservice.domain.model.ExecutionJob;
 import com.pandaterry.query_microservice.infrastructure.messaging.QuotaUsageProducer;
 import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
@@ -20,9 +21,9 @@ public class JobService {
     private final Map<UUID, ExecutionJob> store = new ConcurrentHashMap<>();
     private final QuotaUsageProducer quotaUsageProducer;
 
-    public Mono<ExecutionJob> createJob(UUID orgId, String query) {
+    public Mono<ExecutionJob> createJob(UUID orgId, UUID userId, String query) {
         UUID id = UUID.randomUUID();
-        ExecutionJob job = new ExecutionJob(id, JobStatus.PENDING, orgId, query, LocalDateTime.now(), LocalDateTime.now());
+        ExecutionJob job = new ExecutionJob(id, JobStatus.PENDING, orgId, userId, query, LocalDateTime.now(), LocalDateTime.now());
         store.put(id, job);
         return Mono.just(job);
     }
@@ -42,6 +43,7 @@ public class JobService {
                     existing.jobId(),
                     request.status(),
                     existing.orgId(),
+                    existing.userId(),
                     existing.query(),
                     existing.createdAt(),
                     LocalDateTime.now()
@@ -49,10 +51,7 @@ public class JobService {
             store.put(existing.jobId(), updated);
             if (JobStatus.COMPLETED.equals(request.status())) {
                 quotaUsageProducer.sendQuotaUsage(
-                        QuotaUsageRecordRequest.builder()
-                                .orgId(existing.orgId())
-                                .increment(1L)
-                                .build()
+                        new QuotaUsageEvent(existing.orgId(), existing.userId(), 1)
                 );
             }
         }

@@ -13,7 +13,7 @@ import java.nio.file.Path;
 /**
  * 프리사인 URL을 이용해 파일을 업로드하는 기본 구현체.
  */
-@Requires(property = "storage.type", value = "s3")
+@Requires(property = "app.storage.type", value = "s3")
 @Singleton
 public class PresignedUrlUploadClient implements UploadClient {
 
