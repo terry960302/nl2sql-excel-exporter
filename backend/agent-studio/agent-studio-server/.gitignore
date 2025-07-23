@@ -14,5 +14,6 @@ out/
 .classpath
 .factorypath
 
+application-*.yml
 *.md
 src/test/resources/output/

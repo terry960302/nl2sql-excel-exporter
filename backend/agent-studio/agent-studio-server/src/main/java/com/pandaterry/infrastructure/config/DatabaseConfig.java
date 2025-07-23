@@ -1,14 +1,7 @@
 package com.pandaterry.infrastructure.config;
 
-import com.pandaterry.application.service.database.DataSourceManager;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Value;
 import jakarta.inject.Singleton;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 @Singleton

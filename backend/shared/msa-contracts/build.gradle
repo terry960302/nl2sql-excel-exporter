@@ -24,6 +24,9 @@ dependencies {
     // Validation API
     compileOnly("jakarta.validation:jakarta.validation-api:3.0.2") // Spring-Boot, Micronaut 에서 모두 지원하는 표준 validation
     annotationProcessor("jakarta.validation:jakarta.validation-api:3.0.2")
+    // Micronaut Serdeable 호환 목적
+    implementation 'io.micronaut.serde:micronaut-serde-api:2.13.1'
+    annotationProcessor "io.micronaut.serde:micronaut-serde-processor:2.13.1"
 
     // 로깅
     compileOnly 'org.slf4j:slf4j-api:2.0.9'
@@ -31,9 +34,18 @@ dependencies {
     // 웹
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
     implementation 'org.springframework:spring-webmvc:6.2.7'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
+    // micronaut 직렬화
+    api 'io.micronaut.serde:micronaut-serde-api:2.13.1' // 외부모듈에서 사용가능해야하기 때문에 api로 선언
+    annotationProcessor "io.micronaut.serde:micronaut-serde-processor"
 
     // 인증
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+}
+tasks.configureEach {
+    if (name == "collectReachabilityMetadata") {
+        enabled = false
+    }
 }

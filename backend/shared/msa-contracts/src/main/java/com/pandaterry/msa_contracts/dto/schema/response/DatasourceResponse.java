@@ -4,6 +4,7 @@ import com.pandaterry.msa_contracts.enums.schema.DatabaseEngineType;
 import com.pandaterry.msa_contracts.enums.schema.DatabaseType;
 import com.pandaterry.msa_contracts.enums.schema.EnableStatus;
 
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Serdeable
 @Getter
 @Builder
 @NoArgsConstructor
@@ -21,6 +23,7 @@ public class DatasourceResponse {
     private String name;
     private DatabaseType dbType;
     private DatabaseEngineType engineType;
+    private String description;
     private EnableStatus isEnabled;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

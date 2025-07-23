@@ -2,9 +2,9 @@ package com.pandaterry.application.service.query;
 
 import com.pandaterry.application.event.JobExecutionFailedEvent;
 import com.pandaterry.application.event.JobExecutionSucceededEvent;
+import com.pandaterry.infrastructure.client.DefaultQueryClient;
 import com.pandaterry.msa_contracts.dto.query.request.JobResultRequest;
 import com.pandaterry.msa_contracts.enums.query.JobStatus;
-import com.pandaterry.infrastructure.client.QueryServiceClient;
 import io.micronaut.runtime.event.annotation.EventListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -19,7 +19,7 @@ public class JobResultEventListener {
     private static final Logger log = LoggerFactory.getLogger(JobResultEventListener.class);
 
     @Inject
-    private QueryServiceClient queryServiceClient;
+    private DefaultQueryClient queryClient;
 
     @EventListener
     public void onSuccess(JobExecutionSucceededEvent event) {
@@ -28,7 +28,8 @@ public class JobResultEventListener {
         log.info("Handling JobExecutionSucceededEvent. jobId={}, downloadUrl={}", jobId, downloadUrl);
 
         try {
-            queryServiceClient.reportJobResult(
+            queryClient.reportJobResult(
+                    event.getAuthorization(),
                     jobId,
                     new JobResultRequest(jobId, JobStatus.COMPLETED, downloadUrl, null)
             );
@@ -45,7 +46,8 @@ public class JobResultEventListener {
         log.info("Handling JobExecutionFailedEvent. jobId={}, reason={}", jobId, reason);
 
         try {
-            queryServiceClient.reportJobResult(
+            queryClient.reportJobResult(
+                    event.getAuthorization(),
                     jobId,
                     new JobResultRequest(jobId, JobStatus.FAILED, null, reason)
             );

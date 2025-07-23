@@ -1,14 +1,13 @@
 package com.pandaterry.infrastructure.schema;
 
-import com.pandaterry.domain.enums.DatabaseType;
-import com.pandaterry.domain.model.database.TableSchema;
-import com.pandaterry.domain.model.database.ColumnSchema;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pandaterry.domain.service.SchemaExtractor;
 import com.pandaterry.application.exception.AgentException;
 import com.pandaterry.domain.enums.ErrorCode;
-import io.micronaut.serde.ObjectMapper;
+import com.pandaterry.msa_contracts.enums.schema.DatabaseEngineType;
+import com.pandaterry.msa_contracts.vo.schema.ColumnSchema;
+import com.pandaterry.msa_contracts.vo.schema.TableSchema;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@Singleton
 public class PostgresSchemaExtractor implements SchemaExtractor {
 
     @Inject
@@ -117,8 +115,8 @@ public class PostgresSchemaExtractor implements SchemaExtractor {
     }
 
     @Override
-    public boolean supports(DatabaseType databaseType) {
-        return DatabaseType.POSTGRESQL.equals(databaseType);
+    public boolean supports(DatabaseEngineType engineType) {
+        return DatabaseEngineType.POSTGRESQL.equals(engineType);
     }
 
     private List<ColumnSchema> getColumns(DatabaseMetaData metaData, String tableName) throws SQLException {

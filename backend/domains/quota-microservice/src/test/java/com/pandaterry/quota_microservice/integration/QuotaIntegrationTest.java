@@ -42,7 +42,7 @@ class QuotaIntegrationTest extends IntegrationTestBase {
     static class DummyProducerConfig {
         @Bean
         public QuotaUsageProducer quotaUsageProducer(QuotaService quotaService) {
-            return request -> quotaService.consumeQuotaUsage(request);
+            return quotaService::consumeQuotaUsage;
         }
     }
 
@@ -76,7 +76,6 @@ class QuotaIntegrationTest extends IntegrationTestBase {
     @DisplayName("사용량 기록 후 조회")
     void record_and_query_usage() throws Exception {
         QuotaUsageRecordRequest request = QuotaUsageRecordRequest.builder()
-                .orgId(orgId)
                 .increment(3L)
                 .build();
 

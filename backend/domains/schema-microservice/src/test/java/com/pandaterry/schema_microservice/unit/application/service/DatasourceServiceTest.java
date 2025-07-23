@@ -73,7 +73,7 @@ class DatasourceServiceTest {
     @Test
     @DisplayName("데이터소스 활성화 성공")
     void activateDatasource_성공() {
-        DatasourceUpdateRequest request = DatasourceMapper.of("test", DatabaseType.RDB, DatabaseEngineType.POSTGRESQL);
+        DatasourceUpdateRequest request = DatasourceMapper.of("test", DatabaseType.RDB, DatabaseEngineType.POSTGRESQL, "test desc");
         when(datasourceRepository.findById(datasource.getId())).thenReturn(Optional.of(datasource));
         when(datasourceRepository.save(any(Datasource.class))).thenReturn(datasource);
 

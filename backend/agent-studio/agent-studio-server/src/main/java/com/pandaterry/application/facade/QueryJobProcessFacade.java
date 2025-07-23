@@ -8,11 +8,11 @@ import com.pandaterry.application.service.query.JobExecutionService;
 import com.pandaterry.application.service.query.JobPollingService;
 import com.pandaterry.application.vo.ExcelResult;
 import com.pandaterry.domain.enums.ErrorCode;
+import com.pandaterry.infrastructure.client.DefaultQueryClient;
 import com.pandaterry.msa_contracts.dto.query.request.NaturalLanguageQueryRequest;
 import com.pandaterry.msa_contracts.dto.query.response.NaturalLanguageQueryResponse;
 import com.pandaterry.presentation.dto.request.QueryRequest;
 import com.pandaterry.domain.model.ExecutionJob;
-import com.pandaterry.infrastructure.client.QueryServiceClient;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -28,7 +28,7 @@ public class QueryJobProcessFacade {
     private static final Logger log = LoggerFactory.getLogger(QueryJobProcessFacade.class);
 
     @Inject
-    private QueryServiceClient queryServiceClient;
+    private DefaultQueryClient queryClient;
     @Inject
     private JobPollingService jobPollingService;
     @Inject
@@ -37,26 +37,26 @@ public class QueryJobProcessFacade {
     @Inject
     private ApplicationEventPublisher<JobExecutionEvent> jobExecutionEventPublisher;
 
-    public NaturalLanguageQueryResponse handleQuery(NaturalLanguageQueryRequest request) {
-        return requestQuery(request.getOrgId(), request.getNaturalText())
-                .flatMap(jobId -> pollJob(request.getAgentId(), jobId))
+    public NaturalLanguageQueryResponse handleQuery(String authorization, NaturalLanguageQueryRequest request) {
+        return requestQuery(authorization, request)
+                .flatMap(jobId -> pollJob(authorization, jobId))
                 .flatMap(job -> executeJob(job, request.getDatasourceId()))
                 .orElseThrow(() -> new AgentException(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
-    private Optional<UUID> requestQuery(UUID orgId, String naturalText) {
-        Optional<ExecutionJob> created = queryServiceClient.requestQuery(orgId, new QueryRequest(naturalText));
+    private Optional<UUID> requestQuery(String authorization, NaturalLanguageQueryRequest request) {
+        Optional<ExecutionJob> created = queryClient.requestQuery(authorization, request);
         if (created.isEmpty()) {
-            log.warn("Query request failed for orgId={}", orgId);
+            log.warn("Query request failed");
             return Optional.empty();
         }
         return Optional.of(created.get().jobId());
     }
 
-    private Optional<ExecutionJob> pollJob(UUID agentId, UUID jobId) {
-        ExecutionJob job = jobPollingService.poll(agentId, jobId);
+    private Optional<ExecutionJob> pollJob(String authorization, UUID jobId) {
+        ExecutionJob job = jobPollingService.poll(authorization, jobId);
         if (job == null) {
-            log.warn("Job polling failed. jobId={}, agentId={}", jobId, agentId);
+            log.warn("Job polling failed. jobId={}", jobId);
             return Optional.empty();
         }
         return Optional.of(job);

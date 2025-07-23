@@ -1,6 +1,7 @@
 package com.pandaterry.query_microservice.infrastructure.messaging;
 
 import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
+import com.pandaterry.msa_contracts.event.QuotaUsageEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,7 @@ public class RabbitQuotaUsageProducer implements QuotaUsageProducer {
     private String queue;
 
     @Override
-    public void sendQuotaUsage(QuotaUsageRecordRequest request) {
+    public void sendQuotaUsage(QuotaUsageEvent request) {
         rabbitTemplate.convertAndSend(queue, request);
     }
 }

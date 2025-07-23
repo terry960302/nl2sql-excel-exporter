@@ -69,6 +69,14 @@ public final class RoutePath {
         // 쿼리 실행(에이전트 서버)
         public static final String EXECUTE_SUFFIX = "/execute";
         public static final String EXECUTE = BASE + EXECUTE_SUFFIX;
+
+    }
+
+    public static final class File {
+        public static final String BASE = PREFIX +  "/files";
+
+        public static final String DOWNLOAD_SUFFIX = "/${filename}/download";
+        public static final String DOWNLOAD = BASE + DOWNLOAD_SUFFIX;
     }
 
     public static final class Job {

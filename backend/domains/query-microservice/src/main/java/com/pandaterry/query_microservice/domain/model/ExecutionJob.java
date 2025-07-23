@@ -9,6 +9,7 @@ public record ExecutionJob(
         UUID jobId,
         JobStatus status,
         UUID orgId,
+        UUID userId,
         String query,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

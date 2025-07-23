@@ -1,3 +1,5 @@
+package com.pandaterry.schema_microservice.unit.application.service;
+
 import com.pandaterry.msa_contracts.dto.schema.request.RegisterSchemaRequest;
 import com.pandaterry.msa_contracts.dto.schema.response.RegisterSchemaResponse;
 import com.pandaterry.msa_contracts.vo.schema.ColumnSchema;
@@ -51,13 +53,13 @@ class SchemaServiceTest {
         agentId = UUID.randomUUID();
         ColumnSchema column = ColumnSchema.create("id", "INTEGER", false, true);
         TableSchema table = TableSchema.create("test", List.of(column));
-        request = new RegisterSchemaRequest(orgId, userId, agentId, UUID.randomUUID(), "schema", List.of(table), "{}");
+        request = new RegisterSchemaRequest(UUID.randomUUID(), "schema", List.of(table), "{}");
     }
 
     @Test
     @DisplayName("스키마 업로드 성공")
     void uploadSchema_성공() {
-        Schema saved = Schema.create(orgId, request.datasourceId(), userId, request.name(), request.rawSchema());
+        Schema saved = Schema.create(orgId, request.getDatasourceId(), userId, request.getName(), request.getRawSchema());
         saved.setId(UUID.randomUUID());
         when(schemaRepository.save(any(Schema.class))).thenReturn(saved);
         when(tableDefinitionRepository.save(any(TableDefinition.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -65,7 +67,7 @@ class SchemaServiceTest {
 
         RegisterSchemaResponse response = schemaService.uploadSchema(orgId.toString(), userId.toString(), agentId.toString(), request);
 
-        assertThat(response.id()).isNotNull();
+        assertThat(response.getId()).isNotNull();
         verify(schemaRepository).save(any(Schema.class));
         verify(tableDefinitionRepository, atLeastOnce()).save(any(TableDefinition.class));
         verify(columnDefinitionRepository, atLeastOnce()).save(any(ColumnDefinition.class));

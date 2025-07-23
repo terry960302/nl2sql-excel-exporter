@@ -3,6 +3,15 @@ micronaut:
     name: agent-server-test
   server:
     port: 3931
+  introspection:
+    packages:
+      - com.pandaterry.msa_contracts.dto
+  http:
+    services:
+      custom-client:
+        read-timeout: 30s
+  serialization:
+    enabled: false
 
 datasources:
   default:

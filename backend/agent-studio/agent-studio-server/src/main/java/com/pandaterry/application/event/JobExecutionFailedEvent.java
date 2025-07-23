@@ -9,6 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class JobExecutionFailedEvent implements JobExecutionEvent {
+    private String authorization;
     private UUID jobId;
     private String reason;
 }

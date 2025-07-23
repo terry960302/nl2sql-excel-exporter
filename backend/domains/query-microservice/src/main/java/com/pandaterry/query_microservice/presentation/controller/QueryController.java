@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/v1" + RoutePath.Query.BASE)
+@RequestMapping(RoutePath.Query.BASE)
 @RequiredArgsConstructor
 public class QueryController {
     private final QueryService queryService;

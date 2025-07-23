@@ -1,33 +1,26 @@
 package com.pandaterry.msa_contracts.vo.schema;
 
+import io.micronaut.serde.annotation.Serdeable;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-public class TableSchema {
-    private final UUID id;
-    private final String tableName;
-    private final List<ColumnSchema> columns;
-
-    private TableSchema(UUID id, String tableName, List<ColumnSchema> columns) {
-        this.id = id;
-        this.tableName = tableName;
-        this.columns = columns;
-    }
+@Serdeable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+public class TableSchema implements Serializable {
+    private UUID id;
+    private String tableName;
+    private List<ColumnSchema> columns;
 
     public static TableSchema create(String tableName, List<ColumnSchema> columns) {
         return new TableSchema(UUID.randomUUID(), tableName, columns);
     }
 
-    // Getters
-    public UUID getId() {
-        return id;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public List<ColumnSchema> getColumns() {
-        return columns;
-    }
 }

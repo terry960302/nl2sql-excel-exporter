@@ -11,7 +11,11 @@ import java.util.UUID;
 
 public class SchemaMapper {
     public static RegisterSchemaResponse toResponse(Schema schema) {
-        return new RegisterSchemaResponse(schema.getId(), schema.getName(), schema.getRawJson());
+        return RegisterSchemaResponse.builder()
+                .datasourceId(schema.getDatasourceId())
+                .name(schema.getName())
+                .rawJson(schema.getRawJson())
+                .build();
     }
 
     public static TableDefinition toEntity(UUID schemaId, TableSchema table) {

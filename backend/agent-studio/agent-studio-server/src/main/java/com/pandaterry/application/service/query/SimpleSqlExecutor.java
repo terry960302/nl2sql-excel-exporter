@@ -1,6 +1,6 @@
 package com.pandaterry.application.service.query;
 
-import com.pandaterry.application.service.database.DataSourceManager;
+import com.pandaterry.application.service.datasource.DataSourceManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 

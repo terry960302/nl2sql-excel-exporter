@@ -12,32 +12,44 @@ repositories {
 }
 
 dependencies {
+    // 외부 모듈
     implementation project(':shared:msa-contracts')
 
+    // web
+    implementation("io.micronaut:micronaut-http-client")
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     compileOnly("io.micronaut:micronaut-http-client")
+    implementation("io.projectreactor:reactor-core")
+    implementation("io.micronaut.reactor:micronaut-reactor-http-client")
+    implementation("io.micrometer:context-propagation")
+    implementation("io.micronaut.reactor:micronaut-reactor")
+
+    // 로깅
     runtimeOnly("ch.qos.logback:logback-classic")
-    testImplementation("io.micronaut:micronaut-http-client")
+
+    // 데이터
+    implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("org.postgresql:postgresql")
+    implementation("software.amazon.awssdk:s3")
+
+    // SQL 파싱, 엑셀
+    implementation("com.github.jsqlparser:jsqlparser:4.6")
     implementation("com.alibaba:easyexcel:3.3.2")
     implementation("com.github.jsqlparser:jsqlparser:4.5")
+
+    // 기타
+    runtimeOnly("org.yaml:snakeyaml:2.2")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
-    
-    // HikariCP
-    implementation("com.zaxxer:HikariCP:5.1.0")
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0'
 
 
-    // jsql parser
-    implementation("com.github.jsqlparser:jsqlparser:4.6")
-    
-    // YAML
-    runtimeOnly("org.yaml:snakeyaml:2.2")
-    
-    // Test dependencies
+    // 테스트
     testImplementation("org.testcontainers:testcontainers:1.19.7")
+    testImplementation 'org.testcontainers:kafka:1.19.3'
     testImplementation("org.testcontainers:postgresql:1.19.7")
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
@@ -45,6 +57,13 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
     testImplementation("org.assertj:assertj-core:3.25.3")
     testImplementation 'com.github.tomakehurst:wiremock-standalone:3.0.1'
+    testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
+    testImplementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
+    testImplementation 'com.fasterxml.jackson.core:jackson-annotations:2.17.1'
 }
 
 application {

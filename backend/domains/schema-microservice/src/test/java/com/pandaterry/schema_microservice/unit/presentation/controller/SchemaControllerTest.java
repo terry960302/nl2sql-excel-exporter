@@ -35,7 +35,7 @@ class SchemaControllerTest {
     @Test
     @DisplayName("필수 헤더가 없으면 400 반환")
     void uploadSchema_헤더없음_실패() throws Exception {
-        RegisterSchemaRequest req = new RegisterSchemaRequest(null, null, null, UUID.randomUUID(), "name", List.of(), "{}");
+        RegisterSchemaRequest req = new RegisterSchemaRequest(null,  "name", List.of(), "{}");
         mockMvc.perform(post(RoutePath.Schema.BASE)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(req)))
@@ -45,15 +45,20 @@ class SchemaControllerTest {
     @Test
     @DisplayName("정상 호출 시 서비스 메서드 실행")
     void uploadSchema_성공() throws Exception {
-        RegisterSchemaRequest req = new RegisterSchemaRequest(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "name", List.of(), "{}");
+
+        UUID orgId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID agentId = UUID.randomUUID();
+
+        RegisterSchemaRequest req = new RegisterSchemaRequest(UUID.randomUUID(), "name", List.of(), "{}");
         mockMvc.perform(post(RoutePath.Schema.BASE)
-                        .header(HeaderKeys.ORG_ID, req.orgId().toString())
-                        .header(HeaderKeys.USER_ID, req.userId().toString())
-                        .header(HeaderKeys.AGENT_ID, req.agentId().toString())
+                        .header(HeaderKeys.ORG_ID, orgId)
+                        .header(HeaderKeys.USER_ID, userId)
+                        .header(HeaderKeys.AGENT_ID, agentId)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        verify(schemaService).uploadSchema(req.orgId().toString(), req.userId().toString(), req.agentId().toString(), req);
+        verify(schemaService).uploadSchema(orgId.toString(), userId.toString(), agentId.toString(), req);
     }
 }

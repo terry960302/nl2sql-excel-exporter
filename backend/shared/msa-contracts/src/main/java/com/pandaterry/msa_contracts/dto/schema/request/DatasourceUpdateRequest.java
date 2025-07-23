@@ -16,7 +16,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DatasourceUpdateRequest{
         private String name;
+        private String alias;
+        private String username;
+        private String password;
+        private String host;
+        private int port;
         private DatabaseType dbType;
         private DatabaseEngineType engineType;
+        private String description;
 
 }

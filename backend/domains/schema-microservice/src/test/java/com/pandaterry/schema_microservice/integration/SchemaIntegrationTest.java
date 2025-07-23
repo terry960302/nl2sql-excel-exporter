@@ -58,7 +58,7 @@ class SchemaIntegrationTest {
 
         ColumnSchema column = ColumnSchema.create("id", "INT", false, true);
         TableSchema table = TableSchema.create("t1", List.of(column));
-        RegisterSchemaRequest req = new RegisterSchemaRequest(orgId, userId, agentId, datasourceId, "schema", List.of(table), "{}");
+        RegisterSchemaRequest req = new RegisterSchemaRequest(datasourceId, "schema", List.of(table), "{}");
 
         assertThat(schemaService.uploadSchema(orgId.toString(), userId.toString(), agentId.toString(), req)).isNotNull();
     }

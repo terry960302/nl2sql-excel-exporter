@@ -3,9 +3,8 @@ micronaut:
     name: agent-server
   server:
     port: 3930
-  http:
-    client:
-      read-timeout: 10s
+  profiles:
+    active: local
 
 datasources:
   default:
@@ -14,15 +13,12 @@ datasources:
     password: pass
     driverClassName: org.postgresql.Driver
 
-services:
-  gateway:
-    base-url: http://localhost:8080
-    
-storage:
-  type: local
-  local-path: ./uploads
-  presigned-put-url: http://localhost:9000/put
-  download-url: http://localhost:9000/download
+app:
+  agent:
+    secret: default-secret
 
-agent:
-  secret: default-secret
+logger:
+  levels:
+    ROOT: INFO
+    com.pandaterry.infrastructure.filters: DEBUG
+    reactor.util.context: DEBUG

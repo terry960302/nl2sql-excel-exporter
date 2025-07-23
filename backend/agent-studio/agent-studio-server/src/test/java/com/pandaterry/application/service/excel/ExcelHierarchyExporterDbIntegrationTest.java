@@ -1,10 +1,10 @@
 package com.pandaterry.application.service.excel;
 
-import com.pandaterry.application.service.database.DataSourceManager;
+import com.pandaterry.application.service.datasource.DataSourceManager;
 import com.pandaterry.application.vo.CellRange;
 import com.pandaterry.application.vo.FlatRow;
-import com.pandaterry.domain.enums.DatabaseType;
-import com.pandaterry.domain.model.database.DatasourceSession;
+import com.pandaterry.domain.model.datasource.DatasourceSession;
+import com.pandaterry.msa_contracts.enums.schema.DatabaseEngineType;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -51,7 +51,7 @@ class ExcelHierarchyExporterDbIntegrationTest {
                 postgres.getJdbcUrl(),
                 postgres.getUsername(),
                 postgres.getPassword(),
-                DatabaseType.POSTGRESQL
+                DatabaseEngineType.POSTGRESQL
         );
         dataSourceManager.register(session);
         dataSourceManager.testConnection(session.getDatasourceId());

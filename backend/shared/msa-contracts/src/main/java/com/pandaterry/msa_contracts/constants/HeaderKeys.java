@@ -1,6 +1,7 @@
 package com.pandaterry.msa_contracts.constants;
 
 public class HeaderKeys {
+    public static final String AUTHORIZATION = "Authorization";
     public static final String ORG_ID = "X-Organization-Id";
     public static final String USER_ID = "X-User-Id";
     public static final String AGENT_ID = "X-Agent-Id";

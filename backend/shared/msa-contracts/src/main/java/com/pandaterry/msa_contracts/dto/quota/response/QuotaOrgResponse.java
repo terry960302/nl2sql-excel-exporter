@@ -1,7 +1,9 @@
 package com.pandaterry.msa_contracts.dto.quota.response;
 
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.*;
 
+@Serdeable
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

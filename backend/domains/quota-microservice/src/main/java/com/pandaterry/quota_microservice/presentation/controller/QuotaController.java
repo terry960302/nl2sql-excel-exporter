@@ -6,6 +6,7 @@ import com.pandaterry.msa_contracts.dto.quota.request.QuotaUsageRecordRequest;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgResponse;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgDetailResponse;
 import com.pandaterry.msa_contracts.dto.quota.response.QuotaOrgsPageResponse;
+import com.pandaterry.msa_contracts.event.QuotaUsageEvent;
 import com.pandaterry.quota_microservice.application.service.QuotaService;
 import com.pandaterry.quota_microservice.infrastructure.messaging.QuotaUsageProducer;
 import lombok.RequiredArgsConstructor;
@@ -47,9 +48,10 @@ public class QuotaController {
     }
 
     // TODO: 컨트롤러 호출은 불가피한 경우에, 일반적으론 쿼리서비스에서 이벤트 기반 호출
+    // TODO: 이벤트 매퍼 추가
     @PostMapping(RoutePath.Quota.USAGE_SUFFIX)
     public ResponseEntity<Void> recordUsage(@RequestBody QuotaUsageRecordRequest request) {
-        quotaUsageProducer.sendQuotaUsage(request);
+        quotaUsageProducer.sendQuotaUsage(new QuotaUsageEvent(UUID.randomUUID(), UUID.randomUUID(), request.getIncrement()));
         return ResponseEntity.noContent().build();
     }
 }
